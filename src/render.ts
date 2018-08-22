@@ -1,5 +1,5 @@
 import {tileNumberByXYPos,getAABB} from './collision';
-import {initState, spacing, state, moveCamera} from './state';
+import {initState, Spacing, State, moveCamera} from './State';
 
 export const canvas =  <HTMLCanvasElement>document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -36,7 +36,7 @@ const pyerTiles:any = { 'idle_left.png': [ 1, 1, 20, 20 ],
   'walking_2_left.png': [ 177, 1, 20, 20 ],
   'walking_2_right.png': [ 199, 1, 20, 20 ] };
 
-export function render(st: state, map:string,tsize: number, wsize: number){
+export function render(st: State, map:string,tsize: number, wsize: number){
     if(!can) return;
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.imageSmoothingEnabled = false;

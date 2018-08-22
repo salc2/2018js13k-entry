@@ -1,5 +1,5 @@
 import {tileNumberByXYPos, getAABB, moveBody } from '../collision';
-import {character} from '../state';
+import {Character} from '../state';
 
 test('tile number by x,y position when', () => {
   expect(tileNumberByXYPos(5,4,20,2)).toBe(0);
@@ -14,7 +14,7 @@ test('AABB of a body in [5,5] with w:40 and h:25 should be [5,5|45,5|45,30|5,30]
 });
 
 test('moving bodies in a map with solid tile', () => {
-    const body:character = [5,6,20,20,0,0,"right",true];
+    const body:Character = [5,6,20,20,0,0,"right",true];
     const map = "``````````xxxxx``````````";
 
   expect(moveBody(body,7,8,map,20,5)).toEqual([7,8,20,20,0,0,"right",false]);

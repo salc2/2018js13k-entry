@@ -2,12 +2,12 @@ import {Sub} from './sub';
 import {Cmd, emptyCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
-import {initState, spacing, state, moveCamera,character} from './state';
+import {initState, Spacing, State, moveCamera, Character} from './state';
 import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody} from './collision';
 
-export type Model = state;
+export type Model = State;
 
 const clockSub = Sub.create('clock', (consumer: Sub.Subscriber<Action>) => {
     let id = 0;
@@ -65,10 +65,10 @@ const releaseKeySub = Sub.create('pressEvents', (consumer: Sub.Subscriber<Action
 const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w```````````w````````w````````````w`````````````s``s````s``````s`s````````s``s`s``````s`````rcrrprsrrspcrrscrrprrsrsrprrprrrsrrsrscrrprcsrrrrrffffffdfffffffffdfffffffdffffffdffffffffffffffffffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````";
 
   const applyMotion = (m: Model, delta: number) => {
-    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],pmtr]:Model = m;
+    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],cells,pmtr]:Model = m;
     const gravity = pmtr[0];
-    const playr:character = moveBody([px,py,pw,ph,pVx,pVy,dir,onflo],(px+pVx*delta),py+pVy,map,20,50);
-    const ns: Model = [cam,[[playr[0],playr[1],pw,ph,pVx,Math.min(pVy+gravity,gravity),dir,playr[7]]],pmtr];
+    const playr:Character = moveBody([px,py,pw,ph,pVx,pVy,dir,onflo],(px+pVx*delta),py+pVy,map,20,50);
+    const ns: Model = [cam,[[playr[0],playr[1],pw,ph,pVx,Math.min(pVy+gravity,gravity),dir,playr[7]]],cells,pmtr];
     return ns;
   }
 
@@ -80,17 +80,17 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
   }
 
   const walkRight = (m: Model) => {
-    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],pmtr]:Model = m;
+    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],cells,pmtr]:Model = m;
     const vplayer = pmtr[1];
-    const nm: Model = [cam, [[px,py,pw,ph,vplayer,pVy,"right",onflo]],pmtr]; 
+    const nm: Model = [cam, [[px,py,pw,ph,vplayer,pVy,"right",onflo]],cells,pmtr]; 
     return nm;
   }
 
   const jump = (m: Model) => {
-    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],pmtr]:Model = m;
+    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],cells,pmtr]:Model = m;
     const jumpVel = pmtr[2], gravity = pmtr[0];
     if(onflo){
-      const nm: Model = [cam, [[px,py,pw,ph,pVx,jumpVel,dir,false]],pmtr]; 
+      const nm: Model = [cam, [[px,py,pw,ph,pVx,jumpVel,dir,false]],cells,pmtr]; 
       return nm;
     }else{
       return m;
