@@ -1,4 +1,4 @@
-import {initState, spacing, state, moveCamera,character} from './state';
+import {initState, Spacing, State, moveCamera, Character} from './state';
 
 export function tileNumberByXYPos(x: number, y:number, tileSize: number, worldSize: number){
     return Math.floor(y/tileSize) * worldSize + Math.floor(x/tileSize);
@@ -14,12 +14,12 @@ function notSolid(s: string){
 }
 
 export function moveBody(
-    body: character,
+    body: Character,
     x:number,
     y:number,
     map: string, 
     tileSize: number, 
-    worldSize: number): character{
+    worldSize: number): Character{
     const [bX,bY,bW,bH,bVx,bVy,dir,onflor] = body;
     const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = getAABB(Math.floor(x),Math.floor(y),bW,bH);
     const tRb = tileNumberByXYPos(rbX,rbY,tileSize,worldSize);

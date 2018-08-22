@@ -73,9 +73,9 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
   }
 
   const walkLeft = (m: Model) => {
-    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],pmtr]:Model = m;
+    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],cells,pmtr]:Model = m;
     const vplayer = pmtr[1];
-    const nm: Model = [cam, [[px,py,pw,ph,-vplayer,pVy,"left",onflo]],pmtr]; 
+    const nm: Model = [cam, [[px,py,pw,ph,-vplayer,pVy,"left",onflo]],cells,pmtr]; 
     return nm;
   }
 
@@ -98,8 +98,8 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
   } 
 
   const stop = (m: Model) => {
-    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],prmtr]:Model = m;
-    const nm: Model = [cam, [[px,py,pw,ph,0,pVy,dir,onflo]],prmtr]; 
+    const [cam, [[px,py,pw,ph,pVx,pVy,dir,onflo]],cells,prmtr]:Model = m;
+    const nm: Model = [cam, [[px,py,pw,ph,0,pVy,dir,onflo]],cells,prmtr]; 
     return nm;
   }
 
