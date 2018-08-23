@@ -5,7 +5,7 @@ import {Time, Action as GameAction} from './actions';
 import {update , initStateCmd,render,subs, Model as GameModel} from './index';
 import {Cmd, emptyCmd} from './cmd';
 import {canvas} from './render';
-import {initState, Spacing, State, moveCamera, Character} from './state';
+import {initState, Spacing, State, moveCamera, Character,Camera as CameraType} from './state';
 
 export interface Parameter {
     kind: "parameter";
@@ -21,7 +21,7 @@ export const Camera = (props: CameraProps) => {
 
     const [cam, [player], cells ,[gra, walk, jum]]:Model = props.st;
     const [px,py,pw,ph,pVx,pVy,dir,onflo,k] = player;
-    const [cx,cy,cw,ch,cvx,cvy] = cam;
+    const [cx,cy,cw,ch,cvx,cvy,tgt] = cam;
 
      function onClickCanvas(event: MouseEvent){
         const nx = ( (event.clientX) - canvas.offsetLeft) * .3 + cam[0],
@@ -32,9 +32,9 @@ export const Camera = (props: CameraProps) => {
    return <form>
    <fieldset>
    <legend>Camera:</legend>
-   Camera X: {cx}<input type="range" name="Camera X" value={cx} min="0" max="1000" onChange={ e => props.onChange({kind: "parameter", State:[[parseFloat(e.target.value),cy,cw,ch,cvx,cvy], [player], cells,[gra, walk, jum]]})}/>
+   Camera X: {cx}<input type="range" name="Camera X" value={cx} min="0" max="1000" onChange={ e => props.onChange({kind: "parameter", State:[[parseFloat(e.target.value),cy,cw,ch,cvx,cvy,tgt], [player], cells,[gra, walk, jum]]})}/>
    <br/>
-    Camera Y: {cy}<input type="range" name="Camera Y" value={cy} min="0" max="1000" onChange={ e => props.onChange({kind: "parameter", State:[[cx,parseFloat(e.target.value),cw,ch,cvx,cvy], [player], cells,[gra, walk, jum]]})} />
+    Camera Y: {cy}<input type="range" name="Camera Y" value={cy} min="0" max="1000" onChange={ e => props.onChange({kind: "parameter", State:[[cx,parseFloat(e.target.value),cw,ch,cvx,cvy,tgt], [player], cells,[gra, walk, jum]]})} />
     </fieldset>
     <fieldset>
     <legend>Player:</legend>
@@ -81,7 +81,7 @@ export const updateDebug:Update<Action,Model> = (a: Action, m: Model) =>{
 switch (a.kind) {
     case "parameter":
     const [cam, [player], cells,pmtr] = a.State;
-    const moved:Spacing = moveCamera(m[0],cam[0],cam[1],1000,1000);
+    const moved:CameraType = moveCamera(cam,cam[0],cam[1],1000,1000);
     return [[moved, [player], cells,pmtr],emptyCmd<Action>()];
     default:
       return update(a,m);

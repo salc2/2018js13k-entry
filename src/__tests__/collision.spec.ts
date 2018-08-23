@@ -17,7 +17,7 @@ test('moving bodies in a map with solid tile', () => {
     const body:Character = [5,6,20,20,0,0,"right",true,"player", 0];
     const map = "``````````xxxxx``````````";
 
-  expect(moveBody(body,7,8,map,20,5)).toEqual([7,8,20,20,0,0,"right",false]);
+  expect(moveBody(body,7,8,map,20,5)).toEqual([7,8,20,20,0,0,"right",false,"player", 0]);
   expect(moveBody(body,25,25,map,20,5)).toEqual(body);
 });
 
