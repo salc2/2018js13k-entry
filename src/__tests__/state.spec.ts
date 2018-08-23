@@ -1,4 +1,24 @@
-import {moveCamera, getTilesFromStringMap, Spacing, State} from '../state';
+import {moveCamera, getTilesFromStringMap, Spacing, State, Character} from '../state';
+import {tileNumberByXYPos} from '../collision'
+
+const insertInCells = (s: State,tiles: Character[][],tileSize: number,worldSize: number): State => {
+    const [c, chars,,pmr] = s;
+    chars.forEach(c => { 
+      const tile = tileNumberByXYPos(c[0], c[1], tileSize, worldSize);
+      if(tiles[tile]){
+        tiles[tile].push(c)
+      }else{
+        tiles[tile] = [c]
+      }
+    })
+    return [c, chars,tiles,pmr];
+}
+
+test('players in map should be in cells', () =>{
+    const p: Character = [23,23,1,1,0,0,'left',true,'player'];
+    const s: State = [[0,0,0,0,0,0], [p],[],[0,0,0]];
+    expect(insertInCells(s,new Array(4),20,2)[2][3]).toEqual(p)
+});
 
 test('move camera from 5,4 to 105,335', () => {
     const camera:Spacing = [5,4,180,100,0,0];

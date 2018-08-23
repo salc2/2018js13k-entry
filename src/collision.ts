@@ -20,7 +20,7 @@ export function moveBody(
     map: string, 
     tileSize: number, 
     worldSize: number): Character{
-    const [bX,bY,bW,bH,bVx,bVy,dir,onflor] = body;
+    const [bX,bY,bW,bH,bVx,bVy,dir,onflor,k] = body;
     const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = getAABB(Math.floor(x),Math.floor(y),bW,bH);
     const tRb = tileNumberByXYPos(rbX,rbY,tileSize,worldSize);
     const tLb = tileNumberByXYPos(lbX,lbY,tileSize,worldSize);
@@ -46,5 +46,5 @@ export function moveBody(
         onf = false;
         nY = y;
     }
-    return [nX,nY,bW,bH,bVx,bVy,dir,onf];
+    return [nX,nY,bW,bH,bVx,bVy,dir,onf,k];
 }

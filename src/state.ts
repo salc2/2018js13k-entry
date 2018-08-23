@@ -2,20 +2,22 @@ import {tileNumberByXYPos} from './collision';
 
 type OnFloor = boolean
 type Dir = "right" | "left"
+type Kind = "player" | "enemy"
 // x,y,w,h,vx,vz
 export type Spacing = [number,number,number,number,number,number];
-export type Character = [number,number,number,number,number,number,Dir,OnFloor];
+export type Character = [number,number,number,number,number,number,Dir,OnFloor, Kind];
 export type Parameter = [number,number,number];
 export type Cells = Character[][];
 export type State = [Spacing, Character[], Cells, Parameter];
 
 const camera:Spacing = [0,0,180,100,0,0];
-const player:Character = [80,45,20,20,0,0.98,'right',true];
+const player:Character = [80,45,20,20,0,0.98,'right',true, "player"];
+const enemy:Character = [100,45,20,20,0,0.98,'right',true, "enemy"];
 
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [.98,.075,-5.5];
 
-export const initState: State = [camera,[player],[], parameter];
+export const initState: State = [camera,[player,enemy],[], parameter];
 
 export const moveCamera = (c:Spacing,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy] = c;
