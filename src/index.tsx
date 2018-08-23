@@ -2,12 +2,14 @@ import {Sub} from './sub';
 import {Cmd, emptyCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
-import {initState, Spacing, State, moveCamera, Character} from './state';
+import {initState, Spacing, State, moveCamera, Character, Enemy} from './state';
 import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
-import {moveBody} from './collision';
+import {moveBody, tileNumberByXYPos, getAABB} from './collision';
 
 export type Model = State;
+
+const tileSize = 20, mapSize = 50;
 
 const clockSub = Sub.create('clock', (consumer: Sub.Subscriber<Action>) => {
     let id = 0;
@@ -68,11 +70,15 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const [cam, characters,cells,pmtr]:Model = m;
     const gravity = pmtr[0];
     const n_characters = characters.map(c => {
+      if(c[8] == "player"){
+        //  console.log((c[0]-cam[0]))
+      }
       const [px,py,pw,ph,pVx,pVy,dir,onflo,kind] = c;
       const playr:Character = moveBody(c,(px+pVx*delta),py+pVy,map,20,50);
       playr[5] = Math.min(pVy+gravity,gravity)
       return playr;
     });
+    ///const movedCam = moveCamera(cam,cam[0]+(payr[0]-cam[0])-(cam[2]/2),cam[1],1000,1000)
     return [cam, n_characters,cells,pmtr];
   }
 
@@ -82,7 +88,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const n_characters = characters.map(c =>{
       if(c[8] == 'player'){
               const [px,py,pw,ph,pVx,pVy,dir,onflo, kind] = c;
-              const nplayer:Character = [px,py,pw,ph,-vplayer,pVy,"left",onflo, kind];
+              const nplayer:Character = [px,py,pw,ph,-vplayer,pVy,"left",onflo, kind, 0];
               return nplayer;
       }else{
         return c;
@@ -98,7 +104,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const n_characs = characters.map( c => {
       if(c[8] == 'player'){
         const [px,py,pw,ph,pVx,pVy,dir,onflo, k] = c;
-        const n_player: Character = [px,py,pw,ph,vplayer,pVy,"right",onflo, k];
+        const n_player: Character = [px,py,pw,ph,vplayer,pVy,"right",onflo, k, 0];
         return n_player;
         }else{
           return c;
@@ -117,7 +123,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
       if( c[8] == 'player'){
           const [px,py,pw,ph,pVx,pVy,dir,onflo,k] = c;
           if(onflo){
-            const p: Character = [px,py,pw,ph,pVx,jumpVel,dir,false,k]
+            const p: Character = [px,py,pw,ph,pVx,jumpVel,dir,false,k, 0]
             return p;
           }else{
             return c;
@@ -134,7 +140,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const n_chars = chars.map(c =>{
       if(c[8] == 'player'){
         const [px,py,pw,ph,pVx,pVy,dir,onflo,k] = c;
-        const n_char:Character = [px,py,pw,ph,0,pVy,dir,onflo,k]
+        const n_char:Character = [px,py,pw,ph,0,pVy,dir,onflo,k, 0]
         return n_char;
       }else{
          return c;
@@ -163,7 +169,7 @@ export const update: Update<Action,Model> = (a: Action, m: Model) => {
 }
 
 export const render = (onEvent:(a:Action) => void) => (m: Model) => {
-    renderExt(m,map,20,50);
+    renderExt(m,map,tileSize,mapSize);
 }
 export const subs = (m: Model) => {
   const zero: Time = {kind:"time", delta: 0}; 

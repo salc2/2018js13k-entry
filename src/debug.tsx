@@ -26,7 +26,7 @@ export const Camera = (props: CameraProps) => {
      function onClickCanvas(event: MouseEvent){
         const nx = ( (event.clientX) - canvas.offsetLeft) * .3 + cam[0],
         ny = (event.clientY - canvas.offsetTop) * .3 + cam[1];
-        props.onChange({kind:"parameter", State: [cam, [[nx,ny,pw,ph,pVx,pVy,dir,onflo,k]], cells ,[gra, walk, jum]]})
+        props.onChange({kind:"parameter", State: [cam, [[nx,ny,pw,ph,pVx,pVy,dir,onflo,k, 0]], cells ,[gra, walk, jum]]})
     }
 
    return <form>
@@ -53,12 +53,12 @@ export const Camera = (props: CameraProps) => {
     Jump Speed:[{jum}] <input type="text" onChange={e => props.onChange( {kind:"parameter", State:[cam, [player], cells,[gra, walk, parseFloat(e.target.value)]]} )}/>
     <br/>
     Width:[{pw}] <input type="text" onChange={e => {
-        const np:Character = [px,py,parseFloat(e.target.value),ph,pVx,pVy,dir,onflo,k];
+        const np:Character = [px,py,parseFloat(e.target.value),ph,pVx,pVy,dir,onflo,k, 0];
         props.onChange( {kind:"parameter", State:[cam, [np], cells,[gra, walk, jum]]} )
     }}/>
     <br/>
     Height:[{ph}] <input type="text" onChange={e => {
-        const np:Character = [px,py,pw,parseFloat(e.target.value),pVx,pVy,dir,onflo,k];
+        const np:Character = [px,py,pw,parseFloat(e.target.value),pVx,pVy,dir,onflo,k, 0];
         props.onChange( {kind:"parameter", State:[cam, [np], cells,[gra, walk, jum]]} )
     }}/>
 
@@ -68,7 +68,6 @@ export const Camera = (props: CameraProps) => {
 
 
 export const renderDebug = (onEvent:(a:Action) => void) => (m: Model) => {
-    const [cam, [[px,py,pw,ph,pVx,pVy]], pmtr]:Model = m;
     render(onEvent)(m)
     ReactDOM.render(
     <Camera st = {m}  onChange = {onEvent}/>,

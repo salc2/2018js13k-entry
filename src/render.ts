@@ -74,7 +74,7 @@ const tileMap:any = {
         }
 
       characters.forEach(charact =>{
-      const [px,py,pw,ph,pvx,pvy,dir,onfl,k] = charact;
+      const [px,py,pw,ph,pvx,pvy,dir,onfl,k,] = charact;
       const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = getAABB(px+pvx,py+pvy,pw,ph);
       const collides =  [tileNumberByXYPos(ltX,ltY,tsize,wsize),
       tileNumberByXYPos(rtX,rtY,tsize,wsize),

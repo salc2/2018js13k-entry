@@ -15,7 +15,7 @@ const insertInCells = (s: State,tiles: Character[][],tileSize: number,worldSize:
 }
 
 test('players in map should be in cells', () =>{
-    const p: Character = [23,23,1,1,0,0,'left',true,'player'];
+    const p: Character = [23,23,1,1,0,0,'left',true,'player', 0];
     const s: State = [[0,0,0,0,0,0], [p],[],[0,0,0]];
     expect(insertInCells(s,new Array(4),20,2)[2][3]).toEqual(p)
 });
