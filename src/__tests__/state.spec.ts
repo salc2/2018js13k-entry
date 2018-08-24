@@ -1,4 +1,4 @@
-import {moveCamera, getTilesFromStringMap, Spacing, State, Character, Camera} from '../state';
+import {moveCamera, tilesFromMap, Spacing, State, Character, Camera} from '../state';
 import {tileNumberByXYPos} from '../collision'
 
 const insertInCells = (s: State,tiles: Character[][],tileSize: number, worldSize: number): State => {
@@ -40,12 +40,12 @@ const map = "%^&``*@£````````````````";
 
 test('get tiles id by camera and string map', () => {
   const camera:Camera = [0,0,60,40,0,0, 0];
-  expect(getTilesFromStringMap( [0,0,60,40,0,0],map,20)).toEqual([ '%', '*', '^', '@', '&', '£' ]);
+  expect(tilesFromMap( [0,0,60,40,0,0],map,20)).toEqual([ '%', '*', '^', '@', '&', '£' ]);
 });
 
 test('get tiles id by camera and string map', () => {
   const camera:Camera = [40,20,60,40,0,0,0];
- expect(getTilesFromStringMap([40,20,60,40,0,0],map,20)).toEqual([ '£', '`', '`', '`', '`', '`' ]);
+ expect(tilesFromMap([40,20,60,40,0,0],map,20)).toEqual([ '£', '`', '`', '`', '`', '`' ]);
 });
 
 

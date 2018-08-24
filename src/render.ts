@@ -1,39 +1,9 @@
 import {tileNumberByXYPos,getAABB} from './collision';
 import {initState, Spacing, State, moveCamera} from './State';
-import {drawImage, gl} from './render.webgl'
+import {drawImage, gl,getImg} from './render.webgl'
 
-
-//export const canvas =  <HTMLCanvasElement>document.getElementById("canvas");
-//const ctx = canvas.getContext("2d");
-
-var can = false
-const img_map = new Image();
-let mapWith:number, mapHeight:number;
-let tex = gl.createTexture();
-img_map.onload = () => { 
-  can = true 
-  mapWith = img_map.width
-  mapHeight = img_map.height
-    
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    // Fill the texture with a 1x1 blue pixel.
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-                  new Uint8Array([0, 0, 255, 255]));
-
-    // let's assume all images are not a power of 2
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-
-
-
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img_map);
-}
-img_map.src = "/map.png";
-const img_pla = new Image();
-img_pla.onload = () => { can = true }
-img_pla.src = "/anto_anime.png";
+const map_text = getImg('/map.png');
+const player_text = getImg('/anto_anime.png');
 
 const tiles: any = {"x": '#000000', "`":"#273e63", "\n":"#273e63"};
 const tileMap:any = { 
@@ -62,14 +32,11 @@ const tileMap:any = {
 
 
   export function render(st: State, map:string,tsize: number, wsize: number){
-    if(!can) return;
-
-    // ctx.clearRect(0,0,canvas.width,canvas.height);
-    // ctx.imageSmoothingEnabled = false;
-    // ctx.webkitImageSmoothingEnabled = false;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.BLEND);
 
     const [[x,y,w,h,,], characters,] = st,
     startCol = Math.floor(x / tsize),
@@ -79,10 +46,6 @@ const tileMap:any = {
     offsetX = -x + startCol * tsize,
     offsetY = -y + startRow * tsize;
 
-    /// [ [px,py,pw,ph,pvx,pvy,dir,onfl,k]]
-
-    
-    
     for (var c = startCol; c <= endCol; c++) {
       for (var r = startRow; r <= endRow; r++) {
         var targetX = (c - startCol) * tsize + offsetX;
@@ -90,27 +53,19 @@ const tileMap:any = {
         const letter = map.charAt(r*wsize+c);
         if(letter != '`' && letter != 'x'){
           const [_x,_y,_w,_h] = tileMap[letter];
-
-drawImage(
-        tex,
-        mapWith,
-        mapHeight,
-        _x, _y, _w, _h,
-        Math.round(targetX), Math.round(targetY), tsize, tsize);
-   
-
-
-          // ctx.drawImage(
-          //           img_map, // image
-          //           _x, // source x
-          //           _y, // source y
-          //           _w, // source width
-          //           _h, // source height
-          //           Math.round(targetX),  // target x
-          //           Math.round(targetY), // target y
-          //           tsize, // target width
-          //           tsize // target height
-          //           );
+          drawImage(
+                    map_text.texture, // image
+                    map_text.width,
+                    map_text.height,
+                    _x, // source x
+                    _y, // source y
+                    _w, // source width
+                    _h, // source height
+                    Math.round(targetX),  // target x
+                    Math.round(targetY), // target y
+                    tsize, // target width
+                    tsize // target height
+                    );
         }
 
       characters.forEach(charact =>{
@@ -135,21 +90,18 @@ drawImage(
              coords = pyerTiles[`jump_${i}_${dir}.png`];
          }
          const [_xp,_yp,_wp,_hp] = coords;
-         // ctx.drawImage(
-         //                 img_pla, // image
-         //                 _xp, // source x
-         //                 _yp, // source y
-         //                 _wp, // source width
-         //                 _hp, // source height
-         //                 Math.round(px-x),  // target x
-         //                 Math.round(py-y), // target y
-         //                 pw, // target width
-         //                 ph // target height
-         //             );
-          if(collides.indexOf(r*wsize+c) > -1){
-         //   ctx.strokeStyle = 'red';
-           // ctx.strokeRect(targetX,targetY,tsize,tsize);
-          }
+         drawImage(player_text.texture, // image
+                         player_text.width,
+                         player_text.height,
+                         _xp, // source x
+                         _yp, // source y
+                        _wp, // source width
+                        _hp, // source height
+                         Math.round(px-x),  // target x
+                         Math.round(py-y), // target y
+                         tsize, // target width
+                         tsize // target height
+                     );
       }else{
          var coords;
          if(onfl){
@@ -162,20 +114,19 @@ drawImage(
              coords = pyerTiles[`jump_${i}_${dir}.png`];
          }
          const [_xp,_yp,_wp,_hp] = coords;
-         // ctx.drawImage(
-         //                 img_pla, // image
-         //                 _xp, // source x
-         //                 _yp, // source y
-         //                 _wp, // source width
-         //                 _hp, // source height
-         //                 Math.round(px-x),  // target x
-         //                 Math.round(py-y), // target y
-         //                 pw, // target width
-         //                 ph // target height
-         //             );
           if(collides.indexOf(r*wsize+c) > -1){
-           // ctx.strokeStyle = 'blue';
-           // ctx.strokeRect(targetX,targetY,tsize,tsize);
+                drawImage(player_text.texture, // image
+                         player_text.width,
+                         player_text.height,
+                         _xp, // source x
+                         _yp, // source y
+                        _wp, // source width
+                        _hp, // source height
+                         Math.round(px-x),  // target x
+                         Math.round(py-y), // target y
+                         tsize, // target width
+                         tsize // target height
+                     );
           }
       }
     })

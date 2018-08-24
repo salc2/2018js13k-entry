@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/index.tsx',
  // devtool: 'inline-source-map',
   mode: 'production',
- // mode: 'development',
+//  mode: 'development',
   module: {
     rules: [
       {

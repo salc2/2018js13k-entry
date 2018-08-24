@@ -1,11 +1,11 @@
 import {Cmd, run} from './cmd';
-import {Sub} from './sub';
+import {Subscription, Cancellable, Subscriber, run as runSub} from './sub';
 
 export type Update<A,M> = (a:A,m:M) => [M,Cmd<A>];
-export type Render<M,A> = (s:Sub.Subscriber<A>) => (m:M) => void;
+export type Render<M,A> = (s:Subscriber<A>) => (m:M) => void;
 
-export function runGame<M,A>(update:Update<A,M>, render:Render<M,A>, subs: (m:M) => Sub.Subscription<A>[], initState:[M,Cmd<A>]){
-  let currentSubscribedTo: [string, Sub.Cancellable][] = [];
+export function runGame<M,A>(update:Update<A,M>, render:Render<M,A>, subs: (m:M) => Subscription<A>[], initState:[M,Cmd<A>]){
+  let currentSubscribedTo: [string, Cancellable][] = [];
   let [m,c] = initState;
   let currentModel = m;
 
@@ -16,7 +16,7 @@ export function runGame<M,A>(update:Update<A,M>, render:Render<M,A>, subs: (m:M)
     currentModel = nModel;
   };
 
-  function runEffect(ef: Cmd<A>, ss: Sub.Subscription<A>[]):void{
+  function runEffect(ef: Cmd<A>, ss: Subscription<A>[]):void{
     setTimeout(() =>{
       run(ef,onEvent);
       const currentIds = currentSubscribedTo.map(s => s[0])
@@ -24,7 +24,7 @@ export function runGame<M,A>(update:Update<A,M>, render:Render<M,A>, subs: (m:M)
       const [,toRemove] = partition( id => currAndRem.map(s => s[0]).indexOf(id) > -1, currentIds)
       newSubs.forEach( s =>{
         const [id,obs] = s;
-        currentSubscribedTo = [ [id, Sub.run(s,onEvent)] ,...currentSubscribedTo]
+        currentSubscribedTo = [ [id, runSub(s,onEvent)] ,...currentSubscribedTo]
       } );
       toRemove.forEach( id => {
         currentSubscribedTo.filter( p => p[0] == id ).forEach(canc => canc[1]())

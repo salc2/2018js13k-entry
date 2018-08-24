@@ -1,4 +1,4 @@
-import {Sub} from './sub';
+import {Subscriber, create} from './sub';
 import {Cmd, emptyCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
@@ -11,12 +11,12 @@ export type Model = State;
 
 const tileSize = 20, mapSize = 50;
 
-const clockSub = Sub.create('clock', (consumer: Sub.Subscriber<Action>) => {
+const clockSub = create('clock', (consumer: Subscriber<Action>) => {
     let id = 0;
     let startTime = performance.now();
     const keepAnimation = (time:number) => {
       let t = time - startTime;
-      consumer({kind: "time",delta:t});
+      consumer({kind: "t",delta:t});
       startTime = time;
       id = requestAnimationFrame(keepAnimation);
     };
@@ -25,17 +25,17 @@ const clockSub = Sub.create('clock', (consumer: Sub.Subscriber<Action>) => {
   });
 
 
-const pressKeySub = Sub.create('pressEvents', (consumer: Sub.Subscriber<Action>) => {
+const pressKeySub = create('pressEvents', (consumer: Subscriber<Action>) => {
     const handler = (e: KeyboardEvent) => {
       switch(e.keyCode){
         case 37: 
-          consumer({kind:"leftPressed",delta:16})
+          consumer({kind:"lp",delta:16})
           break;
         case 39:
-          consumer({kind:"rightPressed",delta:16})
+          consumer({kind:"rp",delta:16})
           break;
         case 38:
-          consumer({kind:"upPressed",delta:16})
+          consumer({kind:"up",delta:16})
           break;
         default:
         break;
@@ -45,14 +45,14 @@ const pressKeySub = Sub.create('pressEvents', (consumer: Sub.Subscriber<Action>)
     return () => window.removeEventListener('keydown', handler, true);
   });
 
-const releaseKeySub = Sub.create('pressEvents', (consumer: Sub.Subscriber<Action>) => {
+const releaseKeySub = create('pressEvents', (consumer: Subscriber<Action>) => {
     const handler = (e: KeyboardEvent) => {
       switch(e.keyCode){
         case 37: 
-          consumer({kind:"leftReleased",delta:16})
+          consumer({kind:"lr",delta:16})
           break;
         case 39:
-          consumer({kind:"rightReleased",delta:16})
+          consumer({kind:"rr",delta:16})
           break;
         default:
         break;
@@ -158,17 +158,17 @@ const applyPhysics = (m: Model, delta: number):Model => applyMotion(m,delta);
 
 export const update: Update<Action,Model> = (a: Action, m: Model) => {
   switch (a.kind) {
-    case "time":
+    case "t":
       return [ applyPhysics(m,a.delta) ,emptyCmd<Action>()];
-    case "upPressed":
+    case "up":
       return [ jump(m),emptyCmd<Action>()];
-    case "leftPressed":
+    case "lp":
       return [ walkLeft(m),emptyCmd<Action>()];
-    case "rightPressed":
+    case "rp":
       return [ walkRight(m),emptyCmd<Action>()];
-    case "leftReleased":
+    case "lr":
       return [ stop(m),emptyCmd<Action>()];
-    case "rightReleased":
+    case "rr":
       return [ stop(m),emptyCmd<Action>()];
   }
 }
@@ -177,7 +177,7 @@ export const render = (onEvent:(a:Action) => void) => (m: Model) => {
     renderExt(m,map,tileSize,mapSize);
 }
 export const subs = (m: Model) => {
-  const zero: Time = {kind:"time", delta: 0}; 
+  const zero: Time = {kind:"t", delta: 0}; 
   return [clockSub,pressKeySub, releaseKeySub];
 }
 export const initStateCmd:[Model,Cmd<Action>] = [initState, emptyCmd()]

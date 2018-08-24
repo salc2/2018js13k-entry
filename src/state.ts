@@ -13,7 +13,6 @@ export type Parameter = [number,number,number];
 export type Cells = Character[][];
 export type State = [Camera, Character[], Cells, Parameter];
 
-
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Player = [80,45,20,20,0,0.98,'right',true, "player", 0];
 const enemy:Enemy = [80,45,20,20,0.03,0.98,'right',true, "enemy", 180];
@@ -34,7 +33,7 @@ export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
 
 };
 
-export function getTilesFromStringMap(camera: Spacing,map:string,tsize: number){
+export function tilesFromMap(camera: Spacing,map:string,tsize: number){
      const [x,y,w,h] = camera,
      startCol = Math.floor(x / tsize),
      endCol = startCol + (w / tsize),

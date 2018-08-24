@@ -1,25 +1,25 @@
 export interface Time {
-    kind: "time";
+    kind: "t";
     delta: number;
 }
 export interface LeftPressed {
-    kind: "leftPressed";
+    kind: "lp";
     delta: number;
 }
 export interface RightPressed {
-    kind: "rightPressed";
+    kind: "rp";
     delta: number;
 }
 export interface LeftReleased {
-    kind: "leftReleased";
+    kind: "lr";
     delta: number;
 }
 export interface RightReleased {
-    kind: "rightReleased";
+    kind: "rr";
     delta: number;
 }
 export interface UpPressed {
-    kind: "upPressed";
+    kind: "up";
     delta: number;
 }
 
