@@ -3,7 +3,7 @@ import {Cmd, emptyCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
 import {initState, Spacing, State, moveCamera, Character, Enemy} from './state';
-import {renderDebug,updateDebug} from './debug';
+//import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, tileNumberByXYPos, getAABB} from './collision';
 

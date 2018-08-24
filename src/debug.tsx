@@ -4,13 +4,14 @@ import {Update} from './game.runner';
 import {Time, Action as GameAction} from './actions';
 import {update , initStateCmd,render,subs, Model as GameModel} from './index';
 import {Cmd, emptyCmd} from './cmd';
-import {canvas} from './render';
+//import {canvas} from './render';
 import {initState, Spacing, State, moveCamera, Character,Camera as CameraType} from './state';
 
 export interface Parameter {
     kind: "parameter";
     State: Model;
 }
+let canvas: any;
 
 type Action =  GameAction | Parameter;
 type Model = GameModel;

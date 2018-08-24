@@ -1,12 +1,35 @@
 import {tileNumberByXYPos,getAABB} from './collision';
 import {initState, Spacing, State, moveCamera} from './State';
+import {drawImage, gl} from './render.webgl'
 
-export const canvas =  <HTMLCanvasElement>document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+
+//export const canvas =  <HTMLCanvasElement>document.getElementById("canvas");
+//const ctx = canvas.getContext("2d");
 
 var can = false
 const img_map = new Image();
-img_map.onload = () => { can = true }
+let mapWith:number, mapHeight:number;
+let tex = gl.createTexture();
+img_map.onload = () => { 
+  can = true 
+  mapWith = img_map.width
+  mapHeight = img_map.height
+    
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    // Fill the texture with a 1x1 blue pixel.
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                  new Uint8Array([0, 0, 255, 255]));
+
+    // let's assume all images are not a power of 2
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+
+
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img_map);
+}
 img_map.src = "/map.png";
 const img_pla = new Image();
 img_pla.onload = () => { can = true }
@@ -36,11 +59,18 @@ const tileMap:any = {
   'walking_2_left.png': [ 177, 1, 20, 20 ],
   'walking_2_right.png': [ 199, 1, 20, 20 ] };
 
+
+
   export function render(st: State, map:string,tsize: number, wsize: number){
     if(!can) return;
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.imageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
+
+    // ctx.clearRect(0,0,canvas.width,canvas.height);
+    // ctx.imageSmoothingEnabled = false;
+    // ctx.webkitImageSmoothingEnabled = false;
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
     const [[x,y,w,h,,], characters,] = st,
     startCol = Math.floor(x / tsize),
     endCol = startCol + (w / tsize),
@@ -60,17 +90,27 @@ const tileMap:any = {
         const letter = map.charAt(r*wsize+c);
         if(letter != '`' && letter != 'x'){
           const [_x,_y,_w,_h] = tileMap[letter];
-          ctx.drawImage(
-                    img_map, // image
-                    _x, // source x
-                    _y, // source y
-                    _w, // source width
-                    _h, // source height
-                    Math.round(targetX),  // target x
-                    Math.round(targetY), // target y
-                    tsize, // target width
-                    tsize // target height
-                    );
+
+drawImage(
+        tex,
+        mapWith,
+        mapHeight,
+        _x, _y, _w, _h,
+        Math.round(targetX), Math.round(targetY), tsize, tsize);
+   
+
+
+          // ctx.drawImage(
+          //           img_map, // image
+          //           _x, // source x
+          //           _y, // source y
+          //           _w, // source width
+          //           _h, // source height
+          //           Math.round(targetX),  // target x
+          //           Math.round(targetY), // target y
+          //           tsize, // target width
+          //           tsize // target height
+          //           );
         }
 
       characters.forEach(charact =>{
@@ -95,20 +135,20 @@ const tileMap:any = {
              coords = pyerTiles[`jump_${i}_${dir}.png`];
          }
          const [_xp,_yp,_wp,_hp] = coords;
-         ctx.drawImage(
-                         img_pla, // image
-                         _xp, // source x
-                         _yp, // source y
-                         _wp, // source width
-                         _hp, // source height
-                         Math.round(px-x),  // target x
-                         Math.round(py-y), // target y
-                         pw, // target width
-                         ph // target height
-                     );
+         // ctx.drawImage(
+         //                 img_pla, // image
+         //                 _xp, // source x
+         //                 _yp, // source y
+         //                 _wp, // source width
+         //                 _hp, // source height
+         //                 Math.round(px-x),  // target x
+         //                 Math.round(py-y), // target y
+         //                 pw, // target width
+         //                 ph // target height
+         //             );
           if(collides.indexOf(r*wsize+c) > -1){
-            ctx.strokeStyle = 'red';
-            ctx.strokeRect(targetX,targetY,tsize,tsize);
+         //   ctx.strokeStyle = 'red';
+           // ctx.strokeRect(targetX,targetY,tsize,tsize);
           }
       }else{
          var coords;
@@ -122,20 +162,20 @@ const tileMap:any = {
              coords = pyerTiles[`jump_${i}_${dir}.png`];
          }
          const [_xp,_yp,_wp,_hp] = coords;
-         ctx.drawImage(
-                         img_pla, // image
-                         _xp, // source x
-                         _yp, // source y
-                         _wp, // source width
-                         _hp, // source height
-                         Math.round(px-x),  // target x
-                         Math.round(py-y), // target y
-                         pw, // target width
-                         ph // target height
-                     );
+         // ctx.drawImage(
+         //                 img_pla, // image
+         //                 _xp, // source x
+         //                 _yp, // source y
+         //                 _wp, // source width
+         //                 _hp, // source height
+         //                 Math.round(px-x),  // target x
+         //                 Math.round(py-y), // target y
+         //                 pw, // target width
+         //                 ph // target height
+         //             );
           if(collides.indexOf(r*wsize+c) > -1){
-            ctx.strokeStyle = 'blue';
-            ctx.strokeRect(targetX,targetY,tsize,tsize);
+           // ctx.strokeStyle = 'blue';
+           // ctx.strokeRect(targetX,targetY,tsize,tsize);
           }
       }
     })
