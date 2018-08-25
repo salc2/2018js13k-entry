@@ -1,4 +1,4 @@
-const canvas = <HTMLCanvasElement>document.getElementById("canvas");
+export const canvas = <HTMLCanvasElement>document.getElementById("canvas");
 const vshaderSrc:string = `
 attribute vec4 a_p;
 attribute vec2 a_t;

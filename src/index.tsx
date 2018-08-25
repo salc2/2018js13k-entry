@@ -1,7 +1,8 @@
 import {Subscriber, create} from './sub';
-import {Cmd, emptyCmd} from './cmd';
+import {Cmd, emptyCmd, create as createCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
+import {walking} from './sounds';
 import {initState, Spacing, State, moveCamera, Character, Enemy} from './state';
 //import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
@@ -163,9 +164,9 @@ export const update: Update<Action,Model> = (a: Action, m: Model) => {
     case "up":
       return [ jump(m),emptyCmd<Action>()];
     case "lp":
-      return [ walkLeft(m),emptyCmd<Action>()];
+      return [ walkLeft(m),createCmd<Action>( () => walking.play(), null )];
     case "rp":
-      return [ walkRight(m),emptyCmd<Action>()];
+      return [ walkRight(m),createCmd<Action>( () => walking.play(), null )];
     case "lr":
       return [ stop(m),emptyCmd<Action>()];
     case "rr":

@@ -99,8 +99,8 @@ const tileMap:any = {
                         _hp, // source height
                          Math.round(px-x),  // target x
                          Math.round(py-y), // target y
-                         tsize, // target width
-                         tsize // target height
+                         pw, // target width
+                         ph // target height
                      );
       }else{
          var coords;
@@ -124,8 +124,8 @@ const tileMap:any = {
                         _hp, // source height
                          Math.round(px-x),  // target x
                          Math.round(py-y), // target y
-                         tsize, // target width
-                         tsize // target height
+                         pw, // target width
+                         ph // target height
                      );
           }
       }
