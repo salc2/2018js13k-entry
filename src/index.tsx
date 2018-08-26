@@ -4,7 +4,7 @@ import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
 import {jump as soundJump} from './sounds';
 import {initState, Spacing, State, moveCamera, Character, Enemy, insertInCells} from './state';
-//import {renderDebug,updateDebug} from './debug';
+import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, tileNumberByXYPos, getAABB, collide} from './collision';
 
@@ -102,7 +102,13 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     getAABB(p[0],p[1],p[2],p[3]).map(xy => tileNumberByXYPos(xy[0],xy[1],tileSize,mapSize)).map(tn => cells[tn]).forEach(enemies =>{
       enemies.filter(e => e != p).forEach(e => {
         const [ex,ey,ew,eh] = e;
-        console.log(collide([p[0],p[1],p[2],p[3]],[ex,ey,ew,eh]))
+        if(collide([p[0],p[1],p[2],p[3]],[ex,ey,ew,eh])){
+          if(p[1]+p[3] < ey+3){
+            console.log("enemy down")
+          }else{
+            console.log("player down")
+          }
+        }
       })
     });
 
@@ -203,4 +209,4 @@ export const subs = (m: Model) => {
 }
 export const initStateCmd:[Model,Cmd<Action>] = [initState, emptyCmd()]
 
-runGame( update, render,  subs, initStateCmd);  
+runGame( updateDebug, renderDebug,  subs, initStateCmd);  

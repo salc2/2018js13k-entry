@@ -1,5 +1,6 @@
 import {Cmd, run} from './cmd';
 import {Subscription, Cancellable, Subscriber, run as runSub} from './sub';
+import {partition} from './utils';
 
 export type Update<A,M> = (a:A,m:M) => [M,Cmd<A>];
 export type Render<M,A> = (s:Subscriber<A>) => (m:M) => void;
@@ -32,18 +33,6 @@ export function runGame<M,A>(update:Update<A,M>, render:Render<M,A>, subs: (m:M)
       } );
 
     },0);
-  }
-
-  function partition<A>(p: (a:A) => boolean, xs: A[]): [A[],A[]] {
-    const left:A[] = [], right:A[] = [];
-    xs.forEach(e =>{
-      if(p(e)){
-        left.push(e)
-      }else{
-        right.push(e)
-      }
-    });
-    return [left,right];
   }
 
   runEffect(c,subs(m));

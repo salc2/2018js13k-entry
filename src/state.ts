@@ -15,7 +15,7 @@ export type State = [Camera, Character[], Cells, Parameter];
 
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Player = [80,45,20,20,0,0.98,'right',true, "player", 0];
-const enemy:Enemy = [80,45,20,20,0.03,0.98,'right',true, "enemy", 180];
+const enemy:Enemy = [80,45,25,25,0.03,0.98,'right',true, "enemy", 180];
 
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [.98,.075,-5.5];

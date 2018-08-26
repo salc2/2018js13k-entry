@@ -198,7 +198,6 @@ dst[15] = 1;
 return dst;
 }
 
-
 export function getImg(url: string):any {
 var tex = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, tex);

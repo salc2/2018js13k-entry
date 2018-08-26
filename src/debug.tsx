@@ -6,7 +6,16 @@ import {update , initStateCmd,render,subs, Model as GameModel} from './index';
 import {Cmd, emptyCmd} from './cmd';
 import {initState, Spacing, State, moveCamera, 
     Character,Camera as CameraType} from './state';
-    import {canvas} from './render.webgl';
+    import {canvas,drawImage, gl} from './render.webgl';
+
+import 'fpsmeter';
+
+declare var FPSMeter:any;
+
+const fpsM = new FPSMeter();
+
+export const canvasDebug:any = document.getElementById("debug");
+const _2d = canvasDebug.getContext("2d");
 
 
 export interface PlayerValues {
@@ -60,9 +69,9 @@ export const Camera = (props: CameraProps) => {
     <br/>
     Gravity Speed:[{gra}] <input type="text" onChange={e => props.onChange( {kind:"parameter", val:[parseFloat(e.target.value), walk, jum] } )}/>
     <br/>
-    Walk Speed:[{walk}] <input type="text" onChange={e => props.onChange( {kind:"parameter", val:[gra,parseFloat(e.target.value) ,jum] } )}/>
+    Walk Speed:[{walk}] <input type="text" onChange={e => props.onChange( {kind:"parameter", val:[gra,parseFloat(e.target.value),jum] } )}/>
     <br/>
-    Jump Speed:[{jum}] <input type="text" onChange={e => props.onChange( {kind:"parameter", val:[gra,jum,parseFloat(e.target.value)] } )}/>
+    Jump Speed:[{jum}] <input type="text" onChange={e => props.onChange( {kind:"parameter", val:[gra,walk,parseFloat(e.target.value)] } )}/>
     <br/>
     Width:[{pw}] <input type="text" onChange={e => {
         props.onChange( {kind:"playerVal", val:[px,py,parseFloat(e.target.value),ph]} )
@@ -76,9 +85,62 @@ export const Camera = (props: CameraProps) => {
     </form>;
 };
 
+function returnTextureFromCanvas(canvas){
+const tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+// Fill the texture with a 1x1 blue pixel.
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+              new Uint8Array([0, 0, 255, 255]));
+
+// let's assume all images are not a power of 2
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+ gl.bindTexture(gl.TEXTURE_2D, tex);
+ gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+
+ return tex;
+}
+
+
+function oldScreent(){
+    function roundRect(x0, y0, x1, y1, r, color)
+{
+    var w = x1 - x0;
+    var h = y1 - y0;
+    if (r > w/2) r = w/2;
+    if (r > h/2) r = h/2;
+    _2d.filter = 'blur(5px)';
+   
+    _2d.beginPath();
+    _2d.moveTo(x1 - r, y0);
+    _2d.quadraticCurveTo(x1, y0, x1, y0 + r);
+    _2d.lineTo(x1, y1-r);
+    _2d.quadraticCurveTo(x1, y1, x1 - r, y1);
+    _2d.lineTo(x0 + r, y1);
+    _2d.quadraticCurveTo(x0, y1, x0, y1 - r);
+    _2d.lineTo(x0, y0 + r);
+    _2d.quadraticCurveTo(x0, y0, x0 + r, y0);
+    _2d.closePath();
+    _2d.fillStyle = color;
+    _2d.clip();
+
+_2d.fillStyle='rgba(0, 0, 0, 1)';
+_2d.fillRect(0,0,180,100);
+}
+
+
+_2d.clearRect(0,0,180,100);
+roundRect(0,0,180,100,28,'rgba(255,255,255,1)')
+}
 
 export const renderDebug = (onEvent:(a:Action) => void) => (m: Model) => {
     render(onEvent)(m)
+
+
+   // drawImage(returnTextureFromCanvas(_2d.canvas),180,100,0,0,180,100,0,0,180,100);
+    fpsM.tick()
     ReactDOM.render(
     <Camera st = {m}  onChange = {onEvent}/>,
     document.getElementById("container")
