@@ -1,4 +1,4 @@
-import {tileNumberByXYPos} from './collision';
+import {tileNumberByXYPos,getAABB} from './collision';
 
 type OnFloor = boolean
 type Dir = "right" | "left"
@@ -23,9 +23,9 @@ const parameter:Parameter = [.98,.075,-5.5];
 export const initState: State = [camera,[player,enemy],[], parameter];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
-            const [,,w,h,cvx,cvy,trg] = c;
+    const [,,w,h,cvx,cvy,trg] = c;
     let [nx,ny] = [x % (ww-w),y % (wh-h)]; 
-   
+
     const res:Camera = [nx == x ? x : ww-w, ny == y ? y : wh-h,w,h,cvx,cvy,trg];
     res[0] = res[0] < 0 ? 0 : res[0]
     res[1] = res[1] < 0 ? 0 : res[1]
@@ -34,16 +34,36 @@ export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
 };
 
 export function tilesFromMap(camera: Spacing,map:string,tsize: number){
-     const [x,y,w,h] = camera,
-     startCol = Math.floor(x / tsize),
-     endCol = startCol + (w / tsize),
-     startRow = Math.floor(y / tsize),
-     endRow = startRow + (h / tsize);
-     const result: string[] = [];
-     for (var c = startCol; c < endCol; c++) {
+    const [x,y,w,h] = camera,
+    startCol = Math.floor(x / tsize),
+    endCol = startCol + (w / tsize),
+    startRow = Math.floor(y / tsize),
+    endRow = startRow + (h / tsize);
+    const result: string[] = [];
+    for (var c = startCol; c < endCol; c++) {
         for (var r = startRow; r < endRow; r++) {
-               result.push(map.charAt(tileNumberByXYPos(c*tsize,r*tsize,tsize,5)));
+            result.push(map.charAt(tileNumberByXYPos(c*tsize,r*tsize,tsize,5)));
         }
     }
     return result;
+}
+
+function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
+}
+
+export const insertInCells = (s: State,tiles: Character[][],tileSize: number, worldSize: number): State => {
+    const [c, chars,,pmr] = s;
+    chars.forEach(c => { 
+        const aabbs = getAABB(c[0], c[1],c[2],c[3]);
+        const tilesN = aabbs.map( xy =>  tileNumberByXYPos(xy[0],xy[1],tileSize,worldSize));
+        tilesN.filter(onlyUnique).forEach(tile => {
+            if(tiles[tile]){
+                tiles[tile].push(c)
+            }else{
+                tiles[tile] = [c]
+            }
+        });
+    })
+    return [c, chars,tiles,pmr];
 }

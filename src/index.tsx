@@ -2,11 +2,11 @@ import {Subscriber, create} from './sub';
 import {Cmd, emptyCmd, create as createCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
-import {walking} from './sounds';
-import {initState, Spacing, State, moveCamera, Character, Enemy} from './state';
+import {jump as soundJump} from './sounds';
+import {initState, Spacing, State, moveCamera, Character, Enemy, insertInCells} from './state';
 //import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
-import {moveBody, tileNumberByXYPos, getAABB} from './collision';
+import {moveBody, tileNumberByXYPos, getAABB, collide} from './collision';
 
 export type Model = State;
 
@@ -78,7 +78,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
   }
 
   const applyMotion = (m: Model, delta: number):Model => {
-    const [cam, characters,cells,pmtr]:Model = m;
+    let [cam, characters,cells,pmtr]:Model = m;
     const gravity = pmtr[0];
     const n_characters = characters.map(c => {
       const [px,py,pw,ph,pVx,pVy,dir,onflo,kind] = c;
@@ -86,7 +86,27 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
       playr[5] = Math.min(pVy+gravity,gravity)  
       return playr;
     });
+    const pp = characters.filter(c => c[8] == "player")[0];
+    const cqtr = cam[2]/7;
+    if(pp[0] < cam[0] + (cqtr*2)){
+      cam = moveCamera(cam,cam[0] - (delta*0.075),cam[1],1000,1000);
+    }else if(pp[0] > (cam[0]+ cam[2])-(cqtr*4)){
+      cam = moveCamera(cam,cam[0] + (delta*0.075),cam[1],1000,1000);
+    }
     return [cam, n_characters,cells,pmtr];
+  }
+
+  const checkCollides = (m: Model):Model => {
+    let [cam, characters,cells,pmtr]:Model = insertInCells(m,new Array(2500),20,50);
+    const p = characters.filter(c => c[8] == "player")[0];
+    getAABB(p[0],p[1],p[2],p[3]).map(xy => tileNumberByXYPos(xy[0],xy[1],tileSize,mapSize)).map(tn => cells[tn]).forEach(enemies =>{
+      enemies.filter(e => e != p).forEach(e => {
+        const [ex,ey,ew,eh] = e;
+        console.log(collide([p[0],p[1],p[2],p[3]],[ex,ey,ew,eh]))
+      })
+    });
+
+    return m;
   }
 
   const walkLeft = (m: Model):Model => {
@@ -155,18 +175,18 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     return [cam, n_chars,cells,prmtr]; 
   }
 
-const applyPhysics = (m: Model, delta: number):Model => applyMotion(m,delta);
+const applyPhysics = (m: Model, delta: number):Model => applyMotion(checkCollides(m),delta);
 
 export const update: Update<Action,Model> = (a: Action, m: Model) => {
   switch (a.kind) {
     case "t":
       return [ applyPhysics(m,a.delta) ,emptyCmd<Action>()];
     case "up":
-      return [ jump(m),emptyCmd<Action>()];
+      return [ jump(m),createCmd<Action>( () => soundJump.play(), null )];
     case "lp":
-      return [ walkLeft(m),createCmd<Action>( () => walking.play(), null )];
+      return [ walkLeft(m),emptyCmd<Action>()];
     case "rp":
-      return [ walkRight(m),createCmd<Action>( () => walking.play(), null )];
+      return [ walkRight(m),emptyCmd<Action>()];
     case "lr":
       return [ stop(m),emptyCmd<Action>()];
     case "rr":

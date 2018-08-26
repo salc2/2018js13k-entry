@@ -2,8 +2,8 @@ import {tileNumberByXYPos,getAABB} from './collision';
 import {initState, Spacing, State, moveCamera} from './State';
 import {drawImage, gl,getImg} from './render.webgl'
 
-const map_text = getImg('/map.png');
-const player_text = getImg('/anto_anime.png');
+const map_text = getImg('./map.png');
+const player_text = getImg('./anto_anime.png');
 
 const tiles: any = {"x": '#000000', "`":"#273e63", "\n":"#273e63"};
 const tileMap:any = { 

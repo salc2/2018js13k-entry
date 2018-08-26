@@ -65,3 +65,10 @@ export function moveBody(
     
     return [nX,nY,bW,bH,nVx,bVy,ndir,onf,kind,ntarget];
 }
+
+export function collide(body1:[number,number,number,number],body2:[number,number,number,number]):boolean {
+  return body1[0] < body2[0] + body2[2] && 
+    body1[0] + body1[2] > body2[0] &&
+    body1[1] < body2[1] + body2[3] && 
+    body1[1] + body1[3] > body2[1];
+}

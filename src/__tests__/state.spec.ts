@@ -1,23 +1,17 @@
-import {moveCamera, tilesFromMap, Spacing, State, Character, Camera} from '../state';
+import {moveCamera, tilesFromMap, Spacing, State, Character, Camera, insertInCells} from '../state';
 import {tileNumberByXYPos} from '../collision'
-
-const insertInCells = (s: State,tiles: Character[][],tileSize: number, worldSize: number): State => {
-    const [c, chars,,pmr] = s;
-    chars.forEach(c => { 
-      const tile = tileNumberByXYPos(c[0], c[1], tileSize, worldSize);
-      if(tiles[tile]){
-        tiles[tile].push(c)
-      }else{
-        tiles[tile] = [c]
-      }
-    })
-    return [c, chars,tiles,pmr];
-}
 
 test('players in map should be in cells', () =>{
     const p: Character = [23,23,1,1,0,0,'left',true,'player', 0];
     const s: State = [[0,0,0,0,0,0,0], [p],[],[0,0,0]];
     expect(insertInCells(s,new Array(4),20,2)[2][3]).toEqual([p])
+});
+
+test('players and enemy in map should be in cells', () =>{
+    const p: Character = [43,23,1,1,0,0,'left',true,'player', 0];
+    const e: Character = [53,25,1,1,0,0,'right',true,'enemy', 0];
+    const s: State = [[0,0,0,0,0,0,0], [p,e],[],[0,0,0]];
+    expect(insertInCells(s,new Array(25),20,5)[2][7]).toEqual([p,e])
 });
 
 test('move camera from 5,4 to 105,335', () => {
