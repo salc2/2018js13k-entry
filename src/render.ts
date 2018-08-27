@@ -6,6 +6,7 @@ const map_text = getImg('./map.png');
 const player_text = getImg('./anto_anime.png');
 const enemy_text = getImg('./vending_animation.png');
 const sensor_text = getImg('./sensor.png');
+const drone_text = getImg('./drone.png');
 
 const tiles: any = {"x": '#000000', "`":"#273e63", "\n":"#273e63"};
 const tileMap:any = { 
@@ -36,6 +37,13 @@ const tileMap:any = {
   'vending_walking_1_right.png': [ 1, 39, 19, 21 ],
   'vending_walking_2_left.png': [ 1, 62, 19, 21 ],
   'vending_walking_2_right.png': [ 1, 85, 19, 21 ] };
+
+  const droneEnemy = { 'drone_1_left.png': [ 1, 1, 20, 20 ],
+  'drone_1_right.png': [ 23, 1, 20, 20 ],
+  'drone_2_left.png': [ 45, 1, 20, 20 ],
+  'drone_2_right.png': [ 67, 1, 20, 20 ],
+  'drone_3_left.png': [ 89, 1, 20, 20 ],
+  'drone_3_right.png': [ 111, 1, 20, 20 ] };
 
   const sensorSprite = { 'sensor_offline.png': [ 1, 1, 16, 10 ],
   'sensor_online.png': [ 19, 1, 16, 10 ] };
@@ -113,7 +121,7 @@ const tileMap:any = {
                          pw, // target width
                          ph // target height
                      );
-      }else{
+      }else if(k == "vending"){
          var coords;
          if(onfl){
              if(charact[10] && charact[10] == 0 ){
@@ -153,6 +161,46 @@ const tileMap:any = {
                         _hp, // source height
                          Math.round(px-x),  // target x
                          Math.round(py-y-_hp), // target y
+                         _wp, // target width
+                         _hp // target height
+                     );
+                }
+                
+
+          //}
+      }else if(k == "drone"){
+        const q = Math.round((performance.now()* 0.001)/ 0.04) % 3 + (1);
+         var coords;
+         coords = droneEnemy[`drone_${q}_${dir}.png`];
+
+         let [_xp,_yp,_wp,_hp] = coords;
+         // if(collides.indexOf(r*wsize+c) > -1){
+                drawImage(drone_text.texture, // image
+                         drone_text.width,
+                         drone_text.height,
+                         _xp, // source x
+                         _yp, // source y
+                        _wp, // source width
+                        _hp, // source height
+                         Math.round(px-x),  // target x
+                         Math.round(py-y), // target y
+                         _wp, // target width
+                         _hp // target height
+                     );
+                [_xp,_yp,_wp,_hp] = sensorSprite['sensor_online.png'];
+                if(Math.floor((performance.now() * 0.008) % 2) == 0){
+                  if(charact[10] && charact[10] == 0 ){
+                     coords = sensorSprite[`sensor_offline.png`];
+                   }
+                  drawImage(sensor_text.texture, // image
+                         sensor_text.width,
+                         sensor_text.height,
+                         _xp, // source x
+                         _yp, // source y
+                        _wp, // source width
+                        _hp, // source height
+                         Math.round(2 + (px-x)),  // target x
+                         Math.round(5 + (py-y-_hp)), // target y
                          _wp, // target width
                          _hp // target height
                      );

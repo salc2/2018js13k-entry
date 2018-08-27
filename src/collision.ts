@@ -47,7 +47,7 @@ export function moveBody(
         onf = false;
         nY = y;
     }
-    if(kind == "enemy"){
+    if(kind == "vending" || kind == "drone"){
         if(dir == "right"){
             if(nX >= trg){
             ntarget = nX - range_guard
