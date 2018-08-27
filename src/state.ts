@@ -7,7 +7,7 @@ type Kind = "player" | "enemy"
 export type Spacing = [number,number,number,number,number,number];
 export type Camera = [number,number,number,number,number,number,number];
 export type Player = [number,number,number,number,number,number,Dir,OnFloor, Kind, number];
-export type Enemy = [number,number,number,number,number,number,Dir,OnFloor, Kind, number];
+export type Enemy = [number,number,number,number,number,number,Dir,OnFloor, Kind, number, number];
 export type Character = Player | Enemy;
 export type Parameter = [number,number,number];
 export type Cells = Character[][];
@@ -15,10 +15,10 @@ export type State = [Camera, Character[], Cells, Parameter];
 
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Player = [80,45,20,20,0,0.98,'right',true, "player", 0];
-const enemy:Enemy = [80,45,25,25,0.03,0.98,'right',true, "enemy", 180];
+const enemy:Enemy = [80,45,19,21,0.03,0.98,'right',true, "enemy", 180,1];
 
 // gravity, walkvel, jumpvel
-const parameter:Parameter = [.98,.075,-5.5];
+const parameter:Parameter = [.98,.075,-7.5];
 
 export const initState: State = [camera,[player,enemy],[], parameter];
 

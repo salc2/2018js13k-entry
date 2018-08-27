@@ -4,6 +4,8 @@ import {drawImage, gl,getImg} from './render.webgl'
 
 const map_text = getImg('./map.png');
 const player_text = getImg('./anto_anime.png');
+const enemy_text = getImg('./vending_animation.png');
+const sensor_text = getImg('./sensor.png');
 
 const tiles: any = {"x": '#000000', "`":"#273e63", "\n":"#273e63"};
 const tileMap:any = { 
@@ -28,6 +30,15 @@ const tileMap:any = {
   'walking_1_right.png': [ 155, 1, 20, 20 ],
   'walking_2_left.png': [ 177, 1, 20, 20 ],
   'walking_2_right.png': [ 199, 1, 20, 20 ] };
+
+  const enemySprite = { 'vending_offline.png': [ 1, 1, 20, 13 ],
+  'vending_walking_1_left.png': [ 1, 16, 19, 21 ],
+  'vending_walking_1_right.png': [ 1, 39, 19, 21 ],
+  'vending_walking_2_left.png': [ 1, 62, 19, 21 ],
+  'vending_walking_2_right.png': [ 1, 85, 19, 21 ] };
+
+  const sensorSprite = { 'sensor_offline.png': [ 1, 1, 16, 10 ],
+  'sensor_online.png': [ 19, 1, 16, 10 ] };
 
 
 
@@ -69,7 +80,7 @@ const tileMap:any = {
         }
 
       characters.forEach(charact =>{
-      const [px,py,pw,ph,pvx,pvy,dir,onfl,k,] = charact;
+      const [px,py,pw,ph,pvx,pvy,dir,onfl,k,,lif] = charact;
       const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = getAABB(px+pvx,py+pvy,pw,ph);
       const collides =  [tileNumberByXYPos(ltX,ltY,tsize,wsize),
       tileNumberByXYPos(rtX,rtY,tsize,wsize),
@@ -105,19 +116,20 @@ const tileMap:any = {
       }else{
          var coords;
          if(onfl){
-             if(pvx == 0 ){
-               coords = pyerTiles[`idle_${dir}.png`];
+             if(lif == 0 ){
+               //
+               coords = enemySprite[`vending_offline.png`];
              }else{
-               coords = pyerTiles[`walking_${i}_${dir}.png`];
+               coords = enemySprite[`vending_walking_${i}_${dir}.png`];
              }
            }else{
-             coords = pyerTiles[`jump_${i}_${dir}.png`];
+             coords = enemySprite[`vending_walking_2_${dir}.png`];
          }
-         const [_xp,_yp,_wp,_hp] = coords;
-          if(collides.indexOf(r*wsize+c) > -1){
-                drawImage(player_text.texture, // image
-                         player_text.width,
-                         player_text.height,
+         let [_xp,_yp,_wp,_hp] = coords;
+         // if(collides.indexOf(r*wsize+c) > -1){
+                drawImage(enemy_text.texture, // image
+                         enemy_text.width,
+                         enemy_text.height,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
@@ -127,7 +139,27 @@ const tileMap:any = {
                          pw, // target width
                          ph // target height
                      );
-          }
+                [_xp,_yp,_wp,_hp] = sensorSprite['sensor_online.png'];
+                if(Math.floor((performance.now() * 0.008) % 2) == 0){
+                  if(lif == 0 ){
+                     coords = sensorSprite[`sensor_offline.png`];
+                   }
+                  drawImage(sensor_text.texture, // image
+                         sensor_text.width,
+                         sensor_text.height,
+                         _xp, // source x
+                         _yp, // source y
+                        _wp, // source width
+                        _hp, // source height
+                         Math.round(px-x),  // target x
+                         Math.round(py-y-_hp), // target y
+                         _wp, // target width
+                         _hp // target height
+                     );
+                }
+                
+
+          //}
       }
     })
 

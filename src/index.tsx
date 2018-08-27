@@ -105,6 +105,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
         if(collide([p[0],p[1],p[2],p[3]],[ex,ey,ew,eh])){
           if(p[1]+p[3] < ey+3){
             console.log("enemy down")
+            e[10] = 0;
           }else{
             console.log("player down")
           }
