@@ -40,9 +40,9 @@ const tileMap:any = {
   const sensorSprite = { 'sensor_offline.png': [ 1, 1, 16, 10 ],
   'sensor_online.png': [ 19, 1, 16, 10 ] };
 
-
-
   export function render(st: State, map:string,tsize: number, wsize: number){
+    gl.canvas.style.width = `${window.innerWidth}px`;
+    gl.canvas.style.height = `${window.innerHeight}px`;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -80,7 +80,7 @@ const tileMap:any = {
         }
 
       characters.forEach(charact =>{
-      const [px,py,pw,ph,pvx,pvy,dir,onfl,k,,lif] = charact;
+      const [px,py,pw,ph,pvx,pvy,dir,onfl,k,] = charact;
       const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = getAABB(px+pvx,py+pvy,pw,ph);
       const collides =  [tileNumberByXYPos(ltX,ltY,tsize,wsize),
       tileNumberByXYPos(rtX,rtY,tsize,wsize),
@@ -116,7 +116,7 @@ const tileMap:any = {
       }else{
          var coords;
          if(onfl){
-             if(lif == 0 ){
+             if(charact[10] && charact[10] == 0 ){
                //
                coords = enemySprite[`vending_offline.png`];
              }else{
@@ -141,7 +141,7 @@ const tileMap:any = {
                      );
                 [_xp,_yp,_wp,_hp] = sensorSprite['sensor_online.png'];
                 if(Math.floor((performance.now() * 0.008) % 2) == 0){
-                  if(lif == 0 ){
+                  if(charact[10] && charact[10] == 0 ){
                      coords = sensorSprite[`sensor_offline.png`];
                    }
                   drawImage(sensor_text.texture, // image

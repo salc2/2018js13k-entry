@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "watch": "webpack --config webpack.config --colors --watch & npm start",
-    "start": "http-server dist",
+    "start": "http-server dist -a 192.168.0.15 -p 8080",
     "test": "jest"
   },
   "keywords": [

@@ -25,6 +25,53 @@ const clockSub = create('clock', (consumer: Subscriber<Action>) => {
     return () => cancelAnimationFrame(id);
   });
 
+const touchsSub = create('touchs', (consumer: Subscriber<Action>) => {
+  const handlerStart = (ev: TouchEvent) => {
+    switch (ev.currentTarget['id']) {
+      case "a":
+        consumer({kind:"up", delta:16})
+        break;
+      case "left":
+        consumer({kind:"lp", delta:16})
+        break;
+      case "right":
+        consumer({kind:"rp", delta:16})
+        break;
+      
+      default:
+        // code...
+        break;
+    }
+    window.navigator.vibrate(30); 
+  }
+  const handlerEnd = (ev: TouchEvent) => {
+    switch (ev.currentTarget['id']) {
+      case "left":
+        consumer({kind:"lr", delta:16})
+        break;
+      case "right":
+        consumer({kind:"rr", delta:16})
+        break;
+      default:
+        // code...
+        break;
+    }
+  }
+    const svgs:any = document.querySelectorAll("rect");
+    svgs.forEach( rec =>{
+      rec.addEventListener("touchstart",handlerStart,true);
+      rec.addEventListener("touchend",handlerEnd,true);
+    });
+
+    return () => {
+      svgs.forEach( rec =>{
+       rec.removeEventListener("touchstart",handlerStart,true);
+      rec.removeEventListener("touchend",handlerEnd,true);
+    })
+    }
+  });
+
+
 
 const pressKeySub = create('pressEvents', (consumer: Subscriber<Action>) => {
     const handler = (e: KeyboardEvent) => {
@@ -189,7 +236,10 @@ export const update: Update<Action,Model> = (a: Action, m: Model) => {
     case "t":
       return [ applyPhysics(m,a.delta) ,emptyCmd<Action>()];
     case "up":
-      return [ jump(m),createCmd<Action>( () => soundJump.play(), null )];
+      return [ jump(m), (() => { 
+        soundJump.play()
+            return emptyCmd<Action>()
+       })() ];
     case "lp":
       return [ walkLeft(m),emptyCmd<Action>()];
     case "rp":
@@ -206,8 +256,8 @@ export const render = (onEvent:(a:Action) => void) => (m: Model) => {
 }
 export const subs = (m: Model) => {
   const zero: Time = {kind:"t", delta: 0}; 
-  return [clockSub,pressKeySub, releaseKeySub];
+  return [clockSub, pressKeySub, releaseKeySub, touchsSub];
 }
 export const initStateCmd:[Model,Cmd<Action>] = [initState, emptyCmd()]
 
-runGame( updateDebug, renderDebug,  subs, initStateCmd);  
+runGame( update, render,  subs, initStateCmd);  
