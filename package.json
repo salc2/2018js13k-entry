@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "watch": "webpack --config webpack.config --colors --watch & npm start",
-    "start": "http-server dist -a 192.168.0.15 -p 8080",
+    "start": "http-server dist",
     "test": "jest"
   },
   "keywords": [
@@ -21,6 +21,7 @@
     "fpsmeter": "^0.3.1",
     "http-server": "^0.11.1",
     "jest": "^23.5.0",
+    "raw-loader": "^0.5.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "ts-jest": "^23.1.3",

@@ -1,23 +1,7 @@
+const vshaderSrc: string = require('./shaders/di_v_shader.c');
+const fshaderSrc: string = require('./shaders/di_f_shader.c');
+
 export const canvas = <HTMLCanvasElement>document.getElementById("canvas");
-const vshaderSrc:string = `
-attribute vec4 a_p;
-attribute vec2 a_t;
-uniform mat4 u_m;
-uniform mat4 u_tm;
-varying vec2 v_td;
-void main() {
-gl_Position = u_m * a_p;
-v_td = (u_tm * vec4(a_t, 0, 1)).xy;
-}`;
-
-const fshaderSrc:string = `    
-precision mediump float;
-varying vec2 v_td;
-uniform sampler2D u_tx;
-void main() {
-gl_FragColor = texture2D(u_tx, v_td);
-}`
-
 export const gl = canvas.getContext("webgl");
 const program = gl.createProgram();
 
