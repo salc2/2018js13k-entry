@@ -3,6 +3,7 @@ const fshaderSrc: string = require('./shaders/di_f_shader.c');
 
 export const canvas = <HTMLCanvasElement>document.getElementById("canvas");
 export const gl = canvas.getContext("webgl");
+
 const program = gl.createProgram();
 
 var vshader = gl.createShader(gl.VERTEX_SHADER);
@@ -280,5 +281,3 @@ gl.uniform1i(textureLocation, 0);
 // draw the quad (2 triangles, 6 vertices)
 gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
-
-
