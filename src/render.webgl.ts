@@ -4,22 +4,21 @@ const fshaderSrc: string = require('./shaders/di_f_shader.c');
 export const canvas = <HTMLCanvasElement>document.getElementById("canvas");
 export const gl = canvas.getContext("webgl");
 
-const program = gl.createProgram();
+const program = createProgram(gl,fshaderSrc,vshaderSrc);
 
-var vshader = gl.createShader(gl.VERTEX_SHADER);
-gl.shaderSource(vshader, vshaderSrc);
-gl.compileShader(vshader);
-
-var fshader = gl.createShader(gl.FRAGMENT_SHADER);
-gl.shaderSource(fshader, fshaderSrc);
-gl.compileShader(fshader);
-
-
-// Attach pre-existing shaders
-gl.attachShader(program, vshader);
-gl.attachShader(program, fshader);
-
-gl.linkProgram(program);
+export function createProgram(gl: WebGLRenderingContext, fsSrc:string,vsSrc:string){
+  const prgm = gl.createProgram();
+  const vshader = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vshader, vsSrc);
+  gl.compileShader(vshader);
+  const fshader = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fshader, fsSrc);
+  gl.compileShader(fshader);
+  gl.attachShader(prgm, vshader);
+  gl.attachShader(prgm, fshader);
+  gl.linkProgram(prgm);
+  return prgm;
+}
 
 // look up where the vertex data needs to go.
 var positionLocation = gl.getAttribLocation(program, "a_p");
@@ -65,26 +64,26 @@ gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texcoords), gl.STATIC_DRAW);
 
 
 function orthographic(left:number, right:number, bottom:number, top:number, near:number, far:number, dst:Float32Array = null) {
-dst = dst || new Float32Array(16);
+  dst = dst || new Float32Array(16);
 
-dst[ 0] = 2 / (right - left);
-dst[ 1] = 0;
-dst[ 2] = 0;
-dst[ 3] = 0;
-dst[ 4] = 0;
-dst[ 5] = 2 / (top - bottom);
-dst[ 6] = 0;
-dst[ 7] = 0;
-dst[ 8] = 0;
-dst[ 9] = 0;
-dst[10] = 2 / (near - far);
-dst[11] = 0;
-dst[12] = (left + right) / (left - right);
-dst[13] = (bottom + top) / (bottom - top);
-dst[14] = (near + far) / (near - far);
-dst[15] = 1;
+  dst[ 0] = 2 / (right - left);
+  dst[ 1] = 0;
+  dst[ 2] = 0;
+  dst[ 3] = 0;
+  dst[ 4] = 0;
+  dst[ 5] = 2 / (top - bottom);
+  dst[ 6] = 0;
+  dst[ 7] = 0;
+  dst[ 8] = 0;
+  dst[ 9] = 0;
+  dst[10] = 2 / (near - far);
+  dst[11] = 0;
+  dst[12] = (left + right) / (left - right);
+  dst[13] = (bottom + top) / (bottom - top);
+  dst[14] = (near + far) / (near - far);
+  dst[15] = 1;
 
-return dst;
+  return dst;
 }
 
 function translate(m:any, tx:any, ty:any, tz:any,dst:Float32Array = null) {
@@ -161,26 +160,26 @@ return dst;
 }
 
 function translation(tx:any, ty:any, tz:any, dst:Float32Array = null) {
-dst = dst || new Float32Array(16)
+  dst = dst || new Float32Array(16)
 
-dst[ 0] = 1;
-dst[ 1] = 0;
-dst[ 2] = 0;
-dst[ 3] = 0;
-dst[ 4] = 0;
-dst[ 5] = 1;
-dst[ 6] = 0;
-dst[ 7] = 0;
-dst[ 8] = 0;
-dst[ 9] = 0;
-dst[10] = 1;
-dst[11] = 0;
-dst[12] = tx;
-dst[13] = ty;
-dst[14] = tz;
-dst[15] = 1;
+  dst[ 0] = 1;
+  dst[ 1] = 0;
+  dst[ 2] = 0;
+  dst[ 3] = 0;
+  dst[ 4] = 0;
+  dst[ 5] = 1;
+  dst[ 6] = 0;
+  dst[ 7] = 0;
+  dst[ 8] = 0;
+  dst[ 9] = 0;
+  dst[10] = 1;
+  dst[11] = 0;
+  dst[12] = tx;
+  dst[13] = ty;
+  dst[14] = tz;
+  dst[15] = 1;
 
-return dst;
+  return dst;
 }
 
 export function createAndSetupTexture(gl) {
@@ -198,8 +197,8 @@ export function createAndSetupTexture(gl) {
 }
 
 export function getImg(url: string):any {
-var tex = createAndSetupTexture(gl);
-var textureInfo = {
+  var tex = createAndSetupTexture(gl);
+  var textureInfo = {
   width: 1,   // we don't know the size until it loads
   height: 1,
   texture: tex,
@@ -217,27 +216,19 @@ img.src = url;
 return textureInfo;
 }
 
-
 export const postTexture = createAndSetupTexture(gl);
-  const level = 0;
-  const internalFormat = gl.RGBA;
-  const border = 0;
-  const format = gl.RGBA;
-  const type = gl.UNSIGNED_BYTE;
-  const data = null;
-  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
-                gl.canvas.width, gl.canvas.height, border,
-                format, type, data);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
+  gl.canvas.width, gl.canvas.height, 0,
+  gl.RGBA, gl.UNSIGNED_BYTE, null);
 const fb = gl.createFramebuffer();
 
 
- 
 // attach the texture as the first color attachment
 const attachmentPoint = gl.COLOR_ATTACHMENT0;
 
 export function bindFrameBuffer(){
   gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, postTexture, level);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, postTexture, 0);
 }
 
 
@@ -245,30 +236,30 @@ gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, postText
 export function drawImage(tex:any, texWidth:number, texHeight:number,
   srcX:number, srcY:number, srcWidth:number, srcHeight:number,
   dstX:number, dstY:number, dstWidth:number, dstHeight:number)  {
-if (dstX === undefined) {
-  dstX = srcX;
-  srcX = 0;
-}
-if (dstY === undefined) {
-  dstY = srcY;
-  srcY = 0;
-}
-if (srcWidth === undefined) {
-  srcWidth = texWidth;
-}
-if (srcHeight === undefined) {
-  srcHeight = texHeight;
-}
-if (dstWidth === undefined) {
-  dstWidth = srcWidth;
-  srcWidth = texWidth;
-}
-if (dstHeight === undefined) {
-  dstHeight = srcHeight;
-  srcHeight = texHeight;
-}
+  if (dstX === undefined) {
+    dstX = srcX;
+    srcX = 0;
+  }
+  if (dstY === undefined) {
+    dstY = srcY;
+    srcY = 0;
+  }
+  if (srcWidth === undefined) {
+    srcWidth = texWidth;
+  }
+  if (srcHeight === undefined) {
+    srcHeight = texHeight;
+  }
+  if (dstWidth === undefined) {
+    dstWidth = srcWidth;
+    srcWidth = texWidth;
+  }
+  if (dstHeight === undefined) {
+    dstHeight = srcHeight;
+    srcHeight = texHeight;
+  }
 
-gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.bindTexture(gl.TEXTURE_2D, tex);
 
 // Tell WebGL to use our shader program pair
 gl.useProgram(program);
@@ -277,6 +268,7 @@ gl.useProgram(program);
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.enableVertexAttribArray(positionLocation);
 gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
 gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
 gl.enableVertexAttribArray(texcoordLocation);
 gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);

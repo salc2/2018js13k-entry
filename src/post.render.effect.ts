@@ -1,74 +1,19 @@
-import {gl, createAndSetupTexture} from './render.webgl';
+import {gl, createAndSetupTexture, createProgram} from './render.webgl';
 
 const vshaderSrcPE: string = require('./shaders/sl_v_shader.c');
 const fshaderSrcPE: string = require('./shaders/sl_f_shader.c');
 
-const program = gl.createProgram();
-
-var vshader = gl.createShader(gl.VERTEX_SHADER);
-gl.shaderSource(vshader, vshaderSrcPE);
-gl.compileShader(vshader);
-
-var fshader = gl.createShader(gl.FRAGMENT_SHADER);
-gl.shaderSource(fshader, fshaderSrcPE);
-gl.compileShader(fshader);
-
-
-// Attach pre-existing shaders
-gl.attachShader(program, vshader);
-gl.attachShader(program, fshader);
-
-gl.linkProgram(program);
+const program = createProgram(gl,fshaderSrcPE,vshaderSrcPE);
 gl.useProgram(program);
 
-// look up where the vertex data needs to go.
-var positionLocation = gl.getAttribLocation(program, "a_position");
-var texcoordLocation = gl.getAttribLocation(program, "a_texCoord");
+var positionLocation = gl.getAttribLocation(program, "a_p");
+var texcoordLocation = gl.getAttribLocation(program, "a_t");
 
-// Create a buffer to put three 2d clip space points in
 var positionBuffer = gl.createBuffer();
-
-
-
-// provide texture coordinates for the rectangle.
 var texcoordBuffer = gl.createBuffer();
+var resolutionLocation = gl.getUniformLocation(program, "u_r");
 
 
-
-
-// lookup uniforms
-var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
-var uTimeLocation = gl.getUniformLocation(program, "uTime");
-
-//webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-
-// // Tell WebGL how to convert from clip space to pixels
-// gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
-// // Clear the canvas
-// gl.clearColor(0, 0, 0, 0);
-// gl.clear(gl.COLOR_BUFFER_BIT);
-
-// Tell it to use our program (pair of shaders)
-//gl.useProgram(program);
-
-// Turn on the position attribute
-
-// Create a texture.
-//var texture = createAndSetupTexture(gl);
-
-// Upload the image into the texture.
-
- 
-    // Attach a texture to it.
-
-/*  gl.uniform1f(uTimeLocation, 2.6);
-
-// Draw the rectangle.
-var primitiveType = gl.TRIANGLES;
-var offset = 0;
-var count = 6;
-gl.drawArrays(primitiveType, offset, count);*/
 export function renderPostProcessing(time,text){
 
 
@@ -112,14 +57,8 @@ gl.enableVertexAttribArray(positionLocation);
 // Bind the position buffer.
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-// Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-var size = 2;          // 2 components per iteration
-var type = gl.FLOAT;   // the data is 32bit floats
-var normalize = false; // don't normalize the data
-var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-var offset = 0;        // start at the beginning of the buffer
 gl.vertexAttribPointer(
-    positionLocation, size, type, normalize, stride, offset)
+    positionLocation, 2, gl.FLOAT, false, 0, 0)
 
 // Turn on the teccord attribute
 gl.enableVertexAttribArray(texcoordLocation);
@@ -127,25 +66,12 @@ gl.enableVertexAttribArray(texcoordLocation);
 // Bind the position buffer.
 gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
 
-// Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-var size = 2;          // 2 components per iteration
-var type = gl.FLOAT;   // the data is 32bit floats
-var normalize = false; // don't normalize the data
-var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-var offset = 0;        // start at the beginning of the buffer
 gl.vertexAttribPointer(
-    texcoordLocation, size, type, normalize, stride, offset)
+    texcoordLocation, 2, gl.FLOAT, false, 0, 0)
 
-// set the resolution
 gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
 
-
-
-gl.uniform1f(uTimeLocation, time);
-var primitiveType = gl.TRIANGLES;
-var offset = 0;
-var count = 6;
-gl.drawArrays(primitiveType, offset, count);
+gl.drawArrays( gl.TRIANGLES, 0, 6);
 }
 
 
