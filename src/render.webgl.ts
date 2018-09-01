@@ -183,18 +183,22 @@ dst[15] = 1;
 return dst;
 }
 
+export function createAndSetupTexture(gl) {
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Set up texture so we can render any size image and so we are
+  // working with pixels.
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  return texture;
+}
+
 export function getImg(url: string):any {
-var tex = gl.createTexture();
-gl.bindTexture(gl.TEXTURE_2D, tex);
-// Fill the texture with a 1x1 blue pixel.
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-              new Uint8Array([0, 0, 255, 255]));
-
-// let's assume all images are not a power of 2
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-
+var tex = createAndSetupTexture(gl);
 var textureInfo = {
   width: 1,   // we don't know the size until it loads
   height: 1,
@@ -212,6 +216,31 @@ img.src = url;
 
 return textureInfo;
 }
+
+
+export const postTexture = createAndSetupTexture(gl);
+  const level = 0;
+  const internalFormat = gl.RGBA;
+  const border = 0;
+  const format = gl.RGBA;
+  const type = gl.UNSIGNED_BYTE;
+  const data = null;
+  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
+                gl.canvas.width, gl.canvas.height, border,
+                format, type, data);
+const fb = gl.createFramebuffer();
+
+
+ 
+// attach the texture as the first color attachment
+const attachmentPoint = gl.COLOR_ATTACHMENT0;
+
+export function bindFrameBuffer(){
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, postTexture, level);
+}
+
+
 
 export function drawImage(tex:any, texWidth:number, texHeight:number,
   srcX:number, srcY:number, srcWidth:number, srcHeight:number,
@@ -278,6 +307,10 @@ gl.uniformMatrix4fv(textureMatrixLocation, false, texMatrix);
 // Tell the shader to get the texture from texture unit 0
 gl.uniform1i(textureLocation, 0);
 
+
 // draw the quad (2 triangles, 6 vertices)
 gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
+
+
+

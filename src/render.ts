@@ -1,7 +1,7 @@
 import {tileNumberByXYPos,getAABB} from './collision';
 import {initState, Spacing, State, moveCamera} from './State';
-import {drawImage, gl, getImg} from './render.webgl'
-import {renderPostEffect} from './post.render.effect'
+import {drawImage, gl, getImg, postTexture, bindFrameBuffer} from './render.webgl'
+import {renderPostProcessing} from './post.render.effect'
 
 const map_text = getImg('./map.png');
 const player_text = getImg('./anto_anime.png');
@@ -65,6 +65,7 @@ const tileMap:any = {
     endRow = startRow + (h / tsize),
     offsetX = -x + startCol * tsize,
     offsetY = -y + startRow * tsize;
+          bindFrameBuffer();
 
     for (var c = startCol; c <= endCol; c++) {
       for (var r = startRow; r <= endRow; r++) {
@@ -214,4 +215,8 @@ const tileMap:any = {
 
       }
     }
+
+    renderPostProcessing(performance.now(),postTexture);
+    bindFrameBuffer();
+
   };
