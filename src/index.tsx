@@ -6,7 +6,7 @@ import {jump as soundJump} from './sounds';
 import {initState, Spacing, State, moveCamera, Character, Enemy, insertInCells} from './state';
 //import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
-import {moveBody, tileNumberByXYPos, getAABB, collide} from './collision';
+import {moveBody, gtn, gab, collide} from './collision';
 
 export type Model = State;
 
@@ -42,7 +42,7 @@ const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
         // code...
         break;
     }
-    window.navigator.vibrate(30); 
+    try{window.navigator.vibrate(30);}catch(e){} 
   }
   const handlerEnd = (ev: TouchEvent) => {
     switch (ev.currentTarget['id']) {
@@ -58,15 +58,16 @@ const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
     }
   }
     const svgs:any = document.querySelectorAll("rect");
+    const psOp = {passive: true};
     svgs.forEach( rec =>{
-      rec.addEventListener("touchstart",handlerStart,true);
-      rec.addEventListener("touchend",handlerEnd,true);
+      rec.addEventListener("touchstart",handlerStart,psOp);
+      rec.addEventListener("touchend",handlerEnd,psOp);
     });
 
     return () => {
       svgs.forEach( rec =>{
-       rec.removeEventListener("touchstart",handlerStart,true);
-      rec.removeEventListener("touchend",handlerEnd,true);
+       rec.removeEventListener("touchstart",handlerStart,psOp);
+      rec.removeEventListener("touchend",handlerEnd,psOp);
     })
     }
   });
@@ -146,7 +147,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
   const checkCollides = (m: Model):Model => {
     let [cam, characters,cells,pmtr]:Model = insertInCells(m,new Array(2500),20,50);
     const p = characters.filter(c => c[8] == "player")[0];
-    getAABB(p[0],p[1],p[2],p[3]).map(xy => tileNumberByXYPos(xy[0],xy[1],tileSize,mapSize)).map(tn => cells[tn]).forEach(enemies =>{
+    gab(p[0],p[1],p[2],p[3]).map(xy => gtn(xy[0],xy[1],tileSize,mapSize)).map(tn => cells[tn]).forEach(enemies =>{
       enemies.filter(e => e != p).forEach(e => {
         const [ex,ey,ew,eh] = e;
         if(collide([p[0],p[1],p[2],p[3]],[ex,ey,ew,eh])){
@@ -169,7 +170,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const n_characters = characters.map(c =>{
       if(c[8] == 'player'){
               const [px,py,pw,ph,pVx,pVy,dir,onflo, kind] = c;
-              const nplayer:Character = [px,py,pw,ph,-vplayer,pVy,"left",onflo, kind, 0];
+              const nplayer:Character = [px,py,pw,ph,-vplayer,pVy,"l",onflo, kind, 0];
               return nplayer;
       }else{
         return c;
@@ -185,7 +186,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const n_characs = characters.map( c => {
       if(c[8] == 'player'){
         const [px,py,pw,ph,pVx,pVy,dir,onflo, k] = c;
-        const n_player: Character = [px,py,pw,ph,vplayer,pVy,"right",onflo, k, 0];
+        const n_player: Character = [px,py,pw,ph,vplayer,pVy,"r",onflo, k, 0];
         return n_player;
         }else{
           return c;

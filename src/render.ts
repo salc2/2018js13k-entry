@@ -1,6 +1,6 @@
-import {tileNumberByXYPos,getAABB} from './collision';
+import {gtn,gab} from './collision';
 import {initState, Spacing, State, moveCamera} from './State';
-import {drawImage, gl, getImg, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
+import {drawImage, g, getImg, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
 
 const map_text = getImg('./map.png');
 const player_text = getImg('./anto_anime.png');
@@ -20,42 +20,45 @@ const tileMap:any = {
   'r': [ 20, 40, 20, 20 ],
   't': [ 40, 40, 20, 20 ] };
 
+  const pyerTiles:any = { 
+  'il': [ 1, 1, 20, 20 ],
+  'ir': [ 23, 1, 20, 20 ],
+  'j1l': [ 45, 1, 20, 20 ],
+  'j1r': [ 67, 1, 20, 20 ],
+  'j2l': [ 89, 1, 20, 20 ],
+  'j2r': [ 111, 1, 20, 20 ],
+  'w1l': [ 133, 1, 20, 20 ],
+  'w1r': [ 155, 1, 20, 20 ],
+  'w2l': [ 177, 1, 20, 20 ],
+  'w2r': [ 199, 1, 20, 20 ] };
 
-  const pyerTiles:any = { 'idle_left.png': [ 1, 1, 20, 20 ],
-  'idle_right.png': [ 23, 1, 20, 20 ],
-  'jump_1_left.png': [ 45, 1, 20, 20 ],
-  'jump_1_right.png': [ 67, 1, 20, 20 ],
-  'jump_2_left.png': [ 89, 1, 20, 20 ],
-  'jump_2_right.png': [ 111, 1, 20, 20 ],
-  'walking_1_left.png': [ 133, 1, 20, 20 ],
-  'walking_1_right.png': [ 155, 1, 20, 20 ],
-  'walking_2_left.png': [ 177, 1, 20, 20 ],
-  'walking_2_right.png': [ 199, 1, 20, 20 ] };
+  const enemySprite = { 
+  'vo': [ 1, 1, 20, 13 ],
+  'v1l': [ 1, 16, 19, 21 ],
+  'v1r': [ 1, 39, 19, 21 ],
+  'v2l': [ 1, 62, 19, 21 ],
+  'v2r': [ 1, 85, 19, 21 ] };
 
-  const enemySprite = { 'vending_offline.png': [ 1, 1, 20, 13 ],
-  'vending_walking_1_left.png': [ 1, 16, 19, 21 ],
-  'vending_walking_1_right.png': [ 1, 39, 19, 21 ],
-  'vending_walking_2_left.png': [ 1, 62, 19, 21 ],
-  'vending_walking_2_right.png': [ 1, 85, 19, 21 ] };
+  const droneEnemy = { 
+    'd1l': [ 1, 1, 20, 20 ],
+  'd1r': [ 23, 1, 20, 20 ],
+  'd2l': [ 45, 1, 20, 20 ],
+  'd2r': [ 67, 1, 20, 20 ],
+  'd3l': [ 89, 1, 20, 20 ],
+  'd3r': [ 111, 1, 20, 20 ] };
 
-  const droneEnemy = { 'drone_1_left.png': [ 1, 1, 20, 20 ],
-  'drone_1_right.png': [ 23, 1, 20, 20 ],
-  'drone_2_left.png': [ 45, 1, 20, 20 ],
-  'drone_2_right.png': [ 67, 1, 20, 20 ],
-  'drone_3_left.png': [ 89, 1, 20, 20 ],
-  'drone_3_right.png': [ 111, 1, 20, 20 ] };
-
-  const sensorSprite = { 'sensor_offline.png': [ 1, 1, 16, 10 ],
-  'sensor_online.png': [ 19, 1, 16, 10 ] };
+  const sensorSprite = { 
+    'sof': [ 1, 1, 16, 10 ],
+  'son': [ 19, 1, 16, 10 ] };
 
   export function render(st: State, map:string,tsize: number, wsize: number){
-    gl.canvas.style.width = `${window.innerWidth}px`;
-    gl.canvas.style.height = `${window.innerHeight}px`;
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    g.canvas.style.width = `${window.innerWidth}px`;
+    g.canvas.style.height = `${window.innerHeight}px`;
+    g.viewport(0, 0, g.canvas.width, g.canvas.height);
 
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.enable(gl.BLEND);
+    g.clear(g.COLOR_BUFFER_BIT);
+    g.blendFunc(g.SRC_ALPHA, g.ONE_MINUS_SRC_ALPHA);
+    g.enable(g.BLEND);
 
     const [[x,y,w,h,,], characters,] = st,
     startCol = Math.floor(x / tsize),
@@ -64,7 +67,7 @@ const tileMap:any = {
     endRow = startRow + (h / tsize),
     offsetX = -x + startCol * tsize,
     offsetY = -y + startRow * tsize;
-          bindFrameBuffer();
+    bindFrameBuffer();
 
     for (var c = startCol; c <= endCol; c++) {
       for (var r = startRow; r <= endRow; r++) {
@@ -74,9 +77,9 @@ const tileMap:any = {
         if(letter != '`' && letter != 'x'){
           const [_x,_y,_w,_h] = tileMap[letter];
           drawImage(
-                    map_text.texture, // image
-                    map_text.width,
-                    map_text.height,
+                    map_text.tex, // image
+                    map_text.w,
+                    map_text.h,
                     _x, // source x
                     _y, // source y
                     _w, // source width
@@ -90,11 +93,11 @@ const tileMap:any = {
 
       characters.forEach(charact =>{
       const [px,py,pw,ph,pvx,pvy,dir,onfl,k,] = charact;
-      const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = getAABB(px+pvx,py+pvy,pw,ph);
-      const collides =  [tileNumberByXYPos(ltX,ltY,tsize,wsize),
-      tileNumberByXYPos(rtX,rtY,tsize,wsize),
-      tileNumberByXYPos(rbX,rbY,tsize,wsize),
-      tileNumberByXYPos(lbX,lbY,tsize,wsize)]
+      const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = gab(px+pvx,py+pvy,pw,ph);
+      const collides =  [gtn(ltX,ltY,tsize,wsize),
+      gtn(rtX,rtY,tsize,wsize),
+      gtn(rbX,rbY,tsize,wsize),
+      gtn(lbX,lbY,tsize,wsize)]
          const i = Math.floor(1+(performance.now()* (0.02/5))%2);
       
       if(k == "player"){
@@ -102,17 +105,17 @@ const tileMap:any = {
          var coords;
          if(onfl){
              if(pvx == 0 ){
-               coords = pyerTiles[`idle_${dir}.png`];
+               coords = pyerTiles[`i${dir}`];
              }else{
-               coords = pyerTiles[`walking_${i}_${dir}.png`];
+               coords = pyerTiles[`w${i}${dir}`];
              }
            }else{
-             coords = pyerTiles[`jump_${i}_${dir}.png`];
+             coords = pyerTiles[`j${i}${dir}`];
          }
          const [_xp,_yp,_wp,_hp] = coords;
-         drawImage(player_text.texture, // image
-                         player_text.width,
-                         player_text.height,
+         drawImage(player_text.tex, // image
+                         player_text.w,
+                         player_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
@@ -127,18 +130,18 @@ const tileMap:any = {
          if(onfl){
              if(charact[10] && charact[10] == 0 ){
                //
-               coords = enemySprite[`vending_offline.png`];
+               coords = enemySprite[`vo`];
              }else{
-               coords = enemySprite[`vending_walking_${i}_${dir}.png`];
+               coords = enemySprite[`v${i}${dir}`];
              }
            }else{
-             coords = enemySprite[`vending_walking_2_${dir}.png`];
+             coords = enemySprite[`v${i}${dir}`];
          }
          let [_xp,_yp,_wp,_hp] = coords;
          // if(collides.indexOf(r*wsize+c) > -1){
-                drawImage(enemy_text.texture, // image
-                         enemy_text.width,
-                         enemy_text.height,
+                drawImage(enemy_text.tex, // image
+                         enemy_text.w,
+                         enemy_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
@@ -148,14 +151,14 @@ const tileMap:any = {
                          pw, // target width
                          ph // target height
                      );
-                [_xp,_yp,_wp,_hp] = sensorSprite['sensor_online.png'];
+                [_xp,_yp,_wp,_hp] = sensorSprite['son'];
                 if(Math.floor((performance.now() * 0.008) % 2) == 0){
                   if(charact[10] && charact[10] == 0 ){
-                     coords = sensorSprite[`sensor_offline.png`];
+                     coords = sensorSprite[`sof`];
                    }
-                  drawImage(sensor_text.texture, // image
-                         sensor_text.width,
-                         sensor_text.height,
+                  drawImage(sensor_text.tex, // image
+                         sensor_text.w,
+                         sensor_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
@@ -172,13 +175,13 @@ const tileMap:any = {
       }else if(k == "drone"){
         const q = Math.round((performance.now()* 0.001)/ 0.04) % 3 + (1);
          var coords;
-         coords = droneEnemy[`drone_${q}_${dir}.png`];
+         coords = droneEnemy[`d${q}${dir}`];
 
          let [_xp,_yp,_wp,_hp] = coords;
          // if(collides.indexOf(r*wsize+c) > -1){
-                drawImage(drone_text.texture, // image
-                         drone_text.width,
-                         drone_text.height,
+                drawImage(drone_text.tex, // image
+                         drone_text.w,
+                         drone_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
@@ -188,14 +191,14 @@ const tileMap:any = {
                          _wp, // target width
                          _hp // target height
                      );
-                [_xp,_yp,_wp,_hp] = sensorSprite['sensor_online.png'];
+                [_xp,_yp,_wp,_hp] = sensorSprite['son'];
                 if(Math.floor((performance.now() * 0.008) % 2) == 0){
                   if(charact[10] && charact[10] == 0 ){
-                     coords = sensorSprite[`sensor_offline.png`];
+                     coords = sensorSprite['sof'];
                    }
-                  drawImage(sensor_text.texture, // image
-                         sensor_text.width,
-                         sensor_text.height,
+                  drawImage(sensor_text.tex, // image
+                         sensor_text.w,
+                         sensor_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width

@@ -6,7 +6,7 @@ import {update , initStateCmd,render,subs, Model as GameModel} from './index';
 import {Cmd, emptyCmd} from './cmd';
 import {initState, Spacing, State, moveCamera, 
     Character,Camera as CameraType} from './state';
-    import {canvas,drawImage, gl} from './render.webgl';
+    import {canvas,drawImage, g} from './render.webgl';
 
 import 'fpsmeter';
 
@@ -86,19 +86,19 @@ export const Camera = (props: CameraProps) => {
 };
 
 function returnTextureFromCanvas(canvas){
-const tex = gl.createTexture();
-gl.bindTexture(gl.TEXTURE_2D, tex);
+const tex = g.createTexture();
+g.bindTexture(g.TEXTURE_2D, tex);
 // Fill the texture with a 1x1 blue pixel.
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, 1, 1, 0, g.RGBA, g.UNSIGNED_BYTE,
               new Uint8Array([0, 0, 255, 255]));
 
 // let's assume all images are not a power of 2
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_S, g.CLAMP_TO_EDGE);
+g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_T, g.CLAMP_TO_EDGE);
+g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, g.LINEAR);
 
- gl.bindTexture(gl.TEXTURE_2D, tex);
- gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+ g.bindTexture(g.TEXTURE_2D, tex);
+ g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, canvas);
 
  return tex;
 }

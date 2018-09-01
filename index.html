@@ -1,12 +1,59 @@
 <!doctype html>
-<html>
-	<head>
-		<title>Getting Started</title></script>
-	</head>
-	<body>
-        <canvas id="game"><canvas>
-        <div id="container"></div>
-		<script src="index.js"></script>
-	</body>
+<html lang=en>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>.</title>
+<style>
+  * {
+    margin: 0px;
+    padding: 0px;
+  }
+  canvas#c {
+    overflow: hidden;
+    display: block;
+  image-rendering: optimizeSpeed;             /* Older versions of FF          */
+  image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+  image-rendering: -webkit-optimize-contrast; /* Safari                        */
+  image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+  image-rendering: pixelated;                 /* Awesome future-browsers       */
+  -ms-interpolation-mode: nearest-neighbor;   /* IE   */
+    background-color: #eeeeee;
+    width: 800px;
+    height: 444px;
+}
+svg{
+  transform: scale(6);
+  transform-origin: left;
+  position: absolute;
+  margin-top: 60px;
+  display: none;
+}
+svg#btn{
+  left: 70%;
+}
+</style>
+</head>
+<body>
+    <svg id="arw"  width="40" height="40">
+<g style="fill:white;stroke:skyblue;stroke-width:.5;opacity:0.2"
+transform="translate(0 20) rotate(-45)" >
+  <rect id="up" x="11.25" y="4.5" rx="1.8" ry="1.8" width="11.25" height="11.25"/>
+   <rect id="right" x="11.25" y="15.76" rx="1.8" ry="1.8" width="11.25" height="11.25"/>
+     <rect id="down" x="0" y="15.76" rx="1.8" ry="1.8" width="11.25" height="11.25"/>
+      <rect id="left" x="0" y="4.5" rx="1.8" ry="1.8" width="11.25" height="11.25"/>
+</g>
+</svg>
+<svg id="btn"  width="27" height="40">
+<g style="fill:white;stroke:skyblue;stroke-width:.5;opacity:0.2"
+transform="translate(0 20) rotate(-45)" >
+  <rect id="a" x="11.25" y="4.5" rx="1.8" ry="1.8" width="11.25" height="11.25"/>
+  <rect id="b" x="0" y="15.76" rx="1.8" ry="1.8" width="11.25" height="11.25"/>      
+</g>
+</svg>
+  <canvas id="c" width="180" height="100"></canvas>
+    <script src="bundle.js"></script>
+  </body>
 </html>
+
 

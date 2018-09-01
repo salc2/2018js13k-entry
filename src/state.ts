@@ -1,7 +1,7 @@
-import {tileNumberByXYPos,getAABB} from './collision';
+import {gtn,gab} from './collision';
 
 type OnFloor = boolean
-type Dir = "right" | "left"
+type Dir = "r" | "l"
 type Kind = "player" | "vending" | "drone"
 // x,y,w,h,vx,vz,target
 export type Spacing = [number,number,number,number,number,number];
@@ -14,9 +14,9 @@ export type Cells = Character[][];
 export type State = [Camera, Character[], Cells, Parameter];
 
 const camera:Camera = [0,0,180,100,0,0,0];
-const player:Player = [80,45,20,20,0,0.98,'right',true, "player", 0];
-const enemy:Enemy = [80,45,19,21,0.03,0.98,'right',true, "vending", 180,1];
-const enemy2:Enemy = [8,45,19,21,0.03,0.98,'right',true, "drone", 300,1];
+const player:Player = [80,45,20,20,0,0.98,'r',true, "player", 0];
+const enemy:Enemy = [80,45,19,21,0.03,0.98,'r',true, "vending", 180,1];
+const enemy2:Enemy = [8,45,19,21,0.03,0.98,'r',true, "drone", 300,1];
 
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [.98,.075,-7.5];
@@ -43,7 +43,7 @@ export function tilesFromMap(camera: Spacing,map:string,tsize: number){
     const result: string[] = [];
     for (var c = startCol; c < endCol; c++) {
         for (var r = startRow; r < endRow; r++) {
-            result.push(map.charAt(tileNumberByXYPos(c*tsize,r*tsize,tsize,5)));
+            result.push(map.charAt(gtn(c*tsize,r*tsize,tsize,5)));
         }
     }
     return result;
@@ -56,8 +56,8 @@ function onlyUnique(value, index, self) {
 export const insertInCells = (s: State,tiles: Character[][],tileSize: number, worldSize: number): State => {
     const [c, chars,,pmr] = s;
     chars.forEach(c => { 
-        const aabbs = getAABB(c[0], c[1],c[2],c[3]);
-        const tilesN = aabbs.map( xy =>  tileNumberByXYPos(xy[0],xy[1],tileSize,worldSize));
+        const aabbs = gab(c[0], c[1],c[2],c[3]);
+        const tilesN = aabbs.map( xy =>  gtn(xy[0],xy[1],tileSize,worldSize));
         tilesN.filter(onlyUnique).forEach(tile => {
             if(tiles[tile]){
                 tiles[tile].push(c)
