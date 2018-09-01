@@ -258,6 +258,13 @@ export const subs = (m: Model) => {
   const zero: Time = {kind:"t", delta: 0}; 
   return [clockSub, pressKeySub, releaseKeySub, touchsSub];
 }
-export const initStateCmd:[Model,Cmd<Action>] = [initState, emptyCmd()]
+export const initStateCmd:[Model,Cmd<Action>] = [initState, createCmd(()=>{
+  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+    const svgs: any = document.querySelectorAll("svg")
+      svgs.forEach( svg => {
+        svg.style.display = "block";
+      });
+  }
+},null)]
 
 runGame( update, render,  subs, initStateCmd);  

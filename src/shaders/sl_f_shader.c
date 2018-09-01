@@ -53,39 +53,7 @@ vec3 sepiaColor = vec3(gray) * SEPIA;
 //again we'll use mix so that the sepia effect is at 75%
 texColor.rgb = mix(texColor.rgb, sepiaColor, 0.22);
 
-vec2 q = gl_FragCoord.xy / u_resolution.xy;
 
-// subtle zoom in/out 
-//vec2 uv = 0.5 + (q-0.5)*(0.98 + 0.006*sin(0.9*uTime));
-vec2 uv = 0.5 + (q-0.5)*(0.98 + 0.001*sin(0.95*uTime));
-vec3 oricol = texture2D(u_image,v_texCoord).xyz;
-vec3 col;
-
-// start with the source texture and misalign the rays it a bit
-// TODO animate misalignment upon hit or similar event
-col.r = texture2D(u_image,vec2(uv.x+0.003,-uv.y)).x;
-col.g = texture2D(u_image,vec2(uv.x+0.000,-uv.y)).y;
-col.b = texture2D(u_image,vec2(uv.x-0.003,-uv.y)).z;
-
-// contrast curve
-col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
-
-//vignette
-col *= 0.6 + 0.4*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
-
-//color tint
-col *= vec3(0.9,1.0,0.7);
-
-//scanline (last 2 constants are crawl speed and size)
-//TODO make size dependent on viewport
-col *= 0.8+0.2*sin(10.0*uTime+uv.y*900.0);
-
-//flickering (semi-randomized)
-col *= 1.0-0.07*rand(vec2(uTime, tan(uTime)));
-
-//smoothen
-float comp = smoothstep( 0.2, 0.7, sin(uTime) );
-col = mix( col, oricol, clamp(-2.0+2.0*q.x+3.0*comp,0.0,1.0) );
 //gl_FragColor = texture2D(u_image, v_texCoord);
 //gl_FragColor = vec4(col*0.23,1.0) + texColor;
 gl_FragColor = texColor;
