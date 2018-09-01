@@ -11,11 +11,11 @@ const effProgram = createProgram(gl,effFsrc,effVsrc);
 
 getAttrLoc(mainProgram, "a_p");
 // Create a buffer.
-var positionBuffer = gl.createBuffer();
+const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
 // Put a unit quad in the buffer
-var positions = [
+const positions = [
 0, 0,
 0, 1,
 1, 0,
@@ -27,11 +27,11 @@ gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
 getAttrLoc(mainProgram, "a_t");
 // Create a buffer for texture coords
-var texcoordBuffer = gl.createBuffer();
+const texcoordBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
 
 // Put texcoords in the buffer
-var texcoords = [
+const texcoords = [
 0, 0,
 0, 1,
 1, 0,
@@ -160,7 +160,7 @@ function translation(tx:any, ty:any, tz:any, dst:Float32Array = null) {
   return dst;
 }
 
-export function createAndSetupTexture(gl) {
+function createAndSetupTexture(gl) {
   var texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -342,8 +342,7 @@ function rebindBuffers(location, buffer){
   gl.enableVertexAttribArray(location);
   gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
 }
-
-export function createProgram(gl: WebGLRenderingContext, fsSrc:string,vsSrc:string){
+function createProgram(gl: WebGLRenderingContext, fsSrc:string,vsSrc:string){
   const prgm = gl.createProgram();
   const vshader = gl.createShader(gl.VERTEX_SHADER);
   gl.shaderSource(vshader, vsSrc);

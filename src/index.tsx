@@ -12,7 +12,7 @@ export type Model = State;
 
 const tileSize = 20, mapSize = 50;
 
-const clockSub = create('clock', (consumer: Subscriber<Action>) => {
+const clockSub = create('c1', (consumer: Subscriber<Action>) => {
     let id = 0;
     let startTime = performance.now();
     const keepAnimation = (time:number) => {
@@ -25,7 +25,7 @@ const clockSub = create('clock', (consumer: Subscriber<Action>) => {
     return () => cancelAnimationFrame(id);
   });
 
-const touchsSub = create('touchs', (consumer: Subscriber<Action>) => {
+const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
   const handlerStart = (ev: TouchEvent) => {
     switch (ev.currentTarget['id']) {
       case "a":
@@ -73,7 +73,7 @@ const touchsSub = create('touchs', (consumer: Subscriber<Action>) => {
 
 
 
-const pressKeySub = create('pressEvents', (consumer: Subscriber<Action>) => {
+const pressKeySub = create('p1', (consumer: Subscriber<Action>) => {
     const handler = (e: KeyboardEvent) => {
       switch(e.keyCode){
         case 37: 
@@ -93,7 +93,7 @@ const pressKeySub = create('pressEvents', (consumer: Subscriber<Action>) => {
     return () => window.removeEventListener('keydown', handler, true);
   });
 
-const releaseKeySub = create('pressEvents', (consumer: Subscriber<Action>) => {
+const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
     const handler = (e: KeyboardEvent) => {
       switch(e.keyCode){
         case 37: 
