@@ -80,7 +80,7 @@ gl.bindTexture(gl.TEXTURE_2D, text);
 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 // Clear the canvas AND the depth buffer.
-gl.clearColor(1, 1, 1, 1);   // clear to white
+gl.clearColor(  0.93333, 0.93333, 0.93333, 1.0);   // clear to white
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 gl.useProgram(program);
 

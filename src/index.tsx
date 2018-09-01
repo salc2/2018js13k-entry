@@ -236,10 +236,7 @@ export const update: Update<Action,Model> = (a: Action, m: Model) => {
     case "t":
       return [ applyPhysics(m,a.delta) ,emptyCmd<Action>()];
     case "up":
-      return [ jump(m), (() => { 
-        soundJump.play()
-            return emptyCmd<Action>()
-       })() ];
+      return [ jump(m), createCmd(() => {soundJump.play()},null)];
     case "lp":
       return [ walkLeft(m),emptyCmd<Action>()];
     case "rp":
