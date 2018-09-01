@@ -1,7 +1,6 @@
 import {tileNumberByXYPos,getAABB} from './collision';
 import {initState, Spacing, State, moveCamera} from './State';
-import {drawImage, gl, getImg, postTexture, bindFrameBuffer} from './render.webgl'
-import {renderPostProcessing} from './post.render.effect'
+import {drawImage, gl, getImg, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
 
 const map_text = getImg('./map.png');
 const player_text = getImg('./anto_anime.png');

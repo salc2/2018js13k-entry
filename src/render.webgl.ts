@@ -1,34 +1,15 @@
-const vshaderSrc: string = require('./shaders/di_v_shader.c');
-const fshaderSrc: string = require('./shaders/di_f_shader.c');
+const mainVsrc: string = require('./shaders/main_v.c');
+const mainFsrc: string = require('./shaders/main_f.c');
+const effVsrc: string = require('./shaders/eff_v.c');
+const effFsrc: string = require('./shaders/eff_f.c');
 
 export const canvas = <HTMLCanvasElement>document.getElementById("canvas");
 export const gl = canvas.getContext("webgl");
 
-const program = createProgram(gl,fshaderSrc,vshaderSrc);
+const mainProgram = createProgram(gl,mainFsrc,mainVsrc);
+const effProgram = createProgram(gl,effFsrc,effVsrc);
 
-export function createProgram(gl: WebGLRenderingContext, fsSrc:string,vsSrc:string){
-  const prgm = gl.createProgram();
-  const vshader = gl.createShader(gl.VERTEX_SHADER);
-  gl.shaderSource(vshader, vsSrc);
-  gl.compileShader(vshader);
-  const fshader = gl.createShader(gl.FRAGMENT_SHADER);
-  gl.shaderSource(fshader, fsSrc);
-  gl.compileShader(fshader);
-  gl.attachShader(prgm, vshader);
-  gl.attachShader(prgm, fshader);
-  gl.linkProgram(prgm);
-  return prgm;
-}
-
-// look up where the vertex data needs to go.
-var positionLocation = gl.getAttribLocation(program, "a_p");
-var texcoordLocation = gl.getAttribLocation(program, "a_t");
-
-// lookup uniforms
-var matrixLocation = gl.getUniformLocation(program, "u_m");
-var textureMatrixLocation = gl.getUniformLocation(program, "u_tm");
-var textureLocation = gl.getUniformLocation(program, "u_tx");
-
+getAttrLoc(mainProgram, "a_p");
 // Create a buffer.
 var positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -44,6 +25,7 @@ var positions = [
 ]
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
+getAttrLoc(mainProgram, "a_t");
 // Create a buffer for texture coords
 var texcoordBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
@@ -58,10 +40,6 @@ var texcoords = [
 1, 1,
 ]
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texcoords), gl.STATIC_DRAW);
-
-
-
-
 
 function orthographic(left:number, right:number, bottom:number, top:number, near:number, far:number, dst:Float32Array = null) {
   dst = dst || new Float32Array(16);
@@ -231,8 +209,6 @@ export function bindFrameBuffer(){
   gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, postTexture, 0);
 }
 
-
-
 export function drawImage(tex:any, texWidth:number, texHeight:number,
   srcX:number, srcY:number, srcWidth:number, srcHeight:number,
   dstX:number, dstY:number, dstWidth:number, dstHeight:number)  {
@@ -259,19 +235,15 @@ export function drawImage(tex:any, texWidth:number, texHeight:number,
     srcHeight = texHeight;
   }
 
-  gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.bindTexture(gl.TEXTURE_2D, tex);
 
-// Tell WebGL to use our shader program pair
-gl.useProgram(program);
+// Tell WebGL to use our shader mainProgram pair
+gl.useProgram(mainProgram);
+
 
 // Setup the attributes to pull data from our buffers
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.enableVertexAttribArray(positionLocation);
-gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
-gl.enableVertexAttribArray(texcoordLocation);
-gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
+rebindBuffers(getAttrLoc(mainProgram, "a_p"), positionBuffer);
+rebindBuffers(getAttrLoc(mainProgram, "a_t"), texcoordBuffer);
 
 // this matirx will convert from pixels to clip space
 var matrix = orthographic(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
@@ -284,7 +256,8 @@ matrix = translate(matrix, dstX, dstY, 0);
 matrix = scale(matrix, dstWidth, dstHeight, 1);
 
 // Set the matrix.
-gl.uniformMatrix4fv(matrixLocation, false, matrix);
+
+gl.uniformMatrix4fv(getUniLoc(mainProgram, "u_m"), false, matrix);
 
 // Because texture coordinates go from 0 to 1
 // and because our texture coordinates are already a unit quad
@@ -294,15 +267,92 @@ var texMatrix = translation(srcX / texWidth, srcY / texHeight, 0);
 texMatrix = scale(texMatrix, srcWidth / texWidth, srcHeight / texHeight, 1);
 
 // Set the texture matrix.
-gl.uniformMatrix4fv(textureMatrixLocation, false, texMatrix);
+gl.uniformMatrix4fv(getUniLoc(mainProgram, "u_tm"), false, texMatrix);
 
 // Tell the shader to get the texture from texture unit 0
-gl.uniform1i(textureLocation, 0);
+gl.uniform1i(getUniLoc(mainProgram, "u_tx"), 0);
 
 
 // draw the quad (2 triangles, 6 vertices)
 gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
 
+const positionBufferEff = gl.createBuffer();
+const texcoordBufferEff = gl.createBuffer();
 
 
+export function renderPostProcessing(time,text){
+
+gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+// render the cube with the texture we just rendered to
+gl.bindTexture(gl.TEXTURE_2D, text);
+
+gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+// Clear the canvas AND the depth buffer.
+gl.clearColor(  0.93333, 0.93333, 0.93333, 1.0);   // clear to white
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+gl.useProgram(effProgram);
+
+rebindBuffers(getAttrLoc(effProgram, "a_t"), texcoordBufferEff);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    0.0,  0.0,
+    1.0,  0.0,
+    0.0,  1.0,
+    0.0,  1.0,
+    1.0,  0.0,
+    1.0,  1.0,
+]), gl.STATIC_DRAW);
+
+
+rebindBuffers(getAttrLoc(effProgram, "a_p"), positionBufferEff);
+setRectangle(gl, 0, 0, gl.canvas.width, gl.canvas.height);
+
+gl.uniform2f(getUniLoc(effProgram, "u_r"), gl.canvas.width, gl.canvas.height);
+
+gl.drawArrays( gl.TRIANGLES, 0, 6);
+}
+
+function setRectangle(gl, x, y, width, height) {
+var x1 = x;
+var x2 = x + width;
+var y1 = y;
+var y2 = y + height;
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+   x1, y1,
+   x2, y1,
+   x1, y2,
+   x1, y2,
+   x2, y1,
+   x2, y2,
+]), gl.STATIC_DRAW);
+}
+
+function getAttrLoc(prog, name){
+  return gl.getAttribLocation(prog, name);
+}
+
+function getUniLoc(prog, name){
+  return gl.getUniformLocation(prog, name);
+}
+
+function rebindBuffers(location, buffer){
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.enableVertexAttribArray(location);
+  gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
+}
+
+export function createProgram(gl: WebGLRenderingContext, fsSrc:string,vsSrc:string){
+  const prgm = gl.createProgram();
+  const vshader = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vshader, vsSrc);
+  gl.compileShader(vshader);
+  const fshader = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fshader, fsSrc);
+  gl.compileShader(fshader);
+  gl.attachShader(prgm, vshader);
+  gl.attachShader(prgm, fshader);
+  gl.linkProgram(prgm);
+  return prgm;
+}
