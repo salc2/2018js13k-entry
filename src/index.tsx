@@ -130,7 +130,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const gravity = pmtr[0];
     const n_characters = characters.map(c => {
       const [px,py,pw,ph,pVx,pVy,dir,onflo,kind] = c;
-      const playr:Character = moveBody(c,(px+pVx*delta),py+pVy,map,20,50);
+      const playr:Character = moveBody(c,(px+pVx*delta),(py+pVy*delta),map,20,50);
       playr[5] = Math.min(pVy+gravity,gravity)  
       return playr;
     });

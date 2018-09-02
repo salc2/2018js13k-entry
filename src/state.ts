@@ -14,12 +14,12 @@ export type Cells = Character[][];
 export type State = [Camera, Character[], Cells, Parameter];
 
 const camera:Camera = [0,0,180,100,0,0,0];
-const player:Player = [80,45,20,20,0,0.98,'r',true, "player", 0];
-const enemy:Enemy = [80,45,19,21,0.03,0.98,'r',true, "vending", 180,1];
-const enemy2:Enemy = [8,45,19,21,0.03,0.98,'r',true, "drone", 300,1];
+const player:Player = [80,45,20,20,0,0.058,'r',true, "player", 0];
+const enemy:Enemy = [80,45,19,21,0.03,0.058,'r',true, "vending", 180,1];
+const enemy2:Enemy = [8,45,19,21,0.03,0.058,'r',true, "drone", 300,1];
 
 // gravity, walkvel, jumpvel
-const parameter:Parameter = [.98,.075,-7.5];
+const parameter:Parameter = [0.058,.075,-0.35];
 
 export const initState: State = [camera,[player,enemy,enemy2],[], parameter];
 

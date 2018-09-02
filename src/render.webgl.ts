@@ -9,6 +9,8 @@ export const g = canvas.getContext("webgl");
 const mainProgram = createProgram(g,mainFsrc,mainVsrc);
 const effProgram = createProgram(g,effFsrc,effVsrc);
 
+//g.uniform1f(, 1.0);
+
 getAttrLoc(mainProgram, "a_p");
 // Create a buffer.
 const positionBuffer = g.createBuffer();
@@ -272,13 +274,11 @@ g.uniformMatrix4fv(getUniLoc(mainProgram, "u_m"), false, matrix);
 // down
 var texMatrix = translation(srcX / texWidth, srcY / texHeight, 0);
 texMatrix = scale(texMatrix, srcWidth / texWidth, srcHeight / texHeight, 1);
-
 // Set the texture matrix.
 g.uniformMatrix4fv(getUniLoc(mainProgram, "u_tm"), false, texMatrix);
 
 // Tell the shader to get the texture from texture unit 0
 g.uniform1i(getUniLoc(mainProgram, "u_tx"), 0);
-
 
 // draw the quad (2 triangles, 6 vertices)
 g.drawArrays(g.TRIANGLES, 0, 6);

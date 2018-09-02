@@ -3,10 +3,7 @@ import {initState, Spacing, State, moveCamera} from './State';
 import {drawImage, g, getImg, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
 
 const map_text = getImg('./map.png');
-const player_text = getImg('./anto_anime.png');
-const enemy_text = getImg('./vending_animation.png');
-const sensor_text = getImg('./sensor.png');
-const drone_text = getImg('./drone.png');
+const char_text = getImg('./charatlas.png');
 
 const tiles: any = {"x": '#000000', "`":"#273e63", "\n":"#273e63"};
 const tileMap:any = { 
@@ -20,36 +17,21 @@ const tileMap:any = {
   'r': [ 20, 40, 20, 20 ],
   't': [ 40, 40, 20, 20 ] };
 
-  const pyerTiles:any = { 
-  'il': [ 1, 1, 20, 20 ],
-  'ir': [ 23, 1, 20, 20 ],
-  'j1l': [ 45, 1, 20, 20 ],
-  'j1r': [ 67, 1, 20, 20 ],
-  'j2l': [ 89, 1, 20, 20 ],
-  'j2r': [ 111, 1, 20, 20 ],
-  'w1l': [ 133, 1, 20, 20 ],
-  'w1r': [ 155, 1, 20, 20 ],
-  'w2l': [ 177, 1, 20, 20 ],
-  'w2r': [ 199, 1, 20, 20 ] };
-
-  const enemySprite = { 
-  'vo': [ 1, 1, 20, 13 ],
-  'v1l': [ 1, 16, 19, 21 ],
-  'v1r': [ 1, 39, 19, 21 ],
-  'v2l': [ 1, 62, 19, 21 ],
-  'v2r': [ 1, 85, 19, 21 ] };
-
-  const droneEnemy = { 
-    'd1l': [ 1, 1, 20, 20 ],
-  'd1r': [ 23, 1, 20, 20 ],
-  'd2l': [ 45, 1, 20, 20 ],
-  'd2r': [ 67, 1, 20, 20 ],
-  'd3l': [ 89, 1, 20, 20 ],
-  'd3r': [ 111, 1, 20, 20 ] };
-
-  const sensorSprite = { 
-    'sof': [ 1, 1, 16, 10 ],
-  'son': [ 19, 1, 16, 10 ] };
+  const charsAtlas = { 
+    'd1': [ 0, 0, 20, 20 ],
+  'd2': [ 20, 0, 20, 20 ],
+  'd3': [ 40, 0, 20, 20 ],
+  'pi1': [ 60, 0, 8, 20 ],
+  'pi2': [ 68, 0, 8, 20 ],
+  'pj1': [ 76, 0, 12, 17 ],
+  'pj2': [ 88, 0, 12, 17 ],
+  'pw1': [ 100, 0, 8, 20 ],
+  'pw2': [ 108, 0, 10, 19 ],
+  'sof': [ 118, 0, 16, 10 ],
+  'son': [ 134, 0, 16, 10 ],
+  'vo': [ 150, 0, 20, 13 ],
+  'vw1': [ 170, 0, 19, 21 ],
+  'vw2': [ 189, 0, 19, 21 ] };
 
   export function render(st: State, map:string,tsize: number, wsize: number){
     g.canvas.style.width = `${window.innerWidth}px`;
@@ -99,66 +81,68 @@ const tileMap:any = {
       gtn(rbX,rbY,tsize,wsize),
       gtn(lbX,lbY,tsize,wsize)]
          const i = Math.floor(1+(performance.now()* (0.02/5))%2);
-      
+         const b = (Math.round(performance.now()* 0.008) % 10) == 2 ? 2 : 1;
       if(k == "player"){
 
          var coords;
          if(onfl){
              if(pvx == 0 ){
-               coords = pyerTiles[`i${dir}`];
+               coords = charsAtlas[`pi${b}`];
              }else{
-               coords = pyerTiles[`w${i}${dir}`];
+               coords = charsAtlas[`pw${i}`];
              }
            }else{
-             coords = pyerTiles[`j${i}${dir}`];
+             coords = charsAtlas[`pj${i}`];
          }
+         const fx = dir == "l" ? 1.0 : -1.0;
          const [_xp,_yp,_wp,_hp] = coords;
-         drawImage(player_text.tex, // image
-                         player_text.w,
-                         player_text.h,
+         drawImage(char_text.tex, // image
+                         char_text.w,
+                         char_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
                         _hp, // source height
-                         Math.round(px-x),  // target x
+                         Math.round(px-x) + (fx < 0 ? _wp : 0),  // target x
                          Math.round(py-y), // target y
-                         pw, // target width
-                         ph // target height
+                         _wp*fx, // target width
+                         _hp
                      );
       }else if(k == "vending"){
          var coords;
          if(onfl){
              if(charact[10] && charact[10] == 0 ){
                //
-               coords = enemySprite[`vo`];
+               coords = charsAtlas[`vo`];
              }else{
-               coords = enemySprite[`v${i}${dir}`];
+               coords = charsAtlas[`vw${i}`];
              }
            }else{
-             coords = enemySprite[`v${i}${dir}`];
+             coords = charsAtlas[`vw${i}`];
          }
+         const fx = dir == "l" ? 1.0 : -1.0;
          let [_xp,_yp,_wp,_hp] = coords;
          // if(collides.indexOf(r*wsize+c) > -1){
-                drawImage(enemy_text.tex, // image
-                         enemy_text.w,
-                         enemy_text.h,
+                drawImage(char_text.tex, // image
+                         char_text.w,
+                         char_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
                         _hp, // source height
-                         Math.round(px-x),  // target x
+                         Math.round(px-x) + (fx < 0 ? _wp : 0),  // target x
                          Math.round(py-y), // target y
-                         pw, // target width
-                         ph // target height
+                         _wp*fx, // target width
+                         _hp
                      );
-                [_xp,_yp,_wp,_hp] = sensorSprite['son'];
+                [_xp,_yp,_wp,_hp] = charsAtlas['son'];
                 if(Math.floor((performance.now() * 0.008) % 2) == 0){
                   if(charact[10] && charact[10] == 0 ){
-                     coords = sensorSprite[`sof`];
+                     coords = charsAtlas[`sof`];
                    }
-                  drawImage(sensor_text.tex, // image
-                         sensor_text.w,
-                         sensor_text.h,
+                  drawImage(char_text.tex, // image
+                         char_text.w,
+                         char_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
@@ -175,30 +159,30 @@ const tileMap:any = {
       }else if(k == "drone"){
         const q = Math.round((performance.now()* 0.001)/ 0.04) % 3 + (1);
          var coords;
-         coords = droneEnemy[`d${q}${dir}`];
-
+         coords = charsAtlas[`d${q}`];
+          const fx = dir == "l" ? 1.0 : -1.0;
          let [_xp,_yp,_wp,_hp] = coords;
          // if(collides.indexOf(r*wsize+c) > -1){
-                drawImage(drone_text.tex, // image
-                         drone_text.w,
-                         drone_text.h,
+                drawImage(char_text.tex, // image
+                         char_text.w,
+                         char_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
                         _hp, // source height
-                         Math.round(px-x),  // target x
+                         Math.round(px-x) + (fx < 0 ? _wp : 0),  // target x
                          Math.round(py-y), // target y
-                         _wp, // target width
-                         _hp // target height
+                         _wp*fx, // target width
+                         _hp
                      );
-                [_xp,_yp,_wp,_hp] = sensorSprite['son'];
+                [_xp,_yp,_wp,_hp] = charsAtlas['son'];
                 if(Math.floor((performance.now() * 0.008) % 2) == 0){
                   if(charact[10] && charact[10] == 0 ){
-                     coords = sensorSprite['sof'];
+                     coords = charsAtlas['sof'];
                    }
-                  drawImage(sensor_text.tex, // image
-                         sensor_text.w,
-                         sensor_text.h,
+                  drawImage(char_text.tex, // image
+                         char_text.w,
+                         char_text.h,
                          _xp, // source x
                          _yp, // source y
                         _wp, // source width
