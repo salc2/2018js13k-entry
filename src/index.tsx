@@ -7,6 +7,7 @@ import {initState, Spacing, State, moveCamera, Character, Enemy, insertInCells} 
 //import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
+import {playTheme} from './music';
 
 export type Model = State;
 
@@ -147,13 +148,14 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
   const checkCollides = (m: Model):Model => {
     let [cam, characters,cells,pmtr]:Model = insertInCells(m,new Array(2500),20,50);
     const p = characters.filter(c => c[8] == "player")[0];
+    let pissed:Character;
     gab(p[0],p[1],p[2],p[3]).map(xy => gtn(xy[0],xy[1],tileSize,mapSize)).map(tn => cells[tn]).forEach(enemies =>{
       enemies.filter(e => e != p).forEach(e => {
         const [ex,ey,ew,eh] = e;
         if(collide([p[0],p[1],p[2],p[3]],[ex,ey,ew,eh])){
           if(p[1]+p[3] < ey+3){
             console.log("enemy down")
-            e[10] = 0;
+            pissed = e
           }else{
             console.log("player down")
           }
@@ -263,6 +265,7 @@ export const initStateCmd:[Model,Cmd<Action>] = [initState, createCmd(()=>{
         svg.style.display = "block";
       });
   }
+  playTheme();
 },null)]
 
 runGame( update, render,  subs, initStateCmd);  
