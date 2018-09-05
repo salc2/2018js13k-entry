@@ -162,7 +162,12 @@ const tileMap:any = {
       }else if(k == "drone"){
         const q = Math.round((performance.now()* 0.001)/ 0.04) % 3 + (1);
          var coords;
-         coords = charsAtlas[`d${q}`];
+         if(charact[11] && charact[11] > 0){
+           coords = charsAtlas[`d1`];
+         }else{
+           coords = charsAtlas[`d${q}`];
+         }
+         
           const fx = dir == "l" ? 1.0 : -1.0;
          let [_xp,_yp,_wp,_hp] = coords;
          // if(collides.indexOf(r*wsize+c) > -1){
@@ -180,9 +185,12 @@ const tileMap:any = {
                      );
                 [_xp,_yp,_wp,_hp] = charsAtlas['son'];
                 if(Math.floor((performance.now() * 0.008) % 2) == 0){
-                  if(charact[10] && charact[10] == 0 ){
-                     coords = charsAtlas['sof'];
+                    if(charact[11] && charact[11] > 0){
+                     [_xp,_yp,_wp,_hp] = charsAtlas['sof'];
+                   }else{
+                     [_xp,_yp,_wp,_hp] = charsAtlas['son'];
                    }
+
                   drawImage(char_text.tex, // image
                          char_text.w,
                          char_text.h,

@@ -41,7 +41,7 @@ export interface CameraProps { st: Model; onChange:((a:Action) => void);}
 export const Camera = (props: CameraProps) => {
 
     const [cam, players, cells ,[gra, walk, jum]]:Model = props.st;
-    const [px,py,pw,ph,pVx,pVy,dir,onflo,k] = players.filter( p => p[8] == "player")[0];
+    const [px,py,pw,ph,pVx,pVy,dir,onflo,k,,] = players.filter( p => p[8] == "player")[0];
     const [cx,cy,cw,ch,cvx,cvy,tgt] = cam;
 
      function onClickCanvas(event: MouseEvent){
@@ -160,8 +160,8 @@ switch (a.kind) {
     const [xx,yy,ww,hh] = a.val;
     return [[cam, players.map( p =>{
         if(p[8] == "player"){
-            const [p_x,p_y,p_w,p_h,p_vx,p_vy,dir,onf,k,id,tg]:Body = p;
-            const p_p:Body = [xx,yy,ww,hh,p_vx,p_vy,dir,onf,k,id,tg]
+            const [p_x,p_y,p_w,p_h,p_vx,p_vy,dir,onf,k,id,tg,act]:Body = p;
+            const p_p:Body = [xx,yy,ww,hh,p_vx,p_vy,dir,onf,k,id,tg,act]
             return p_p;
         }else{
             return p;

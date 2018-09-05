@@ -37,18 +37,23 @@ export function moveBody(
     canMoveRight:boolean = true,
     canMoveLeft:boolean = true,
     amIdead = dead;
+    const isEnemy = (s:string) => s == "vending" || s == "drone";
 
-    gab(x,y,body[2],body[3]).map(xy => gtn(xy[0],xy[1],tileSize,worldSize)).map(tn => cells[tn]).forEach(bodies =>{
+    gab(bX,bY,body[2],body[3]).map(xy => gtn(xy[0],xy[1],tileSize,worldSize)).map(tn => cells[tn]).forEach(bodies =>{
         if(bodies){
             bodies.filter(e => e[9] != id).forEach(e => {
                 const [ex,ey,ew,eh] = e;
                 if(collide([x,y,body[2],body[3]],[ex,ey,ew,eh])){
                     canMoveUp = !(y < bY);
-                    canMoveDown = !(y > bY);
+                    canMoveDown = !(y > bY) || ey+eh-4 < bY;
                     canMoveRight = !(x > bX) || (bY+bH-4)<ey;
                     canMoveLeft = !(x < bX) || (bY+bH-4)<ey;
-                    if(e[8] == "player" && ey+eh-5 < body[1]){
-                        amIdead = 1000;
+                    if(e[8] == "player" && ey+eh-2 < bY){
+                        amIdead = 5000;
+                    }
+                    if(kind == "player" && bY+bH-2 < ey ){
+                        nVy = -0.15
+                        console.log("nunca?")
                     }
                 }
             })
@@ -88,12 +93,12 @@ export function moveBody(
         }
     }
     if(amIdead > 0){
+        if(kind == "vending"){
         nH = 13;
+        }else if(kind == "drone"){
+        nH = 15;
+        }
         nVx = 0;
-    }
-    if(kind == "vending"){
-    console.log("quien soy? "+kind)
-
     }
     return [nX,nY,bW,nH,nVx,nVy,ndir,onf,kind,id,ntarget,amIdead];
 }

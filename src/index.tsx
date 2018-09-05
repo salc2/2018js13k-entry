@@ -2,7 +2,7 @@ import {Subscriber, create} from './sub';
 import {Cmd, emptyCmd, create as createCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
-import {initState, Spacing, State, moveCamera, Body, Enemy, insertInCells} from './state';
+import {initState, Spacing, State, moveCamera, Body, insertInCells} from './state';
 //import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
@@ -139,9 +139,10 @@ const map = decodeMap("2-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3
     let [cam, characters,cells,pmtr]:Model = insertInCells(m,new Array(2500),20,50);
     const gravity = pmtr[0];
     const n_characters = characters.map(c => {
-      const [px,py,pw,ph,pVx,pVy,dir,onflo,kind,,] = c;
+      const [px,py,pw,ph,pVx,pVy,dir,onflo,kind,id,,act] = c;
       const playr:Body = moveBody(c,(px+pVx*delta),(py+pVy*delta),map,20,50,cells);
-      playr[5] = Math.min(pVy+gravity,gravity)  
+      playr[5] = Math.min(pVy+gravity,gravity)
+      //playr[11] = Math.max(0,act-delta)  
       return playr;
     });
     const pp = characters.filter(c => c[8] == "player")[0];
@@ -180,8 +181,8 @@ const map = decodeMap("2-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3
     const vplayer = pmtr[1];
     const n_characters = characters.map(c =>{
       if(c[8] == 'player'){
-              const [px,py,pw,ph,pVx,pVy,dir,onflo, kind,id,] = c;
-              const nplayer:Body = [px,py,pw,ph,-vplayer,pVy,"l",onflo, kind,id, 0];
+              const [px,py,pw,ph,pVx,pVy,dir,onflo, kind,id,act] = c;
+              const nplayer:Body = [px,py,pw,ph,-vplayer,pVy,"l",onflo, kind,id, 0,act];
               return nplayer;
       }else{
         return c;
@@ -196,8 +197,8 @@ const map = decodeMap("2-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3
     const vplayer = pmtr[1];
     const n_characs = characters.map( c => {
       if(c[8] == 'player'){
-        const [px,py,pw,ph,pVx,pVy,dir,onflo, k, id,] = c;
-        const n_player: Body = [px,py,pw,ph,vplayer,pVy,"r",onflo, k,id, 0];
+        const [px,py,pw,ph,pVx,pVy,dir,onflo, k, id,act] = c;
+        const n_player: Body = [px,py,pw,ph,vplayer,pVy,"r",onflo, k,id, 0,act];
         return n_player;
         }else{
           return c;
@@ -213,9 +214,9 @@ const map = decodeMap("2-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3
     const jumpVel = pmtr[2], gravity = pmtr[0];
     const n_chars = chars.map(c => {
       if( c[8] == 'player'){
-          const [px,py,pw,ph,pVx,pVy,dir,onflo,k,id,] = c;
+          const [px,py,pw,ph,pVx,pVy,dir,onflo,k,id,act] = c;
           if(onflo){
-            const p: Body = [px,py,pw,ph,pVx,jumpVel,dir,false,k,id, 0]
+            const p: Body = [px,py,pw,ph,pVx,jumpVel,dir,false,k,id,0,act]
             return p;
           }else{
             return c;
@@ -231,8 +232,8 @@ const map = decodeMap("2-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3
     const [cam, chars,cells,prmtr]:Model = m;
     const n_chars = chars.map(c =>{
       if(c[8] == 'player'){
-        const [px,py,pw,ph,pVx,pVy,dir,onflo,k,id,] = c;
-        const n_char:Body = [px,py,pw,ph,0,pVy,dir,onflo,k,id, 0]
+        const [px,py,pw,ph,pVx,pVy,dir,onflo,k,id,act] = c;
+        const n_char:Body = [px,py,pw,ph,0,pVy,dir,onflo,k,id, 0,act]
         return n_char;
       }else{
          return c;
