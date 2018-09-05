@@ -18,7 +18,7 @@ export type State = [Camera, Body[], Cells, Parameter];
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Player = [80,45,8,20,0,0.058,'r',true, "player", 0, 0];
 const enemy:Enemy = [300,45,19,21,0.03,0.058,'r',true, "vending",1, 180,1];
-const enemy2:Enemy = [200,45,19,21,0.03,0.058,'r',true, "drone",2, 300,1];
+const enemy2:Enemy = [800,45,19,21,0.03,0.058,'r',true, "drone",2, 300,1];
 const desk1:Furniture = [85,45,20,10,0,0,'r',true, "furniture",3, 0,0];
 
 // gravity, walkvel, jumpvel
