@@ -40,7 +40,7 @@ export interface CameraProps { st: Model; onChange:((a:Action) => void);}
 
 export const Camera = (props: CameraProps) => {
 
-    const [cam, players, cells ,[gra, walk, jum]]:Model = props.st;
+    const [cam, players, cells ,[gra, walk, jum],map]:Model = props.st;
     const [px,py,pw,ph,pVx,pVy,dir,onflo,k,,] = players.filter( p => p[8] == "player")[0];
     const [cx,cy,cw,ch,cvx,cvy,tgt] = cam;
 
@@ -148,14 +148,14 @@ export const renderDebug = (onEvent:(a:Action) => void) => (m: Model) => {
 }
 
 export const updateDebug:Update<Action,Model> = (a: Action, m: Model) =>{
-      const [cam, players,cells,pmt] = m;
+      const [cam, players,cells,pmt,map] = m;
 
 switch (a.kind) {
     case "parameter":
-    return [[cam, players, cells, a.val],emptyCmd<Action>()];
+    return [[cam, players, cells, a.val,map],emptyCmd<Action>()];
     case "cameraPos": 
     const moved:CameraType = moveCamera(cam,a.val[0],a.val[1],1000,1000);
-    return [[moved, players, cells, pmt] ,emptyCmd<Action>()];
+    return [[moved, players, cells, pmt,map] ,emptyCmd<Action>()];
     case "playerVal": 
     const [xx,yy,ww,hh] = a.val;
     return [[cam, players.map( p =>{
@@ -166,7 +166,7 @@ switch (a.kind) {
         }else{
             return p;
         }
-    }), cells, pmt],emptyCmd<Action>()];
+    }), cells, pmt, map],emptyCmd<Action>()];
     default:
       return update(a,m);
   }

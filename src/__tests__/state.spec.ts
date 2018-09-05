@@ -1,16 +1,18 @@
 import {moveCamera, tilesFromMap, Spacing, State, Body, Camera, insertInCells} from '../state';
+import {update} from '../index';
+import {} from '../actions';
 import {gtn} from '../collision'
 
 test('players in map should be in cells', () =>{
     const p: Body = [23,23,1,1,0,0,'l',true,'player', 0,1,0];
-    const s: State = [[0,0,0,0,0,0,0], [p],[],[0,0,0]];
+    const s: State = [[0,0,0,0,0,0,0], [p],[],[0,0,0],""];
     expect(insertInCells(s,new Array(4),20,2)[2][3]).toEqual([p])
 });
 
 test('players and enemy in map should be in cells', () =>{
     const p: Body = [43,23,1,1,0,0,'l',true,'player', 0,1,0];
     const e: Body = [53,25,1,1,0,0,'r',true,'vending', 0,2,0];
-    const s: State = [[0,0,0,0,0,0,0], [p,e],[],[0,0,0]];
+    const s: State = [[0,0,0,0,0,0,0], [p,e],[],[0,0,0],""];
     expect(insertInCells(s,new Array(25),20,5)[2][7]).toEqual([p,e])
 });
 
@@ -26,6 +28,13 @@ test('move camera from 0,0 to 1005, 3335 should keep inside limits', () => {
 
 test('move camera to negative', () => {
     const camera:Camera = [5,4,180,100,0,0,0];
+  expect(moveCamera(camera,-100,-100,1000,1000)).toEqual([0,0,180,100,0,0,0]);
+});
+
+test('test using doors', () => {
+  const player:Body = [21,21,8,20,0,0.058,'r',true, "player", 0, 0,0];
+  const camera:Camera = [5,4,180,100,0,0,0];
+  const state:State = [camera,[player],[], [0,0,0],""];
   expect(moveCamera(camera,-100,-100,1000,1000)).toEqual([0,0,180,100,0,0,0]);
 });
 
