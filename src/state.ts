@@ -5,11 +5,12 @@ type Dir = "r" | "l"
 type Kind = "player" | "vending" | "drone" | "furniture";
 // x,y,w,h,vx,vz,target
 type Id = number;
+type Active = number;
 export type Spacing = [number,number,number,number,number,number];
 export type Camera = [number,number,number,number,number,number,number];
 export type Player = [number,number,number,number,number,number,Dir,OnFloor, Kind,Id, number];
-export type Enemy = [number,number,number,number,number,number,Dir,OnFloor, Kind,Id, number, number];
-export type Furniture = [number,number,number,number,number,number,Dir,OnFloor, Kind,Id, number, number];
+export type Enemy = [number,number,number,number,number,number,Dir,OnFloor, Kind,Id, number, Active];
+export type Furniture = [number,number,number,number,number,number,Dir,OnFloor, Kind,Id, number, Active];
 export type Body = Player | Enemy | Furniture;
 export type Parameter = [number,number,number];
 export type Cells = Body[][];
@@ -17,8 +18,8 @@ export type State = [Camera, Body[], Cells, Parameter];
 
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Player = [80,45,8,20,0,0.058,'r',true, "player", 0, 0];
-const enemy:Enemy = [300,45,19,21,0.03,0.058,'r',true, "vending",1, 180,1];
-const enemy2:Enemy = [800,45,19,21,0.03,0.058,'r',true, "drone",2, 300,1];
+const enemy:Enemy = [300,45,19,21,0.03,0.058,'r',true, "vending",1, 180,0];
+const enemy2:Enemy = [800,45,19,21,0.03,0.058,'r',true, "drone",2, 300,0];
 const desk1:Furniture = [85,45,20,10,0,0,'r',true, "furniture",3, 0,0];
 
 // gravity, walkvel, jumpvel

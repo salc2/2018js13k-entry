@@ -22,19 +22,21 @@ export function moveBody(
     tileSize: number, 
     worldSize: number,
     cells: Cells): Body{
+
     const range_guard = 100;
-    const [bX,bY,bW,bH,bVx,bVy,dir,onflor,kind,id,trg] = body;
+    const [bX,bY,bW,bH,bVx,bVy,dir,onflor,kind,id,trg,dead] = body;
     const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = gab(Math.floor(x),Math.floor(y),bW,bH);
     const tRb = gtn(rbX,rbY,tileSize,worldSize);
     const tLb = gtn(lbX,lbY,tileSize,worldSize);
     const tRt = gtn(rtX,rtY,tileSize,worldSize);
     const tLt = gtn(ltX,ltY,tileSize,worldSize);
-    var nY = bY, nX = bX, onf = true, ntarget = trg, ndir = dir, nVx = bVx;
+    var nY = bY, nX = bX, onf = true, ntarget = trg, ndir = dir, nVx = bVx, nH = bH, nVy = bVy;
     
     var canMoveUp:boolean = true,
     canMoveDown:boolean = true,
     canMoveRight:boolean = true,
-    canMoveLeft:boolean = true;
+    canMoveLeft:boolean = true,
+    amIdead = dead;
 
     gab(x,y,body[2],body[3]).map(xy => gtn(xy[0],xy[1],tileSize,worldSize)).map(tn => cells[tn]).forEach(bodies =>{
         if(bodies){
@@ -45,6 +47,9 @@ export function moveBody(
                     canMoveDown = !(y > bY);
                     canMoveRight = !(x > bX) || (bY+bH-4)<ey;
                     canMoveLeft = !(x < bX) || (bY+bH-4)<ey;
+                    if(e[8] == "player" && ey+eh-5 < body[1]){
+                        amIdead = 1000;
+                    }
                 }
             })
         }});
@@ -67,7 +72,7 @@ export function moveBody(
         onf = false;
         nY = y;
     }
-    if(kind == "vending" || kind == "drone"){
+    if( (kind == "vending" || kind == "drone") && amIdead == 0){
         if(dir == "r"){
             if(nX >= trg){
                 ntarget = nX - range_guard
@@ -82,8 +87,15 @@ export function moveBody(
             } 
         }
     }
-    
-    return [nX,nY,bW,bH,nVx,bVy,ndir,onf,kind,id,ntarget];
+    if(amIdead > 0){
+        nH = 13;
+        nVx = 0;
+    }
+    if(kind == "vending"){
+    console.log("quien soy? "+kind)
+
+    }
+    return [nX,nY,bW,nH,nVx,nVy,ndir,onf,kind,id,ntarget,amIdead];
 }
 
 export function collide(body1:[number,number,number,number],body2:[number,number,number,number]):boolean {

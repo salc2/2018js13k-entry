@@ -111,7 +111,7 @@ const tileMap:any = {
       }else if(k == "vending"){
          var coords;
          if(onfl){
-             if(charact[10] && charact[10] == 0 ){
+             if(charact[11] && charact[11] > 0 ){
                //
                coords = charsAtlas[`vo`];
              }else{
@@ -135,11 +135,14 @@ const tileMap:any = {
                          _wp*fx, // target width
                          _hp
                      );
-                [_xp,_yp,_wp,_hp] = charsAtlas['son'];
                 if(Math.floor((performance.now() * 0.008) % 2) == 0){
-                  if(charact[10] && charact[10] == 0 ){
-                     coords = charsAtlas[`sof`];
+
+                  if(charact[11] && charact[11] > 0){
+                     [_xp,_yp,_wp,_hp] = charsAtlas['sof'];
+                   }else{
+                     [_xp,_yp,_wp,_hp] = charsAtlas['son'];
                    }
+
                   drawImage(char_text.tex, // image
                          char_text.w,
                          char_text.h,
