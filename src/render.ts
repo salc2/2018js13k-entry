@@ -9,7 +9,7 @@ const tiles: any = {"x": '#000000', "`":"#273e63", "\n":"#273e63"};
 const tileMap:any = { 
   'c': [ 0, 0, 20, 20 ],
   'w': [ 20, 0, 20, 20 ],
-  'd': [ 40, 0, 20, 20 ],
+  'd': [ 40, 10, 20, 10 ],
   'f': [ 0, 20, 20, 20 ],
   'l': [ 20, 20, 20, 20 ],
   's': [ 40, 20, 20, 20 ],
@@ -195,6 +195,22 @@ const tileMap:any = {
                 }
                 
 
+          //}
+      }else if(k == "furniture"){
+         var coords = tileMap['d'];
+         let [_xp,_yp,_wp,_hp] = coords;
+                drawImage(map_text.tex, // image
+                         map_text.w,
+                         map_text.h,
+                         _xp, // source x
+                         _yp, // source y
+                        _wp, // source width
+                        _hp, // source height
+                         Math.round(px-x),  // target x
+                         Math.round(py-y), // target y
+                         _wp, // target width
+                         _hp
+                     );
           //}
       }
     })

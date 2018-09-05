@@ -1,5 +1,5 @@
 import {gtn, gab, moveBody, collide} from '../collision';
-import {Character} from '../state';
+import {Body} from '../state';
 
 test('tile number by x,y position when', () => {
   expect(gtn(5,4,20,2)).toBe(0);
@@ -14,24 +14,24 @@ test('AABB of a body in [5,5] with w:40 and h:25 should be [5,5|45,5|45,30|5,30]
 });
 
 test('moving bodies in a map with solid tile', () => {
-    const body:Character = [5,6,20,20,0,0,"r",true,"player", 0];
+    const body:Body = [5,6,20,20,0,0,"r",true,"player", 0,1];
     const map = "``````````xxxxx``````````";
 
-  expect(moveBody(body,7,8,map,20,5)).toEqual([7,8,20,20,0,0,"r",false,"player", 0]);
-  expect(moveBody(body,25,25,map,20,5)).toEqual(body);
+  expect(moveBody(body,7,8,map,20,5,[])).toEqual([7,8,20,20,0,0,"r",false,"player", 0,1]);
+  expect(moveBody(body,25,25,map,20,5,[])).toEqual(body);
 });
 
-type Body = [number,number,number,number];
+type Object = [number,number,number,number];
 
 test('collision between two bodies 1', () => {
-  const body1:Body = [0,0,20,20];
-  const body2:Body = [19,0,20,20];
+  const body1:Object = [0,0,20,20];
+  const body2:Object = [19,0,20,20];
   expect(collide(body1,body2)).toEqual(true);
 });
 
 test('collision between two bodies 2', () => {
-  const body1:Body = [0,0,20,20];
-  const body2:Body = [0,19,20,20];
+  const body1:Object = [0,0,20,20];
+  const body2:Object = [0,19,20,20];
   expect(collide(body1,body2)).toEqual(true);
 });
 

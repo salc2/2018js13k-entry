@@ -5,7 +5,7 @@ import {Time, Action as GameAction} from './actions';
 import {update , initStateCmd,render,subs, Model as GameModel} from './index';
 import {Cmd, emptyCmd} from './cmd';
 import {initState, Spacing, State, moveCamera, 
-    Character,Camera as CameraType} from './state';
+    Body,Camera as CameraType} from './state';
     import {canvas,drawImage, g} from './render.webgl';
 
 import 'fpsmeter';
@@ -160,8 +160,8 @@ switch (a.kind) {
     const [xx,yy,ww,hh] = a.val;
     return [[cam, players.map( p =>{
         if(p[8] == "player"){
-            const [p_x,p_y,p_w,p_h,p_vx,p_vy,dir,onf,k,tg]:Character = p;
-            const p_p:Character = [xx,yy,ww,hh,p_vx,p_vy,dir,onf,k,tg]
+            const [p_x,p_y,p_w,p_h,p_vx,p_vy,dir,onf,k,id,tg]:Body = p;
+            const p_p:Body = [xx,yy,ww,hh,p_vx,p_vy,dir,onf,k,id,tg]
             return p_p;
         }else{
             return p;

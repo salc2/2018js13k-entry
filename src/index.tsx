@@ -3,7 +3,7 @@ import {Cmd, emptyCmd, create as createCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
 import {jump as soundJump} from './sounds';
-import {initState, Spacing, State, moveCamera, Character, Enemy, insertInCells} from './state';
+import {initState, Spacing, State, moveCamera, Body, Enemy, insertInCells} from './state';
 //import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
@@ -114,7 +114,7 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
 
 
 
-const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w```````````w````````w````````````w`````````````s``s````s``````s`s````````s``s`s``````s`````rcrrprsrrspcrrscrrprrsrsrprrprrrsrrsrscrrprcsrrrrrffffffdfffffffffdfffffffdffffffdffffffffffffffffffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````";
+const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w```````````w````````w````````````w`````````````s``s````s``````s`s````````s``s`s``````s`````rcrrprsrrspcrrscrrprrsrsrprrprrrsrrsrscrrprcsrrrrrffffffffffffffffffffffffffffffffffffffffffffffffffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````";
 
   const cameraMotion = (m:Model, delta: number):Model => {
     const [cam, characters,cells,pmtr]:Model = m;
@@ -127,11 +127,11 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
   }
 
   const applyMotion = (m: Model, delta: number):Model => {
-    let [cam, characters,cells,pmtr]:Model = m;
+    let [cam, characters,cells,pmtr]:Model = insertInCells(m,new Array(2500),20,50);
     const gravity = pmtr[0];
     const n_characters = characters.map(c => {
-      const [px,py,pw,ph,pVx,pVy,dir,onflo,kind] = c;
-      const playr:Character = moveBody(c,(px+pVx*delta),(py+pVy*delta),map,20,50);
+      const [px,py,pw,ph,pVx,pVy,dir,onflo,kind,,] = c;
+      const playr:Body = moveBody(c,(px+pVx*delta),(py+pVy*delta),map,20,50,cells);
       playr[5] = Math.min(pVy+gravity,gravity)  
       return playr;
     });
@@ -148,7 +148,7 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
   const checkCollides = (m: Model):Model => {
     let [cam, characters,cells,pmtr]:Model = insertInCells(m,new Array(2500),20,50);
     const p = characters.filter(c => c[8] == "player")[0];
-    let pissed:Character;
+    let pissed:Body;
     gab(p[0],p[1],p[2],p[3]).map(xy => gtn(xy[0],xy[1],tileSize,mapSize)).map(tn => cells[tn]).forEach(enemies =>{
       enemies.filter(e => e != p).forEach(e => {
         const [ex,ey,ew,eh] = e;
@@ -171,8 +171,8 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const vplayer = pmtr[1];
     const n_characters = characters.map(c =>{
       if(c[8] == 'player'){
-              const [px,py,pw,ph,pVx,pVy,dir,onflo, kind] = c;
-              const nplayer:Character = [px,py,pw,ph,-vplayer,pVy,"l",onflo, kind, 0];
+              const [px,py,pw,ph,pVx,pVy,dir,onflo, kind,id,] = c;
+              const nplayer:Body = [px,py,pw,ph,-vplayer,pVy,"l",onflo, kind,id, 0];
               return nplayer;
       }else{
         return c;
@@ -187,8 +187,8 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const vplayer = pmtr[1];
     const n_characs = characters.map( c => {
       if(c[8] == 'player'){
-        const [px,py,pw,ph,pVx,pVy,dir,onflo, k] = c;
-        const n_player: Character = [px,py,pw,ph,vplayer,pVy,"r",onflo, k, 0];
+        const [px,py,pw,ph,pVx,pVy,dir,onflo, k, id,] = c;
+        const n_player: Body = [px,py,pw,ph,vplayer,pVy,"r",onflo, k,id, 0];
         return n_player;
         }else{
           return c;
@@ -204,9 +204,9 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const jumpVel = pmtr[2], gravity = pmtr[0];
     const n_chars = chars.map(c => {
       if( c[8] == 'player'){
-          const [px,py,pw,ph,pVx,pVy,dir,onflo,k] = c;
+          const [px,py,pw,ph,pVx,pVy,dir,onflo,k,id,] = c;
           if(onflo){
-            const p: Character = [px,py,pw,ph,pVx,jumpVel,dir,false,k, 0]
+            const p: Body = [px,py,pw,ph,pVx,jumpVel,dir,false,k,id, 0]
             return p;
           }else{
             return c;
@@ -222,8 +222,8 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     const [cam, chars,cells,prmtr]:Model = m;
     const n_chars = chars.map(c =>{
       if(c[8] == 'player'){
-        const [px,py,pw,ph,pVx,pVy,dir,onflo,k] = c;
-        const n_char:Character = [px,py,pw,ph,0,pVy,dir,onflo,k, 0]
+        const [px,py,pw,ph,pVx,pVy,dir,onflo,k,id,] = c;
+        const n_char:Body = [px,py,pw,ph,0,pVy,dir,onflo,k,id, 0]
         return n_char;
       }else{
          return c;
@@ -232,14 +232,14 @@ const map = "ttltttltttltttltttltttltttltttltttltttltttltttlttt````````w````````
     return [cam, n_chars,cells,prmtr]; 
   }
 
-const applyPhysics = (m: Model, delta: number):Model => applyMotion(checkCollides(m),delta);
+const applyPhysics = (m: Model, delta: number):Model => applyMotion(m,delta);
 
 export const update: Update<Action,Model> = (a: Action, m: Model) => {
   switch (a.kind) {
     case "t":
       return [ applyPhysics(m,a.delta) ,emptyCmd<Action>()];
     case "up":
-      return [ jump(m), createCmd(() => {soundJump.play()},null)];
+      return [ jump(m), emptyCmd<Action>()];
     case "lp":
       return [ walkLeft(m),emptyCmd<Action>()];
     case "rp":
@@ -265,7 +265,7 @@ export const initStateCmd:[Model,Cmd<Action>] = [initState, createCmd(()=>{
         svg.style.display = "block";
       });
   }
-  playTheme();
+ // playTheme();
 },null)]
 
 runGame( update, render,  subs, initStateCmd);  
