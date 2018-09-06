@@ -1,6 +1,6 @@
 import {moveCamera, tilesFromMap, Spacing, State, Body, Camera, insertInCells} from '../state';
 import {update} from '../index';
-import {} from '../actions';
+import {Action} from '../actions';
 import {gtn} from '../collision'
 
 test('players in map should be in cells', () =>{
@@ -33,9 +33,16 @@ test('move camera to negative', () => {
 
 test('test using doors', () => {
   const player:Body = [21,21,8,20,0,0.058,'r',true, "player", 0, 0,0];
-  const camera:Camera = [5,4,180,100,0,0,0];
-  const state:State = [camera,[player],[], [0,0,0],""];
-  expect(moveCamera(camera,-100,-100,1000,1000)).toEqual([0,0,180,100,0,0,0]);
+  const door1:Body = [21,21,20,20,0,0,'r',true, "door", 1, 2,0];
+  const door2:Body = [101,21,20,20,0,0,'r',true, "door", 2, 1,0];
+  const camera:Camera = [10,10,180,100,0,0,0];
+  const state:State = [camera,[player,door1,door2],[], [0,0,0],""];
+  const act:Action = {kind: "use",delta: 16};
+
+  const playerExpected:Body = [101,21,8,20,0,0.058,'r',true, "player", 0, 0,0];
+  const cameraExpected:Camera = [90,10,180,100,0,0,0];
+  const stateExpeced:State = [cameraExpected,[playerExpected,door1,door2],[], [0,0,0],""];
+  expect(update(act,state)).toEqual(stateExpeced);
 });
 
 

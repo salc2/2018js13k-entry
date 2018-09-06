@@ -25,7 +25,7 @@ export function moveBody(
 
     const range_guard = 100;
     const [bX,bY,bW,bH,bVx,bVy,dir,onflor,kind,id,trg,dead] = body;
-    const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = gab(Math.floor(x),Math.floor(y),bW,bH);
+    const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = gab(Math.floor(bX),Math.floor(bY),bW,bH);
     const tRb = gtn(rbX,rbY,tileSize,worldSize);
     const tLb = gtn(lbX,lbY,tileSize,worldSize);
     const tRt = gtn(rtX,rtY,tileSize,worldSize);
@@ -43,17 +43,14 @@ export function moveBody(
         if(bodies){
             bodies.filter(e => e[9] != id).forEach(e => {
                 const [ex,ey,ew,eh] = e;
-                if(collide([x,y,body[2],body[3]],[ex,ey,ew,eh])){
-                    canMoveUp = !(y < bY);
-                    canMoveDown = !(y > bY) || ey+eh-4 < bY;
-                    canMoveRight = !(x > bX) || (bY+bH-4)<ey;
-                    canMoveLeft = !(x < bX) || (bY+bH-4)<ey;
+                const above = (bY+bH-4)<ey, left = (x > bX && ex < bX), right = (x < bX && ex > bX);
+                if(collide([bX,bY,body[2],body[3]],[ex,ey,ew,eh])){
+                    canMoveUp = !(y < bY) || above;
+                    canMoveDown = !(y > bY) || ey+eh-4 < bY || (right || left);
+                    canMoveRight = !(x > bX) || above || left;
+                    canMoveLeft = !(x < bX) || above || right;
                     if(e[8] == "player" && ey+eh-2 < bY){
                         amIdead = 5000;
-                    }
-                    if(kind == "player" && bY+bH-2 < ey ){
-                        nVy = -0.15
-                        console.log("nunca?")
                     }
                 }
             })
@@ -105,7 +102,7 @@ export function moveBody(
 
 export function collide(body1:[number,number,number,number],body2:[number,number,number,number]):boolean {
     return body1[0] < body2[0] + body2[2] && 
-    body1[0] + (body1[2]/2) > body2[0] &&
+    body1[0] + (body1[2]) > body2[0] &&
     body1[1] < body2[1] + body2[3] && 
     body1[1] + body1[3] > body2[1];
 }

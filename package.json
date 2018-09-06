@@ -21,6 +21,7 @@
     "fpsmeter": "^0.3.1",
     "http-server": "^0.11.1",
     "jest": "^23.5.0",
+    "jest-raw-loader": "^1.0.1",
     "raw-loader": "^0.5.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
