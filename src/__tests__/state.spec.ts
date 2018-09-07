@@ -39,18 +39,21 @@ gab(px,py,pw,ph).map(xy => gtn(xy[0],xy[1],20,10)).map(tn => cells[tn]).forEach(
   if(bodies){
     const door = bodies.filter( b => b[8] == "door")
   if(door.length > 0){
-    const parId = door[0][9], [xToGo,yToGo,...rs] = 
-    characters.filter( oth => oth[10] == parId)[0];
+     const parId = door[0][10];
+     const dest = characters.filter( oth => oth[9] == parId)[0];
+     xToGo = dest[0];
+     yToGo = dest[1];
   }
   }
 });
+
 if(xToGo && yToGo){
-   const others = characters.filter(c => c[8] != "player")[0];
    cam[0] = xToGo;
    cam[1] = yToGo;
    player[0] = xToGo;
    player[1] = yToGo;
-    const ns: State = [cam, [player].concat(others),cells,pmtr,map ]; 
+   console.log(player)
+    const ns: State = [cam, characters,[],pmtr,map ]; 
   return ns;
 }else{
   return m;
@@ -66,7 +69,7 @@ test('test using doors', () => {
   const state:State = [camera,[player,door1,door2],[], [0,0,0],""];
 
   const playerExpected:Body = [101,21,8,20,0,0.058,'r',true, "player", 0, 0,0];
-  const cameraExpected:Camera = [90,10,180,100,0,0,0];
+  const cameraExpected:Camera = [101,21,180,100,0,0,0];
   const stateExpeced:State = [cameraExpected,[playerExpected,door1,door2],[], [0,0,0],""];
   expect(useDoors(state)).toEqual(stateExpeced);
 });
