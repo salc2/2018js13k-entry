@@ -6,6 +6,7 @@
   "scripts": {
     "watch": "webpack --config webpack.config --colors --watch & npm start",
     "start": "http-server dist",
+    "compile": "webpack --config webpack.config --colors",
     "test": "jest"
   },
   "keywords": [

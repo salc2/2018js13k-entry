@@ -114,17 +114,17 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
   });
 
   const cameraMotion = (m:Model, delta: number):Model => {
-    const [cam, characters,cells,pmtr,map]:Model = m;
+    const [cam, characters,cells,pmtr,map,inv]:Model = m;
     if(cam[0] < cam[6]){
       moveCamera(cam,cam[6] * 0.075 * delta * 0.3,cam[1],1000,1000 )
     }else if(cam[0] > cam[6]){
       moveCamera(cam,cam[6] * 0.075 * delta * 0.3,cam[1],1000,1000 )
     }
-    return [cam, characters,cells,pmtr,map];
+    return [cam, characters,cells,pmtr,map,inv];
   }
 
   const applyMotion = (m: Model, delta: number):Model => {
-    let [cam, characters,cells,pmtr,map]:Model = insertInCells(m,new Array(m[4].length),20,50);
+    let [cam, characters,cells,pmtr,map,inv]:Model = insertInCells(m,new Array(m[4].length),20,50);
     const gravity = pmtr[0];
     const n_characters = characters.map(c => {
       const [px,py,pw,ph,pVx,pVy,dir,onflo,kind,id,,act] = c;
@@ -140,11 +140,11 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
     }else if(pp[0] > (cam[0]+ cam[2])-(cqtr*4)){
       cam = moveCamera(cam,cam[0] + (delta*0.075),cam[1],1000,1000);
     }
-    return [cam, n_characters,cells,pmtr,map];
+    return [cam, n_characters,cells,pmtr,map,inv];
   }
 
   const walkLeft = (m: Model):Model => {
-    const [cam, characters,cells,pmtr,map]:Model = m;
+    const [cam, characters,cells,pmtr,map,inv]:Model = m;
     const vplayer = pmtr[1];
     const n_characters = characters.map(c =>{
       if(c[8] == 'player'){
@@ -155,12 +155,12 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
         return c;
       }
     })
-    const nm: Model = [cam,n_characters,cells,pmtr,map]; 
+    const nm: Model = [cam,n_characters,cells,pmtr,map,inv]; 
     return nm;
   }
 
   const walkRight = (m: Model):Model => {
-    const [cam, characters,cells,pmtr,map]:Model = m;
+    const [cam, characters,cells,pmtr,map,inv]:Model = m;
     const vplayer = pmtr[1];
     const n_characs = characters.map( c => {
       if(c[8] == 'player'){
@@ -171,13 +171,13 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
           return c;
         }
     });
-    const nm: Model = [cam, n_characs,cells,pmtr,map]; 
+    const nm: Model = [cam, n_characs,cells,pmtr,map,inv]; 
     return nm;
     }
   
 
   const jump = (m: Model):Model => {
-    const [cam, chars,cells,pmtr,map]:Model = m;
+    const [cam, chars,cells,pmtr,map,inv]:Model = m;
     const jumpVel = pmtr[2], gravity = pmtr[0];
     const n_chars = chars.map(c => {
       if( c[8] == 'player'){
@@ -192,11 +192,11 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
         return c;
       } 
     })
-    return [cam, n_chars,cells,pmtr,map];
+    return [cam, n_chars,cells,pmtr,map,inv];
   } 
 
   const stop = (m: Model):Model => {
-    const [cam, chars,cells,prmtr,map]:Model = m;
+    const [cam, chars,cells,prmtr,map,inv]:Model = m;
     const n_chars = chars.map(c =>{
       if(c[8] == 'player'){
         const [px,py,pw,ph,pVx,pVy,dir,onflo,k,id,act] = c;
@@ -206,7 +206,7 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
          return c;
       }
     })
-    return [cam, n_chars,cells,prmtr,map]; 
+    return [cam, n_chars,cells,prmtr,map,inv]; 
   }
 
 const applyPhysics = (m: Model, delta: number):Model => applyMotion(m,delta);

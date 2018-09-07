@@ -2,7 +2,7 @@ import {gtn,gab} from './collision';
 
 type OnFloor = boolean
 type Dir = "r" | "l"
-type Kind = "player" | "vending" | "drone" | "furniture" | "door";
+type Kind = "player" | "vending" | "drone" | "furniture" | "door" | "key";
 // x,y,w,h,vx,vz,target
 type Id = number;
 type Active = number;
@@ -11,8 +11,11 @@ export type Spacing = [number,number,number,number,number,number];
 export type Camera = [number,number,number,number,number,number,number];
 export type Body = [number,number,number,number,number,number,Dir,OnFloor, Kind,Id, number, Active];
 export type Parameter = [number,number,number];
+export type ArtifactoryType = "pendrive" | "key";
+export type Artifactory = [number, ArtifactoryType];
 export type Cells = Body[][];
-export type State = [Camera, Body[], Cells, Parameter, Map];
+export type Inventory = Artifactory[];
+export type State = [Camera, Body[], Cells, Parameter, Map, Inventory];
 
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Body = [80,45,8,20,0,0.058,'r',true, "player", 0, 0,0];
@@ -41,7 +44,7 @@ const map = decodeMap("2-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [0.058,.075,-0.35];
 
-export const initState: State = [camera,[desk1,player,enemy,enemy2,enemy3,enemy4],[], parameter, map];
+export const initState: State = [camera,[desk1,player,enemy,enemy2,enemy3,enemy4],[], parameter, map, []];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy,trg] = c;
@@ -73,7 +76,7 @@ function onlyUnique(value, index, self) {
 }
 
 export const insertInCells = (s: State,tiles: Body[][],tileSize: number, worldSize: number): State => {
-    const [c, chars,,pmr,map] = s;
+    const [c, chars,,pmr,map,inv] = s;
     chars.forEach(c => { 
         const aabbs = gab(c[0], c[1],c[2],c[3]);
         const tilesN = aabbs.map( xy =>  gtn(xy[0],xy[1],tileSize,worldSize));
@@ -85,5 +88,5 @@ export const insertInCells = (s: State,tiles: Body[][],tileSize: number, worldSi
             }
         });
     })
-    return [c, chars,tiles,pmr,map];
+    return [c, chars,tiles,pmr,map,inv];
 }
