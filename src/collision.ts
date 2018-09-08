@@ -21,7 +21,8 @@ export function moveBody(
     map: string, 
     tileSize: number, 
     worldSize: number,
-    cells: Cells): Body{
+    cells: Cells,
+    time:number = performance.now()): Body{
 
     const range_guard = 100;
     const [bX,bY,bW,bH,bVx,bVy,dir,onflor,kind,id,trg,dead] = body;

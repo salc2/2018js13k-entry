@@ -24,11 +24,12 @@ const enemy2:Body = [250,45,19,21,0.03,0.058,'r',true, "vending",3, 180,0];
 const enemy3:Body = [300,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
 const enemy4:Body = [350,45,19,21,0.03,0.058,'r',true, "vending",5, 180,0];
 const step1:Body = [120,35,20,10,0.03,0.058,'r',true, "step",2, 300,0];
-const door1:Body = [120,50,20,40,0,0,'r',true, "door",2, 300,0];
+const door1:Body = [120,50,20,40,0,0,'r',true, "door",63, 67,-1];
+const door2:Body = [320,50,20,40,0,0,'r',true, "door",67, 63,-1];
 const desk1:Body = [390,45,18,10,0,0,'r',true, "desk",3, 0,0];
 const server1:Body = [400,45,40,20,0,0,'r',true, "server",3, 0,0];
-const key1:Body = [10,45,10,10,0,0,'r',true, "key",3, 0,0];
-const pen1:Body = [32,45,10,10,0,0,'r',true, "pendrive",3, 0,0];
+const key1:Body = [23,45,10,10,0,0,'r',true, "key",3, 0,0];
+const pen1:Body = [35,45,10,10,0,0,'r',true, "pendrive",3, 0,0];
 
 
 function decodeMap(encodeMap:string): string{
@@ -44,12 +45,12 @@ function decodeMap(encodeMap:string): string{
     return result;
 }
 
-const map = decodeMap("2-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,8-`,1-w,11-`,1-w,8-`,1-w,12-`,1-w,13-`,1-s,2-`,1-s,4-`,1-s,6-`,1-s,1-`,1-s,8-`,1-s,2-`,1-s,1-`,1-s,6-`,1-s,5-`,1-r,1-c,2-r,1-p,1-r,1-s,2-r,1-s,1-p,1-c,2-r,1-s,1-c,2-r,1-p,2-r,1-s,1-r,1-s,1-r,1-p,2-r,1-p,3-r,1-s,2-r,1-s,1-r,1-s,1-c,2-r,1-p,1-r,1-c,1-s,5-r,50-f,50-x,2200-`");
+const map = decodeMap("1-x,48-t,2-x,2-`,1-0,4-_,1-0,4-_,1-0,3-_,1-0,31-`,2-x,48-`,2-x,36-`,1-w,11-`,2-x,27-`,1-c,1-`,2-s,1-p,1-`,1-c,11-`,1-p,1-s,1-`,51-x,2200-`");
 
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [0.058,.075,-0.35];
 
-export const initState: State = [camera,[enemy, enemy3, door1, desk1, server1, key1, pen1, player],[], parameter, map, []];
+export const initState: State = [camera,[door1,door2, desk1, server1, key1, pen1, player],[], parameter, map, []];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy,trg] = c;
@@ -134,10 +135,10 @@ gab(px,py,pw,ph).map(xy => gtn(xy[0],xy[1],20,10)).map(tn => cells[tn]).forEach(
 });
 
 if(xToGo && yToGo){
-   cam[0] = xToGo;
-   cam[1] = yToGo;
+   cam[0] = xToGo-70;
+   cam[1] = yToGo-70;
    player[0] = xToGo;
-   player[1] = yToGo;
+   player[1] = yToGo+10;
    const ns: State = [cam, characters,[],pmtr,map,inv]; 
   return ns;
 }else{

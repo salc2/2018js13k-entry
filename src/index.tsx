@@ -2,7 +2,7 @@ import {Subscriber, create} from './sub';
 import {Cmd, emptyCmd, create as createCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
-import {initState, Spacing, State, moveCamera, Body, insertInCells} from './state';
+import {initState, Spacing, State, moveCamera, Body, insertInCells, openUse} from './state';
 import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
@@ -85,7 +85,7 @@ const pressKeySub = create('p1', (consumer: Subscriber<Action>) => {
         case 38:
           consumer({kind:"up",delta:16})
           break;
-        case 32:
+        case 13:
           consumer({kind:"use",delta:16})
           break;
         default:
@@ -113,15 +113,15 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
     return () => window.removeEventListener('keyup', handler, true);
   });
 
-  const cameraMotion = (m:Model, delta: number):Model => {
-    const [cam, characters,cells,pmtr,map,inv]:Model = m;
-    if(cam[0] < cam[6]){
-      moveCamera(cam,cam[6] * 0.075 * delta * 0.3,cam[1],1000,1000 )
-    }else if(cam[0] > cam[6]){
-      moveCamera(cam,cam[6] * 0.075 * delta * 0.3,cam[1],1000,1000 )
-    }
-    return [cam, characters,cells,pmtr,map,inv];
-  }
+  // const cameraMotion = (m:Model, delta: number):Model => {
+  //   const [cam, characters,cells,pmtr,map,inv]:Model = m;
+  //   if(cam[0] < cam[6]){
+  //     moveCamera(cam,cam[6] * 0.075 * delta * 0.3,cam[1],680,680 )
+  //   }else if(cam[0] > cam[6]){
+  //     moveCamera(cam,cam[6] * 0.075 * delta * 0.3,cam[1],680,680 )
+  //   }
+  //   return [cam, characters,cells,pmtr,map,inv];
+  // }
 
   const applyMotion = (m: Model, delta: number):Model => {
     let [cam, characters,cells,pmtr,map,inv]:Model = insertInCells(m,new Array(m[4].length),20,50);
@@ -136,10 +136,17 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
     const pp = characters.filter(c => c[8] == "player")[0];
     const cqtr = cam[2]/7;
     if(pp[0] < cam[0] + (cqtr*2)){
-      cam = moveCamera(cam,cam[0] - (delta*0.075),cam[1],1000,1000);
+      cam = moveCamera(cam,cam[0] - (delta*0.075),cam[1],680,680);
     }else if(pp[0] > (cam[0]+ cam[2])-(cqtr*4)){
-      cam = moveCamera(cam,cam[0] + (delta*0.075),cam[1],1000,1000);
+      cam = moveCamera(cam,cam[0] + (delta*0.075),cam[1],680,680);
     }
+    const mdl = cam[3]/5;
+    if(pp[1] - (cam[1]+mdl) < 70){
+      cam = moveCamera(cam,cam[0],cam[1] - (delta*0.075),680,680);
+    }else if(pp[1] - (cam[1]+mdl) > 70){
+      cam = moveCamera(cam,cam[0],cam[1] + (delta*0.075),680,680);
+    }
+    
     return [cam, n_characters,cells,pmtr,map,inv];
   }
 
@@ -226,16 +233,9 @@ export const update: Update<Action,Model> = (a: Action, m: Model) => {
     case "rr":
       return [ stop(m),emptyCmd<Action>()];
     case "use":
-      return [ checkAction(m),emptyCmd<Action>()];
+      return [ openUse(m),emptyCmd<Action>()];
   }
 }
-
-const checkAction = (m: Model): Model => {
-  let [cam, characters,cells,pmtr,map]:Model = insertInCells(m,new Array(2500),20,50);
-
-
-    return m;
-};
 
 export const render = (onEvent:(a:Action) => void) => (m: Model) => {
     renderExt(m,m[4],tileSize,mapSize);

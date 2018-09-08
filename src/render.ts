@@ -6,7 +6,7 @@ const map_text = getImg('./map.png');
 const char_text = getImg('./charatlas.png');
 
 const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
-  '-': [ 20, 0, 20, 20 ],
+  '_': [ 20, 0, 20, 20 ],
   'c': [ 40, 0, 20, 20 ],
   'w': [ 60, 0, 20, 20 ],
   'd': [ 80, 0, 20, 20 ],
