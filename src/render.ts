@@ -5,39 +5,38 @@ import {drawImage, g, getImg, postTexture, bindFrameBuffer, renderPostProcessing
 const map_text = getImg('./map.png');
 const char_text = getImg('./charatlas.png');
 
-const tileMap: any = { 
-  '0': [ 0, 0, 20, 20 ],
+const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
   '-': [ 20, 0, 20, 20 ],
   'c': [ 40, 0, 20, 20 ],
   'w': [ 60, 0, 20, 20 ],
-  'f': [ 80, 0, 20, 20 ],
-  'l': [ 100, 0, 20, 20 ],
-  's': [ 120, 0, 20, 20 ],
-  'p': [ 140, 0, 20, 20 ],
-  'r': [ 160, 0, 20, 20 ],
-  't': [ 180, 0, 20, 20 ] }
+  'd': [ 80, 0, 20, 20 ],
+  'f': [ 100, 0, 20, 20 ],
+  'l': [ 120, 0, 20, 20 ],
+  's': [ 140, 0, 20, 20 ],
+  'p': [ 160, 0, 20, 20 ],
+  'r': [ 180, 0, 20, 20 ],
+  't': [ 200, 0, 20, 20 ] };
 
    const charsAtlas:any = { 
-  'd1': [ 40, 40, 20, 20 ],
-  'd2': [ 0, 60, 20, 20 ],
-  'd3': [ 34, 60, 20, 20 ],
-  'desk': [ 0, 10, 18, 10 ],
-  'door': [ 20, 60, 14, 20 ],
-  'step': [ 0, 0, 20, 10 ],
-  'key': [ 34, 10, 10, 10 ],
-  'pendrive': [ 36, 0, 10, 10 ],
-  'pi1': [ 54, 60, 8, 20 ],
-  'pi2': [ 0, 80, 8, 20 ],
-  'pj1': [ 20, 20, 12, 17 ],
-  'pj2': [ 32, 20, 12, 17 ],
-  'pw1': [ 54, 20, 8, 20 ],
-  'pw2': [ 44, 20, 10, 19 ],
-  'sof': [ 18, 10, 16, 10 ],
-  'son': [ 20, 0, 16, 10 ],
-  'server': [ 0, 40, 40, 20 ],
-  'vo': [ 0, 20, 20, 13 ],
-  'vw1': [ 8, 80, 19, 21 ],
-  'vw2': [ 27, 80, 19, 21 ] };
+  'd1': [ 19, 49, 20, 20 ],
+  'd2': [ 39, 49, 20, 20 ],
+  'd3': [ 0, 70, 20, 20 ],
+  'desk': [ 8, 10, 18, 10 ],
+  'door': [ 39, 70, 20, 40 ],
+  'key': [ 10, 0, 10, 10 ],
+  'pendrive': [ 0, 0, 10, 10 ],
+  'pi1': [ 0, 10, 8, 20 ],
+  'pi2': [ 34, 10, 8, 20 ],
+  'pj1': [ 0, 30, 12, 17 ],
+  'pj2': [ 42, 10, 12, 17 ],
+  'pw1': [ 26, 10, 8, 20 ],
+  'pw2': [ 12, 30, 10, 19 ],
+  'sof': [ 20, 0, 16, 10 ],
+  'son': [ 36, 0, 16, 10 ],
+  'server': [ 0, 110, 40, 20 ],
+  'vo': [ 22, 30, 20, 13 ],
+  'vw1': [ 0, 49, 19, 21 ],
+  'vw2': [ 20, 70, 19, 21 ] };
 
   export function render(st: State, map:string,tsize: number, wsize: number){
     g.canvas.style.width = `${window.innerWidth}px`;
@@ -88,7 +87,22 @@ const tileMap: any = {
       gtn(lbX,lbY,tsize,wsize)]
          const i = Math.floor(1+(performance.now()* (0.02/5))%2);
          const b = (Math.round(performance.now()* 0.008) % 10) == 2 ? 2 : 1;
-      if(k == "player"){
+      if(["desk","pendrive","key","server","door","step"].indexOf(k) > -1){
+         let [_xp,_yp,_wp,_hp] = charsAtlas[k];
+                drawImage(char_text.tex, // image
+                         char_text.w,
+                         char_text.h,
+                         _xp, // source x
+                         _yp, // source y
+                        _wp, // source width
+                        _hp, // source height
+                         Math.round(px-x),  // target x
+                         Math.round(py-y), // target y
+                         _wp, // target width
+                         _hp
+                     );
+      }
+      else if(k == "player"){
 
          var coords;
          if(onfl){
@@ -213,20 +227,6 @@ const tileMap: any = {
                 
 
           //}
-      }else if(["desk","pendrive","key","server","door","step"].indexOf(k) > -1){
-         let [_xp,_yp,_wp,_hp] = charsAtlas[k];
-                drawImage(map_text.tex, // image
-                         map_text.w,
-                         map_text.h,
-                         _xp, // source x
-                         _yp, // source y
-                        _wp, // source width
-                        _hp, // source height
-                         Math.round(px-x),  // target x
-                         Math.round(py-y), // target y
-                         _wp, // target width
-                         _hp
-                     );
       }
     })
 

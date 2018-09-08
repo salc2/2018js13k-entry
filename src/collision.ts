@@ -11,7 +11,7 @@ export function gab(x: number, y:number,w:number,h:number): number[][]{
 }
 
 function notSolid(s: string){
-    return s != "x";
+    return ["x","d","-","0"].indexOf(s) < 0 ;
 }
 
 export function moveBody(
@@ -38,18 +38,20 @@ export function moveBody(
     canMoveLeft:boolean = true,
     amIdead = dead;
     const isEnemy = (s:string) => s == "vending" || s == "drone";
+    const notCollide = (k:string) => !(k == "key" || k == "pendrive" || k == "server" || k == "door");
 
     gab(bX,bY,body[2],body[3]).map(xy => gtn(xy[0],xy[1],tileSize,worldSize)).map(tn => cells[tn]).forEach(bodies =>{
         if(bodies){
             bodies.filter(e => e[9] != id).forEach(e => {
                 const [ex,ey,ew,eh] = e;
+                const e_kind = e[8];
                 const above = (bY+bH-4)<ey, left = (x > bX && ex < bX), right = (x < bX && ex > bX);
-                if(collide([bX,bY,body[2],body[3]],[ex,ey,ew,eh])){
+                if(collide([bX,bY,body[2],body[3]],[ex,ey,ew,eh]) && notCollide(e_kind)){
                     canMoveUp = !(y < bY) || above;
                     canMoveDown = !(y > bY) || ey+eh-4 < bY || (right || left);
                     canMoveRight = !(x > bX) || above || left;
                     canMoveLeft = !(x < bX) || above || right;
-                    if(e[8] == "player" && ey+eh-2 < bY){
+                    if(e_kind == "player" && ey+eh-2 < bY){
                         amIdead = 5000;
                     }
                 }
