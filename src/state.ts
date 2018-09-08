@@ -1,4 +1,4 @@
-import {gtn,gab} from './collision';
+import {gtn,gab,collide} from './collision';
 
 type OnFloor = boolean
 type Dir = "r" | "l"
@@ -89,4 +89,53 @@ export const insertInCells = (s: State,tiles: Body[][],tileSize: number, worldSi
         });
     })
     return [c, chars,tiles,pmr,map,inv];
+}
+
+export function openUse(m:State): State {
+  let [cam, characters,cells,pmtr,map,inv]:State = insertInCells(m,new Array(100),20,10);
+  let xToGo:number ,yToGo: number, serverOn, currentDev:Body;
+  const player:Body = characters.filter(c => c[8]=="player")[0];
+  const [px,py,pw,ph] = player;
+gab(px,py,pw,ph).map(xy => gtn(xy[0],xy[1],20,10)).map(tn => cells[tn]).forEach(objects =>{
+  if(objects){
+    objects.filter(obj => {
+      const [ox,oy,ow,oh] = obj;
+      const [px,py,pw,ph] = player;
+      return collide([px,py,pw,ph],[ox,oy,ow,oh]);
+    }).forEach(obj =>{
+        if(obj[8] == "door"){
+           const parId = obj[10];
+           const dest = characters.filter( oth => oth[9] == parId)[0];
+           const idKey = dest[11];
+           if(idKey > 0){
+             if(inv.filter(el => el[1] == "key")
+             .map(elm => elm[0] == idKey).indexOf(true,idKey) > -1){
+               xToGo = dest[0];
+               yToGo = dest[1];
+             }
+           }else{
+              xToGo = dest[0];
+             yToGo = dest[1];
+           }
+        }else if(obj[8] == "server"){
+               const pendId = obj[11];
+            if(inv.filter(el => el[1] == "pendrive")
+             .map(elm => elm[0]).indexOf(pendId) > -1){
+              obj[10] = 0;
+             }
+        }
+    });
+  }
+});
+
+if(xToGo && yToGo){
+   cam[0] = xToGo;
+   cam[1] = yToGo;
+   player[0] = xToGo;
+   player[1] = yToGo;
+   const ns: State = [cam, characters,[],pmtr,map,inv]; 
+  return ns;
+}else{
+  return m;
+}
 }
