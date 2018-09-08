@@ -1,23 +1,23 @@
 import {gtn,gab} from './collision';
-import {initState, Spacing, State, moveCamera} from './State';
-import {drawImage, g, getImg, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
+import {initState, Spacing, State, moveCamera, Kind, Body} from './State';
+import {drawImage, g, getImg,Img, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
 
 const map_text = getImg('./map.png');
 const char_text = getImg('./charatlas.png');
 
 const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
-  '_': [ 20, 0, 20, 20 ],
-  'c': [ 40, 0, 20, 20 ],
-  'w': [ 60, 0, 20, 20 ],
-  'd': [ 80, 0, 20, 20 ],
-  'f': [ 100, 0, 20, 20 ],
-  'l': [ 120, 0, 20, 20 ],
-  's': [ 140, 0, 20, 20 ],
-  'p': [ 160, 0, 20, 20 ],
-  'r': [ 180, 0, 20, 20 ],
-  't': [ 200, 0, 20, 20 ] };
+'_': [ 20, 0, 20, 20 ],
+'c': [ 40, 0, 20, 20 ],
+'w': [ 60, 0, 20, 20 ],
+'d': [ 80, 0, 20, 20 ],
+'f': [ 100, 0, 20, 20 ],
+'l': [ 120, 0, 20, 20 ],
+'s': [ 140, 0, 20, 20 ],
+'p': [ 160, 0, 20, 20 ],
+'r': [ 180, 0, 20, 20 ],
+'t': [ 200, 0, 20, 20 ] };
 
-   const charsAtlas:any = { 
+const charsAtlas = { 
   'd1': [ 19, 49, 20, 20 ],
   'd2': [ 39, 49, 20, 20 ],
   'd3': [ 0, 70, 20, 20 ],
@@ -37,6 +37,84 @@ const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
   'vo': [ 22, 30, 20, 13 ],
   'vw1': [ 0, 49, 19, 21 ],
   'vw2': [ 20, 70, 19, 21 ] };
+
+
+  type Coord = number[];
+
+  const seqTimeI = (t:number) =>  Math.floor(1+(t* (0.02/5))%2);
+  const seqTimeB = (t:number) =>  (Math.round(t* 0.008) % 10) == 2 ? 2 : 1;
+  const seqTimeQ = (t:number) =>  Math.round((performance.now()* 0.001)/ 0.04) % 3 + (1);
+  const seqTimeBlink = (t:number):boolean => Math.floor((t * 0.008) % 2) == 0;
+
+  function playerCoords(vx: number,onfloor:boolean,time: number):Coord{
+    const i = seqTimeI(time),
+    b = seqTimeB(time);
+    if(onfloor){
+      if(vx == 0 ){
+        return charsAtlas[`pi${b}`];
+      }else{
+        return charsAtlas[`pw${i}`];
+      }
+    }else{
+      return charsAtlas[`pj${i}`];
+    }
+  }
+
+  function vendingCoords(life: number,time: number):Coord{
+    const i = seqTimeI(time),
+    b = (Math.round(time* 0.008) % 10) == 2 ? 2 : 1;
+    if(life > 0 ){
+      return charsAtlas[`vo`];
+    }else{
+      return charsAtlas[`vw${i}`];
+    }
+  }
+
+  function droneCoords(life: number,time: number):Coord{
+    const q = seqTimeQ(time);
+    if(life > 0){
+      return charsAtlas[`d1`];
+    }else{
+      return charsAtlas[`d${q}`];
+    }
+  }
+
+  function stuffCoords(kind: string):Coord{
+    return charsAtlas[kind];
+  }
+
+  function getCoords(body: Body, time: number): 
+  [Img,Coord]{
+    switch (body[8]) {
+      case "player":
+      return [char_text,playerCoords(body[4],body[7],time)];
+      case "vending":
+      return [char_text,vendingCoords(body[11],time)];
+      case "drone":
+      return [char_text,droneCoords(body[11],time)];
+      default:
+      return [char_text,stuffCoords(body[8])];
+    }
+  }
+
+  function renderCharacter(body: Body, time: number, camX: number, camY: number){
+    const [img, [x,y,w,h]] = getCoords(body,time);
+    const fx = body[6] == "l" ? 1.0 : -1.0;
+    drawImage(img.tex,img.w,img.h,x,y,w,h,
+      Math.round(body[0]-camX) + (fx < 0 ? w : 0),
+      Math.round(body[1]-camY),w*fx,h);
+    renderSignal(body[8],body[11],body[0]-camX,body[1]-camY,time);
+  }
+
+  function renderSignal(kind:Kind,life:number ,x:number,y:number, time:number):void{
+    if( (kind == "vending" || kind == "drone") && seqTimeBlink(time)){
+      const iden = life > 0 ? "sof" : "son",
+      [_x,_y,_w,_h] = charsAtlas[iden], [plx,ply] = kind == "drone" ? [2,5] : [0,0];
+      drawImage(char_text.tex,char_text.w,char_text.h,_x,_y,_w, _h,
+        Math.round(x+plx), Math.round(y+ply-_h),_w,_h)
+    }
+  }
+
 
   export function render(st: State, map:string,tsize: number, wsize: number){
     g.canvas.style.width = `${window.innerWidth}px`;
@@ -64,7 +142,7 @@ const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
         if(letter != '`' && letter != 'x'){
           try{
             const [_x,_y,_w,_h] = tileMap[letter];
-          drawImage(
+            drawImage(
                     map_text.tex, // image
                     map_text.w,
                     map_text.h,
@@ -80,163 +158,11 @@ const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
           }catch(e){}
           
         }
+        characters.forEach(charact => renderCharacter(charact,performance.now(),x,y));
+}
+}
 
-      characters.forEach(charact =>{
-      const [px,py,pw,ph,pvx,pvy,dir,onfl,k,] = charact;
-      const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = gab(px+pvx,py+pvy,pw,ph);
-      const collides =  [gtn(ltX,ltY,tsize,wsize),
-      gtn(rtX,rtY,tsize,wsize),
-      gtn(rbX,rbY,tsize,wsize),
-      gtn(lbX,lbY,tsize,wsize)]
-         const i = Math.floor(1+(performance.now()* (0.02/5))%2);
-         const b = (Math.round(performance.now()* 0.008) % 10) == 2 ? 2 : 1;
-      if(["desk","pendrive","key","server","door","step"].indexOf(k) > -1){
-         let [_xp,_yp,_wp,_hp] = charsAtlas[k];
-                drawImage(char_text.tex, // image
-                         char_text.w,
-                         char_text.h,
-                         _xp, // source x
-                         _yp, // source y
-                        _wp, // source width
-                        _hp, // source height
-                         Math.round(px-x),  // target x
-                         Math.round(py-y), // target y
-                         _wp, // target width
-                         _hp
-                     );
-      }
-      else if(k == "player"){
+renderPostProcessing(performance.now(),postTexture);
+bindFrameBuffer();
 
-         var coords;
-         if(onfl){
-             if(pvx == 0 ){
-               coords = charsAtlas[`pi${b}`];
-             }else{
-               coords = charsAtlas[`pw${i}`];
-             }
-           }else{
-             coords = charsAtlas[`pj${i}`];
-         }
-         const fx = dir == "l" ? 1.0 : -1.0;
-         const [_xp,_yp,_wp,_hp] = coords;
-         drawImage(char_text.tex, // image
-                         char_text.w,
-                         char_text.h,
-                         _xp, // source x
-                         _yp, // source y
-                        _wp, // source width
-                        _hp, // source height
-                         Math.round(px-x) + (fx < 0 ? _wp : 0),  // target x
-                         Math.round(py-y), // target y
-                         _wp*fx, // target width
-                         _hp
-                     );
-      }else if(k == "vending"){
-         var coords;
-         if(onfl){
-             if(charact[11] && charact[11] > 0 ){
-               //
-               coords = charsAtlas[`vo`];
-             }else{
-               coords = charsAtlas[`vw${i}`];
-             }
-           }else{
-             coords = charsAtlas[`vw${i}`];
-         }
-         const fx = dir == "l" ? 1.0 : -1.0;
-         let [_xp,_yp,_wp,_hp] = coords;
-         // if(collides.indexOf(r*wsize+c) > -1){
-                drawImage(char_text.tex, // image
-                         char_text.w,
-                         char_text.h,
-                         _xp, // source x
-                         _yp, // source y
-                        _wp, // source width
-                        _hp, // source height
-                         Math.round(px-x) + (fx < 0 ? _wp : 0),  // target x
-                         Math.round(py-y), // target y
-                         _wp*fx, // target width
-                         _hp
-                     );
-                if(Math.floor((performance.now() * 0.008) % 2) == 0){
-
-                  if(charact[11] && charact[11] > 0){
-                     [_xp,_yp,_wp,_hp] = charsAtlas['sof'];
-                   }else{
-                     [_xp,_yp,_wp,_hp] = charsAtlas['son'];
-                   }
-
-                  drawImage(char_text.tex, // image
-                         char_text.w,
-                         char_text.h,
-                         _xp, // source x
-                         _yp, // source y
-                        _wp, // source width
-                        _hp, // source height
-                         Math.round(px-x),  // target x
-                         Math.round(py-y-_hp), // target y
-                         _wp, // target width
-                         _hp // target height
-                     );
-                }
-                
-
-          //}
-      }else if(k == "drone"){
-        const q = Math.round((performance.now()* 0.001)/ 0.04) % 3 + (1);
-         var coords;
-         if(charact[11] && charact[11] > 0){
-           coords = charsAtlas[`d1`];
-         }else{
-           coords = charsAtlas[`d${q}`];
-         }
-         
-          const fx = dir == "l" ? 1.0 : -1.0;
-         let [_xp,_yp,_wp,_hp] = coords;
-         // if(collides.indexOf(r*wsize+c) > -1){
-                drawImage(char_text.tex, // image
-                         char_text.w,
-                         char_text.h,
-                         _xp, // source x
-                         _yp, // source y
-                        _wp, // source width
-                        _hp, // source height
-                         Math.round(px-x) + (fx < 0 ? _wp : 0),  // target x
-                         Math.round(py-y), // target y
-                         _wp*fx, // target width
-                         _hp
-                     );
-                [_xp,_yp,_wp,_hp] = charsAtlas['son'];
-                if(Math.floor((performance.now() * 0.008) % 2) == 0){
-                    if(charact[11] && charact[11] > 0){
-                     [_xp,_yp,_wp,_hp] = charsAtlas['sof'];
-                   }else{
-                     [_xp,_yp,_wp,_hp] = charsAtlas['son'];
-                   }
-
-                  drawImage(char_text.tex, // image
-                         char_text.w,
-                         char_text.h,
-                         _xp, // source x
-                         _yp, // source y
-                        _wp, // source width
-                        _hp, // source height
-                         Math.round(2 + (px-x)),  // target x
-                         Math.round(5 + (py-y-_hp)), // target y
-                         _wp, // target width
-                         _hp // target height
-                     );
-                }
-                
-
-          //}
-      }
-    })
-
-      }
-    }
-
-    renderPostProcessing(performance.now(),postTexture);
-    bindFrameBuffer();
-
-  };
+};
