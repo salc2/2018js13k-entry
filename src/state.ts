@@ -2,7 +2,7 @@ import {gtn,gab,collide} from './collision';
 
 type OnFloor = boolean
 type Dir = "r" | "l"
-type Kind = "player" | "vending" | "drone" | "furniture" | "door" | "key" | "server" | "pendrive";
+type Kind = "player" | "vending" | "drone" | "desk" | "door" | "key" | "server" | "pendrive" | "step";
 // x,y,w,h,vx,vz,target
 type Id = number;
 type Active = number;
@@ -23,8 +23,13 @@ const enemy:Body = [200,45,19,21,0.03,0.058,'r',true, "vending",1, 180,0];
 const enemy2:Body = [250,45,19,21,0.03,0.058,'r',true, "vending",3, 180,0];
 const enemy3:Body = [300,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
 const enemy4:Body = [350,45,19,21,0.03,0.058,'r',true, "vending",5, 180,0];
-//const enemy2:Body = [300,45,19,21,0.03,0.058,'r',true, "drone",2, 300,0];
-const desk1:Body = [15,45,20,10,0,0,'r',true, "furniture",3, 0,0];
+const step1:Body = [300,35,19,21,0.03,0.058,'r',true, "step",2, 300,0];
+const door1:Body = [300,50,19,21,0.03,0.058,'r',true, "door",2, 300,0];
+const desk1:Body = [15,45,20,10,0,0,'r',true, "desk",3, 0,0];
+const server1:Body = [4,45,20,10,0,0,'r',true, "server",3, 0,0];
+const key1:Body = [17,45,20,10,0,0,'r',true, "key",3, 0,0];
+const pen1:Body = [10,45,20,10,0,0,'r',true, "pendrive",3, 0,0];
+
 
 function decodeMap(encodeMap:string): string{
     var grps = encodeMap.split(",");
@@ -44,7 +49,7 @@ const map = decodeMap("2-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3-t,1-l,3
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [0.058,.075,-0.35];
 
-export const initState: State = [camera,[desk1,player,enemy,enemy2,enemy3,enemy4],[], parameter, map, []];
+export const initState: State = [camera,[player, enemy, enemy2, enemy3, enemy4, step1, door1, desk1, server1, key1, pen1],[], parameter, map, []];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy,trg] = c;

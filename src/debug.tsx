@@ -14,9 +14,13 @@ declare var FPSMeter:any;
 
 const fpsM = new FPSMeter();
 
-export const canvasDebug:any = document.getElementById("debug");
+export const canvasDebug:any = document.createElement("canvas")
+document.body.appendChild(canvasDebug)
+canvasDebug.style ="left: -1000";
+const div = document.createElement("div")
+div.id ="container";
+document.body.appendChild(div)
 const _2d = canvasDebug.getContext("2d");
-
 
 export interface PlayerValues {
     kind: "playerVal";

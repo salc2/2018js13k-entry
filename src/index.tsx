@@ -3,7 +3,7 @@ import {Cmd, emptyCmd, create as createCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
 import {initState, Spacing, State, moveCamera, Body, insertInCells} from './state';
-//import {renderDebug,updateDebug} from './debug';
+import {renderDebug,updateDebug} from './debug';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
 
@@ -254,4 +254,4 @@ export const initStateCmd:[Model,Cmd<Action>] = [initState, createCmd(()=>{
  // playTheme();
 },null)]
 
-runGame( update, render,  subs, initStateCmd);  
+runGame( updateDebug, renderDebug,  subs, initStateCmd);  

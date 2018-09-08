@@ -5,33 +5,39 @@ import {drawImage, g, getImg, postTexture, bindFrameBuffer, renderPostProcessing
 const map_text = getImg('./map.png');
 const char_text = getImg('./charatlas.png');
 
-const tiles: any = {"x": '#000000', "`":"#273e63", "\n":"#273e63"};
-const tileMap:any = { 
-  'c': [ 0, 0, 20, 20 ],
-  'w': [ 20, 0, 20, 20 ],
-  'd': [ 40, 10, 20, 10 ],
-  'f': [ 0, 20, 20, 20 ],
-  'l': [ 20, 20, 20, 20 ],
-  's': [ 40, 20, 20, 20 ],
-  'p': [ 0, 40, 20, 20 ],
-  'r': [ 20, 40, 20, 20 ],
-  't': [ 40, 40, 20, 20 ] };
+const tileMap: any = { 
+  '0': [ 0, 0, 20, 20 ],
+  '-': [ 20, 0, 20, 20 ],
+  'c': [ 40, 0, 20, 20 ],
+  'w': [ 60, 0, 20, 20 ],
+  'f': [ 80, 0, 20, 20 ],
+  'l': [ 100, 0, 20, 20 ],
+  's': [ 120, 0, 20, 20 ],
+  'p': [ 140, 0, 20, 20 ],
+  'r': [ 160, 0, 20, 20 ],
+  't': [ 180, 0, 20, 20 ] }
 
-  const charsAtlas = { 
-    'd1': [ 0, 0, 20, 20 ],
-  'd2': [ 20, 0, 20, 20 ],
-  'd3': [ 40, 0, 20, 20 ],
-  'pi1': [ 60, 0, 8, 20 ],
-  'pi2': [ 68, 0, 8, 20 ],
-  'pj1': [ 76, 0, 12, 17 ],
-  'pj2': [ 88, 0, 12, 17 ],
-  'pw1': [ 100, 0, 8, 20 ],
-  'pw2': [ 108, 0, 10, 19 ],
-  'sof': [ 118, 0, 16, 10 ],
-  'son': [ 134, 0, 16, 10 ],
-  'vo': [ 150, 0, 20, 13 ],
-  'vw1': [ 170, 0, 19, 21 ],
-  'vw2': [ 189, 0, 19, 21 ] };
+   const charsAtlas:any = { 
+  'd1': [ 40, 40, 20, 20 ],
+  'd2': [ 0, 60, 20, 20 ],
+  'd3': [ 34, 60, 20, 20 ],
+  'desk': [ 0, 10, 18, 10 ],
+  'door': [ 20, 60, 14, 20 ],
+  'step': [ 0, 0, 20, 10 ],
+  'key': [ 34, 10, 10, 10 ],
+  'pendrive': [ 36, 0, 10, 10 ],
+  'pi1': [ 54, 60, 8, 20 ],
+  'pi2': [ 0, 80, 8, 20 ],
+  'pj1': [ 20, 20, 12, 17 ],
+  'pj2': [ 32, 20, 12, 17 ],
+  'pw1': [ 54, 20, 8, 20 ],
+  'pw2': [ 44, 20, 10, 19 ],
+  'sof': [ 18, 10, 16, 10 ],
+  'son': [ 20, 0, 16, 10 ],
+  'server': [ 0, 40, 40, 20 ],
+  'vo': [ 0, 20, 20, 13 ],
+  'vw1': [ 8, 80, 19, 21 ],
+  'vw2': [ 27, 80, 19, 21 ] };
 
   export function render(st: State, map:string,tsize: number, wsize: number){
     g.canvas.style.width = `${window.innerWidth}px`;
@@ -207,9 +213,8 @@ const tileMap:any = {
                 
 
           //}
-      }else if(k == "furniture"){
-         var coords = tileMap['d'];
-         let [_xp,_yp,_wp,_hp] = coords;
+      }else if(["desk","pendrive","key","server","door","step"].indexOf(k) > -1){
+         let [_xp,_yp,_wp,_hp] = charsAtlas[k];
                 drawImage(map_text.tex, // image
                          map_text.w,
                          map_text.h,
@@ -222,7 +227,6 @@ const tileMap:any = {
                          _wp, // target width
                          _hp
                      );
-          //}
       }
     })
 
