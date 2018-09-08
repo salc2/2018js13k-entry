@@ -2,7 +2,7 @@ import {gtn,gab} from './collision';
 
 type OnFloor = boolean
 type Dir = "r" | "l"
-type Kind = "player" | "vending" | "drone" | "furniture" | "door" | "key";
+type Kind = "player" | "vending" | "drone" | "furniture" | "door" | "key" | "server" | "pendrive";
 // x,y,w,h,vx,vz,target
 type Id = number;
 type Active = number;
