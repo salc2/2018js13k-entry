@@ -21,8 +21,7 @@ export function moveBody(
     map: string, 
     tileSize: number, 
     worldSize: number,
-    cells: Cells,
-    time:number = performance.now()): Body{
+    cells: Cells): Body{
 
     const range_guard = 100;
     const [bX,bY,bW,bH,bVx,bVy,dir,onflor,kind,id,trg,dead] = body;
@@ -47,13 +46,23 @@ export function moveBody(
                 const [ex,ey,ew,eh] = e;
                 const e_kind = e[8];
                 const above = (bY+bH-4)<ey, left = (x > bX && ex < bX), right = (x < bX && ex > bX);
-                if(collide([bX,bY,body[2],body[3]],[ex,ey,ew,eh]) && notCollide(e_kind)){
+                if(collide([bX,bY,body[2],body[3]],[ex,ey,ew,eh])){
+                    if(notCollide(e_kind)){
                     canMoveUp = !(y < bY) || above;
                     canMoveDown = !(y > bY) || ey+eh-4 < bY || (right || left);
                     canMoveRight = !(x > bX) || above || left;
                     canMoveLeft = !(x < bX) || above || right;
                     if(e_kind == "player" && ey+eh-2 < bY){
                         amIdead = 5000;
+                    }
+                    if(isEnemy(e_kind) && kind == "player" && e[11] == 0){
+                        amIdead = amIdead - 1
+                        nX = e[0] > bX ? bX-20 : bX + 20;
+                    }
+
+                    }
+                    if(e_kind == "player" && (kind == "key" || kind == "pendrive") ){
+                        nX = -10000;
                     }
                 }
             })
@@ -92,14 +101,15 @@ export function moveBody(
             } 
         }
     }
-    if(amIdead > 0){
-        if(kind == "vending"){
-        nH = 13;
-        }else if(kind == "drone"){
-        nH = 15;
-        }
-        nVx = 0;
-    }
+    // if(amIdead > 0){
+    //     if(kind == "vending"){
+    //     nH = 13;
+    //     nVx = 0;
+    //     }else if(kind == "drone"){
+    //     nH = 15;
+    //     nVx = 0;
+    //     }
+    // }
     return [nX,nY,bW,nH,nVx,nVy,ndir,onf,kind,id,ntarget,amIdead];
 }
 

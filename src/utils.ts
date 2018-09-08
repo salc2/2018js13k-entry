@@ -1,3 +1,4 @@
+  import {Body} from './state';
   export function partition<A>(p: (a:A) => boolean, xs: A[]): [A[],A[]] {
     const left:A[] = [], right:A[] = [];
     xs.forEach(e =>{
@@ -8,4 +9,9 @@
       }
     });
     return [left,right];
+  }
+
+
+  export const isEnemy = (b:Body):Boolean => {
+    return b[8] == "vending" || b[8] == "drone";
   }

@@ -62,7 +62,8 @@ const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
         var targetY = (r - startRow) * tsize + offsetY;
         const letter = map.charAt(r*wsize+c);
         if(letter != '`' && letter != 'x'){
-          const [_x,_y,_w,_h] = tileMap[letter];
+          try{
+            const [_x,_y,_w,_h] = tileMap[letter];
           drawImage(
                     map_text.tex, // image
                     map_text.w,
@@ -76,6 +77,8 @@ const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
                     tsize, // target width
                     tsize // target height
                     );
+          }catch(e){}
+          
         }
 
       characters.forEach(charact =>{
