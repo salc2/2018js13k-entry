@@ -15,9 +15,10 @@ const tileSize = 20, mapSize = 50;
 
 const clockSub = create('c1', (consumer: Subscriber<Action>) => {
   let id = 0;
-  let startTime = performance.now();
+  let startTime = 0;
   const keepAnimation = (time:number) => {
     let t = time - startTime;
+    t = t > 17 ? 16 : t;
     consumer({kind: "t",delta:t});
     startTime = time;
     id = requestAnimationFrame(keepAnimation);
@@ -115,14 +116,16 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
   return () => window.removeEventListener('keyup', handler, true);
 });
 
-const applyMotion = (m: Model, delta: number):Model => {
+const applyMotion = (m: Model, delta: number):[Model,Cmd<Action>] => {
+  let cmdSound: Cmd<Action> = emptyCmd();
   let [cam, characters,cells,pmtr,map,inv]:Model = insertInCells(m,new Array(m[4].length),20,50);
   const pp = characters.filter(c => c[8] == "player")[0];
   const gravity = pmtr[0];
   const n_characters = characters.map(c => {
     const [px,py,pw,ph,pVx,pVy,dir,onflo,kind,id,n,act] = c;
     let _pVy = c[8] == "drone" && c[11] == 0 ? 0 : pVy;
-    const playr:Body = moveBody(c,(px+pVx*delta),(py+_pVy*delta),map,20,50,cells);
+    const [playr,sounds] = moveBody(c,(px+pVx*delta),(py+_pVy*delta),map,20,50,cells);
+    cmdSound = sounds;
     playr[5] = Math.min(pVy+gravity,gravity)
     return playr;
   });
@@ -138,7 +141,8 @@ const applyMotion = (m: Model, delta: number):Model => {
   }else if(pp[1] - (cam[1]+mdl) > 70){
     cam = moveCamera(cam,cam[0],cam[1] + (delta*0.075),1000,1000);
   }
-  return [cam, n_characters,cells,pmtr,map,inv];
+  const nm: Model  =[cam, n_characters,cells,pmtr,map,inv];
+  return [nm,cmdSound];
 }
 
 const walkLeft = (m: Model):Model => {
@@ -200,12 +204,16 @@ const jump = (m: Model):Model => {
     return m;
   }
 
-  const applyPhysics = (m: Model, delta: number):Model => recoveryEnemies(evalVictoryDefeat(fillingInventory(applyMotion(m,delta))),delta);
+  const passingTime = (m: Model, delta: number):[Model,Cmd<Action>] => {
+    const [nm, cmdEffects] = applyMotion(m,delta)
+    const _nm = recoveryEnemies(evalVictoryDefeat(fillingInventory(nm)),delta)
+    return [_nm,cmdEffects];
+  };
 
   export const update: Update<Action,Model> = (a: Action, m: Model) => {
     switch (a.kind) {
       case "t":
-      return [ applyPhysics(m,a.delta) ,emptyCmd<Action>()];
+      return passingTime(m,a.delta);
       case "up":
       return [ jump(m), emptyCmd<Action>()];
       case "lp":
@@ -261,8 +269,8 @@ const jump = (m: Model):Model => {
         svg.style.display = "block";
       });
     }
-playSound()
- // playTheme();
+
+ playSound();
 },null)]
 
   runGame( update, render,  subs, initStateCmd);  

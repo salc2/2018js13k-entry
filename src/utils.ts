@@ -10,8 +10,7 @@
     });
     return [left,right];
   }
-
-
+  
   export const isEnemy = (b:Body):Boolean => {
     return b[8] == "vending" || b[8] == "drone";
   }

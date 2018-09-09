@@ -1,4 +1,7 @@
 import {initState, Spacing, State, moveCamera, Body, Cells} from './state';
+import {Cmd, emptyCmd, create} from './cmd';
+import {Action} from './actions';
+import {soundOnFloor, gotInventorySound} from './sound'
 
 //getTileNumer
 export function gtn(x: number, y:number, tileSize: number, worldSize: number){
@@ -21,8 +24,9 @@ export function moveBody(
     map: string, 
     tileSize: number, 
     worldSize: number,
-    cells: Cells): Body{
+    cells: Cells): [Body, Cmd<Action>]{
 
+    const aver = body[7];
     const range_guard = 100;
     const [bX,bY,bW,bH,bVx,bVy,dir,onflor,kind,id,trg,dead] = body;
     const [[ltX,ltY],[rtX,rtY],[rbX, rbY],[lbX,lbY]] = gab(Math.floor(bX),Math.floor(bY),bW,bH);
@@ -31,7 +35,8 @@ export function moveBody(
     const tRt = gtn(rtX,rtY,tileSize,worldSize);
     const tLt = gtn(ltX,ltY,tileSize,worldSize);
     var nY = bY, nX = bX, onf = true, ntarget = trg, ndir = dir, nVx = bVx, nH = bH, nVy = bVy;
-    
+    var cmd:Cmd<Action> = emptyCmd<Action>();
+
     var canMoveUp:boolean = true,
     canMoveDown:boolean = true,
     canMoveRight:boolean = true,
@@ -48,21 +53,24 @@ export function moveBody(
                 const above = (bY+bH-4)<ey, left = (x > bX && ex < bX), right = (x < bX && ex > bX);
                 if(collide([bX,bY,body[2],body[3]],[ex,ey,ew,eh])){
                     if(notCollide(e_kind)){
-                    canMoveUp = !(y < bY) || above;
-                    canMoveDown = !(y > bY) || isEnemy(kind)
-                    canMoveRight = !(x > bX) || above || left;
-                    canMoveLeft = !(x < bX) || above || right;
-                    if(e_kind == "player" && ey+eh-2 < bY){
-                        amIdead = 5000;
-                    }
-                    if(isEnemy(e_kind) && kind == "player" && e[11] == 0){
-                        amIdead = amIdead - 1
-                        nX = e[0] > bX ? bX-20 : bX + 20;
-                    }
+                        canMoveUp = !(y < bY) || above;
+                        canMoveDown = !(y > bY) || isEnemy(kind)
+                        canMoveRight = !(x > bX) || above || left;
+                        canMoveLeft = !(x < bX) || above || right;
+                        if(e_kind == "player" && ey+eh-2 < bY){
+                            amIdead = 5000;
+                        }
+                        if(isEnemy(e_kind) && kind == "player" && e[11] == 0){
+                            amIdead = amIdead - 1
+                            nX = e[0] > bX ? bX-20 : bX + 20;
+                        }
 
                     }
                     if(e_kind == "player" && (kind == "key" || kind == "pendrive") ){
                         nX = -10000;
+                    }
+                    if(kind == "player" && (e_kind == "key" || e_kind == "pendrive") ){
+                        cmd = gotInventorySound();
                     }
                 }
             })
@@ -86,6 +94,13 @@ export function moveBody(
         onf = false;
         nY = y;
     }
+    if(y > bY && !notSolid(map.charAt(tLb)) && !notSolid(map.charAt(tRb)) && !body[7]){
+
+        if(body[8] == "player"){
+            cmd = soundOnFloor();
+        }
+
+    }
     if( (kind == "vending" || kind == "drone") && amIdead == 0){
         if(dir == "r"){
             if(nX >= trg){
@@ -101,16 +116,7 @@ export function moveBody(
             } 
         }
     }
-    // if(amIdead > 0){
-    //     if(kind == "vending"){
-    //     nH = 13;
-    //     nVx = 0;
-    //     }else if(kind == "drone"){
-    //     nH = 15;
-    //     nVx = 0;
-    //     }
-    // }
-    return [nX,nY,bW,nH,nVx,nVy,ndir,onf,kind,id,ntarget,amIdead];
+    return [[nX,nY,bW,nH,nVx,nVy,ndir,onf,kind,id,ntarget,amIdead],cmd];
 }
 
 export function collide(body1:[number,number,number,number],body2:[number,number,number,number]):boolean {
