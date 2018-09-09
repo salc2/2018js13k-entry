@@ -1,7 +1,7 @@
 import {initState, Spacing, State, moveCamera, Body, Cells} from './state';
 import {Cmd, emptyCmd, create} from './cmd';
 import {Action} from './actions';
-import {soundOnFloor, gotInventorySound} from './sound'
+import {soundOnFloor, gotInventorySound,soundSplashEnemy} from './sound'
 
 //getTileNumer
 export function gtn(x: number, y:number, tileSize: number, worldSize: number){
@@ -59,6 +59,9 @@ export function moveBody(
                         canMoveLeft = !(x < bX) || above || right;
                         if(e_kind == "player" && ey+eh-2 < bY){
                             amIdead = 5000;
+                        }
+                        if(kind == "player" && isEnemy(e_kind) && ey > bY+bH-2 && e[11] == 0){
+                            cmd = soundSplashEnemy();
                         }
                         if(isEnemy(e_kind) && kind == "player" && e[11] == 0){
                             amIdead = amIdead - 1
