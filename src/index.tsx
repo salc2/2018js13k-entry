@@ -3,15 +3,11 @@ import {Cmd, emptyCmd, create as createCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
 import {ArtifactoryType,initState, Spacing, State, moveCamera, Body, insertInCells, openUse} from './state';
-import {renderDebug,updateDebug} from './debug';
+//import {renderDebug,updateDebug} from './debug';
 import {isEnemy} from './utils';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
-//import {hola} from './sound'
-import * as every from './lib/sonantx';
-
-
-console.log(every)
+import {playSound} from './sound'
 
 export type Model = State;
 
@@ -121,6 +117,7 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
 
 const applyMotion = (m: Model, delta: number):Model => {
   let [cam, characters,cells,pmtr,map,inv]:Model = insertInCells(m,new Array(m[4].length),20,50);
+  const pp = characters.filter(c => c[8] == "player")[0];
   const gravity = pmtr[0];
   const n_characters = characters.map(c => {
     const [px,py,pw,ph,pVx,pVy,dir,onflo,kind,id,n,act] = c;
@@ -129,7 +126,6 @@ const applyMotion = (m: Model, delta: number):Model => {
     playr[5] = Math.min(pVy+gravity,gravity)
     return playr;
   });
-  const pp = characters.filter(c => c[8] == "player")[0];
   const cqtr = cam[2]/7;
   if(pp[0] < cam[0] + (cqtr*2)){
     cam = moveCamera(cam,cam[0] - (delta*0.075),cam[1],1000,1000);
@@ -142,7 +138,6 @@ const applyMotion = (m: Model, delta: number):Model => {
   }else if(pp[1] - (cam[1]+mdl) > 70){
     cam = moveCamera(cam,cam[0],cam[1] + (delta*0.075),1000,1000);
   }
-
   return [cam, n_characters,cells,pmtr,map,inv];
 }
 
@@ -266,8 +261,8 @@ const jump = (m: Model):Model => {
         svg.style.display = "block";
       });
     }
-
+playSound()
  // playTheme();
 },null)]
 
-  runGame( updateDebug, renderDebug,  subs, initStateCmd);  
+  runGame( update, render,  subs, initStateCmd);  
