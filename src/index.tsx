@@ -7,6 +7,11 @@ import {renderDebug,updateDebug} from './debug';
 import {isEnemy} from './utils';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
+//import {hola} from './sound'
+import * as every from './lib/sonantx';
+
+
+console.log(every)
 
 export type Model = State;
 
@@ -240,7 +245,7 @@ const jump = (m: Model):Model => {
           c[4] = c[6] == "r" ? 0.03 : -0.03;
         }else if(c[11] > 100){
           c[4] = 0;
-          c[3] = 10;
+          c[3] = 13;
         }
       }
     });
@@ -261,6 +266,7 @@ const jump = (m: Model):Model => {
         svg.style.display = "block";
       });
     }
+
  // playTheme();
 },null)]
 
