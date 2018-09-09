@@ -11,7 +11,7 @@ export function gab(x: number, y:number,w:number,h:number): number[][]{
 }
 
 function notSolid(s: string){
-    return ["x","d","-","0"].indexOf(s) < 0 ;
+    return ["x","d","_","0"].indexOf(s) < 0 ;
 }
 
 export function moveBody(
@@ -49,7 +49,7 @@ export function moveBody(
                 if(collide([bX,bY,body[2],body[3]],[ex,ey,ew,eh])){
                     if(notCollide(e_kind)){
                     canMoveUp = !(y < bY) || above;
-                    canMoveDown = !(y > bY) || ey+eh-4 < bY || (right || left);
+                    canMoveDown = !(y > bY) || isEnemy(kind)
                     canMoveRight = !(x > bX) || above || left;
                     canMoveLeft = !(x < bX) || above || right;
                     if(e_kind == "player" && ey+eh-2 < bY){
@@ -114,7 +114,7 @@ export function moveBody(
 }
 
 export function collide(body1:[number,number,number,number],body2:[number,number,number,number]):boolean {
-    return body1[0] < body2[0] + body2[2] && 
+    return body1[0] < body2[0] + (body2[2]) && 
     body1[0] + (body1[2]) > body2[0] &&
     body1[1] < body2[1] + body2[3] && 
     body1[1] + body1[3] > body2[1];

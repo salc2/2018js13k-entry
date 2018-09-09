@@ -19,15 +19,15 @@ export type State = [Camera, Body[], Cells, Parameter, Map, Inventory];
 
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Body = [80,45,8,20,0,0.058,'r',true, "player", 0, 0,10];
-const enemy:Body = [200,45,19,21,0.03,0.058,'r',true, "vending",1, 180,0];
+const enemy:Body = [300,45,19,21,0.03,0.058,'r',true, "vending",1, 180,0];
 const enemy2:Body = [250,45,19,21,0.03,0.058,'r',true, "vending",3, 180,0];
-const enemy3:Body = [300,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
-const enemy4:Body = [350,45,19,21,0.03,0.058,'r',true, "vending",5, 180,0];
+const enemy3:Body = [100,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
+const enemy4:Body = [100,70,20,20,0.03,0.058,'r',true, "drone",5, 180,0];
 const step1:Body = [120,35,20,10,0.03,0.058,'r',true, "step",2, 300,0];
 const door1:Body = [120,50,20,40,0,0,'r',true, "door",63, 67,-1];
 const door2:Body = [320,50,20,40,0,0,'r',true, "door",67, 63,-1];
 const desk1:Body = [390,45,18,10,0,0,'r',true, "desk",3, 0,0];
-const server1:Body = [400,45,40,20,0,0,'r',true, "server",3, 0,0];
+const server1:Body = [450,45,40,20,0,0,'r',true, "server",3, 0,0];
 const key1:Body = [23,45,10,10,0,0,'r',true, "key",99, 0,0];
 const pen1:Body = [35,45,10,10,0,0,'r',true, "pendrive",33, 0,0];
 
@@ -50,7 +50,7 @@ const map = decodeMap("1-x,48-t,2-x,2-`,1-0,4-_,1-0,4-_,1-0,3-_,1-0,31-`,2-x,48-
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [0.058,.075,-0.35];
 
-export const initState: State = [camera,[door1,door2,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, []];
+export const initState: State = [camera,[door1,door2,enemy4,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, []];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy,trg] = c;
