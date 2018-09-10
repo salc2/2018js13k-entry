@@ -11,7 +11,14 @@ const effProgram = createProgram(g,effFsrc,effVsrc);
 
 //g.uniform1f(, 1.0);
 
-getAttrLoc(mainProgram, "a_p");
+const a_pMain = getAttrLoc(mainProgram, "a_p");
+const a_tMain = getAttrLoc(mainProgram, "a_t");
+const a_tEffec = getAttrLoc(effProgram, "a_t");
+const a_pEffec = getAttrLoc(effProgram, "a_p");
+const u_mMain = getUniLoc(mainProgram, "u_m");
+const u_tM = getUniLoc(mainProgram, "u_tm");
+const u_tX = getUniLoc(mainProgram, "u_tx");
+const u_rEffec = getUniLoc(effProgram, "u_r")
 // Create a buffer.
 const positionBuffer = g.createBuffer();
 g.bindBuffer(g.ARRAY_BUFFER, positionBuffer);
@@ -27,7 +34,7 @@ const positions = [
 ]
 g.bufferData(g.ARRAY_BUFFER, new Float32Array(positions), g.STATIC_DRAW);
 
-getAttrLoc(mainProgram, "a_t");
+
 // Create a buffer for texture coords
 const texcoordBuffer = g.createBuffer();
 g.bindBuffer(g.ARRAY_BUFFER, texcoordBuffer);
@@ -162,7 +169,7 @@ function translation(tx:number, ty:number, tz:number, dst:Float32Array = null) {
   return dst;
 }
 
-function createAndSetupTexture(g: WebGLRenderingContext): WebGLTexture {
+export function createAndSetupTexture(g: WebGLRenderingContext): WebGLTexture {
   var texture = g.createTexture();
   g.bindTexture(g.TEXTURE_2D, texture);
 
@@ -251,8 +258,8 @@ g.useProgram(mainProgram);
 
 
 // Setup the attributes to pull data from our buffers
-rebindBuffers(getAttrLoc(mainProgram, "a_p"), positionBuffer);
-rebindBuffers(getAttrLoc(mainProgram, "a_t"), texcoordBuffer);
+rebindBuffers(a_pMain, positionBuffer);
+rebindBuffers(a_tMain, texcoordBuffer);
 
 // this matirx will convert from pixels to clip space
 var matrix = orthographic(0, g.canvas.width, g.canvas.height, 0, -1, 1);
@@ -266,7 +273,7 @@ matrix = scale(matrix, dstWidth, dstHeight, 1);
 
 // Set the matrix.
 
-g.uniformMatrix4fv(getUniLoc(mainProgram, "u_m"), false, matrix);
+g.uniformMatrix4fv(u_mMain, false, matrix);
 
 // Because texture coordinates go from 0 to 1
 // and because our texture coordinates are already a unit quad
@@ -275,10 +282,10 @@ g.uniformMatrix4fv(getUniLoc(mainProgram, "u_m"), false, matrix);
 var texMatrix = translation(srcX / texWidth, srcY / texHeight, 0);
 texMatrix = scale(texMatrix, srcWidth / texWidth, srcHeight / texHeight, 1);
 // Set the texture matrix.
-g.uniformMatrix4fv(getUniLoc(mainProgram, "u_tm"), false, texMatrix);
+g.uniformMatrix4fv(u_tM, false, texMatrix);
 
 // Tell the shader to get the texture from texture unit 0
-g.uniform1i(getUniLoc(mainProgram, "u_tx"), 0);
+g.uniform1i(u_tX, 0);
 
 // draw the quad (2 triangles, 6 vertices)
 g.drawArrays(g.TRIANGLES, 0, 6);
@@ -302,7 +309,7 @@ g.clearColor(  0.93333, 0.93333, 0.93333, 1.0);   // clear to white
 g.clear(g.COLOR_BUFFER_BIT | g.DEPTH_BUFFER_BIT);
 g.useProgram(effProgram);
 
-rebindBuffers(getAttrLoc(effProgram, "a_t"), texcoordBufferEff);
+rebindBuffers(a_tEffec, texcoordBufferEff);
 g.bufferData(g.ARRAY_BUFFER, new Float32Array([
     0.0,  0.0,
     1.0,  0.0,
@@ -313,10 +320,10 @@ g.bufferData(g.ARRAY_BUFFER, new Float32Array([
 ]), g.STATIC_DRAW);
 
 
-rebindBuffers(getAttrLoc(effProgram, "a_p"), positionBufferEff);
+rebindBuffers(a_pEffec, positionBufferEff);
 setRectangle(g, 0, 0, g.canvas.width, g.canvas.height);
 
-g.uniform2f(getUniLoc(effProgram, "u_r"), g.canvas.width, g.canvas.height);
+g.uniform2f(u_rEffec, g.canvas.width, g.canvas.height);
 
 g.drawArrays( g.TRIANGLES, 0, 6);
 }

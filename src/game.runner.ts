@@ -10,15 +10,21 @@ export function runGame<M,A>(update:Update<A,M>, render:Render<M,A>, subs: (m:M)
   let [m,c] = initState;
   let currentModel = m;
 
+  function delayUpdate(event:A){
+     setTimeout(() =>{
+       const [nModel, ef] = update(event, currentModel);
+        runEffect(ef,subs(nModel));
+        currentModel = nModel;
+     },40);
+  }
+
   function onEvent(event:A){
-    const [nModel, ef] = update(event, currentModel);
-    runEffect(ef,subs(nModel));
-    render(onEvent)(nModel);
-    currentModel = nModel;
+    delayUpdate(event);
+    render(onEvent)(currentModel);
   };
 
   function runEffect(ef: Cmd<A>, ss: Subscription<A>[]):void{
-    setTimeout(() =>{
+    
       run(ef,onEvent);
       const currentIds = currentSubscribedTo.map(s => s[0])
       const [currAndRem, newSubs] = partition( su => currentIds.indexOf(su[0]) > -1, ss)
@@ -32,7 +38,7 @@ export function runGame<M,A>(update:Update<A,M>, render:Render<M,A>, subs: (m:M)
         currentSubscribedTo = currentSubscribedTo.filter( p => p[0] != id )
       } );
 
-    },0);
+   
   }
 
   runEffect(c,subs(m));

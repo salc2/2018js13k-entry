@@ -65,7 +65,7 @@ export function moveBody(
                         }
                         if(isEnemy(e_kind) && kind == "player" && e[11] == 0){
                             amIdead = amIdead - 1
-                            nX = e[0] > bX ? bX-20 : bX + 20;
+                           nX = e[0] > bX ? bX-5 : bX + 5;
                         }
 
                     }
@@ -99,9 +99,9 @@ export function moveBody(
     }
     if(y > bY && !notSolid(map.charAt(tLb)) && !notSolid(map.charAt(tRb)) && !body[7]){
 
-        if(body[8] == "player"){
-            cmd = soundOnFloor();
-        }
+        // if(body[8] == "player"){
+        //     cmd = soundOnFloor();
+        // }
 
     }
     if( (kind == "vending" || kind == "drone") && amIdead == 0){

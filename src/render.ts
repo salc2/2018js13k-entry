@@ -1,6 +1,13 @@
 import {gtn,gab} from './collision';
 import {initState, Spacing, State, moveCamera, Kind, Body} from './State';
 import {drawImage, g, getImg,Img, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
+//import {renderUi} from './render.ui'
+
+import 'fpsmeter';
+
+declare var FPSMeter:any;
+
+const fpsM = new FPSMeter();
 
 const map_text = getImg('./map.png');
 const char_text = getImg('./charatlas.png');
@@ -117,6 +124,7 @@ const charsAtlas = {
 
 
   export function render(st: State, map:string,tsize: number, wsize: number){
+    fpsM.tick()
     g.canvas.style.width = `${window.innerWidth}px`;
     g.canvas.style.height = `${window.innerHeight}px`;
     g.viewport(0, 0, g.canvas.width, g.canvas.height);
@@ -132,7 +140,7 @@ const charsAtlas = {
     endRow = startRow + (h / tsize),
     offsetX = -x + startCol * tsize,
     offsetY = -y + startRow * tsize;
-    bindFrameBuffer();
+  //  bindFrameBuffer();
 
     for (var c = startCol; c <= endCol; c++) {
       for (var r = startRow; r <= endRow; r++) {
@@ -162,7 +170,23 @@ const charsAtlas = {
 }
 }
 
-renderPostProcessing(performance.now(),postTexture);
-bindFrameBuffer();
+
+
+
+//renderPostProcessing(performance.now(),postTexture);
+//const ui = renderUi();
+// drawImage(ui, // image
+//                     32,
+//                     8,
+//                     0, // source x
+//                     0, // source y
+//                     32, // source width
+//                     8, // source height
+//                     20,  // target x
+//                     20, // target y
+//                     32, // target width
+//                     8 // target height
+//                     );
+//bindFrameBuffer();
 
 };

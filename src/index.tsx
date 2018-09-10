@@ -33,18 +33,23 @@ const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
       case "a":
       consumer({kind:"up", delta:16})
       break;
+      case "b":
+      consumer({kind:"use", delta:16})
+      break;
       case "left":
       consumer({kind:"lp", delta:16})
       break;
       case "right":
       consumer({kind:"rp", delta:16})
       break;
+      case "up":
+      consumer({kind:"up", delta:16})
+      break;
       
       default:
         // code...
         break;
       }
-      try{window.navigator.vibrate(30);}catch(e){} 
     }
     const handlerEnd = (ev: TouchEvent) => {
       switch (ev.currentTarget['id']) {
