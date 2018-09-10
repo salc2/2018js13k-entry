@@ -305,7 +305,8 @@ g.bindTexture(g.TEXTURE_2D, text);
 g.viewport(0, 0, g.canvas.width, g.canvas.height);
 
 // Clear the canvas AND the depth buffer.
-g.clearColor(  0.93333, 0.93333, 0.93333, 1.0);   // clear to white
+//g.clearColor(  0.93333, 0.93333, 0.93333, 1.0);   // clear to white
+g.clearColor(0.67800, 0.49800, 0.65900, 1.0);
 g.clear(g.COLOR_BUFFER_BIT | g.DEPTH_BUFFER_BIT);
 g.useProgram(effProgram);
 

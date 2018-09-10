@@ -1,13 +1,12 @@
-import {gtn,gab} from './collision';
-import {initState, Spacing, State, moveCamera, Kind, Body} from './State';
+import {State, Kind, Body} from './State';
 import {drawImage, g, getImg,Img, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
-//import {renderUi} from './render.ui'
+import {renderUi} from './render.ui'
 
-import 'fpsmeter';
+//import 'fpsmeter';
 
-declare var FPSMeter:any;
+//declare var FPSMeter:any;
 
-const fpsM = new FPSMeter();
+//const fpsM = new FPSMeter();
 
 const map_text = getImg('./map.png');
 const char_text = getImg('./charatlas.png');
@@ -124,7 +123,7 @@ const charsAtlas = {
 
 
   export function render(st: State, map:string,tsize: number, wsize: number){
-    fpsM.tick()
+   // fpsM.tick()
     g.canvas.style.width = window.innerWidth+"px";
     g.canvas.style.height = window.innerHeight+"px";
     g.viewport(0, 0, g.canvas.width, g.canvas.height);
@@ -133,7 +132,7 @@ const charsAtlas = {
     g.blendFunc(g.SRC_ALPHA, g.ONE_MINUS_SRC_ALPHA);
     g.enable(g.BLEND);
 
-    const [[x,y,w,h,,], characters,] = st,
+    const [[x,y,w,h,,], chars,] = st,
     startCol = Math.floor(x / tsize),
     endCol = startCol + (w / tsize),
     startRow = Math.floor(y / tsize),
@@ -168,9 +167,9 @@ const charsAtlas = {
         }
         }
 
-        for(var i = 0; i<characters.length; i++){
-          if(characters[i][0] > x && characters[i][0] < x + w && characters[i][1] > y && characters[i][1] < y+h){
-              renderCharacter(characters[i],performance.now(),x,y)
+        for(var i = 0; i<chars.length; i++){
+          if(chars[i][0]+chars[i][2] > x && chars[i][0] < x + w && chars[i][1] > y && chars[i][1] < y+h){
+              renderCharacter(chars[i],performance.now(),x,y)
           }
         }
 
@@ -180,7 +179,7 @@ const charsAtlas = {
 
 
 renderPostProcessing(performance.now(),postTexture);
-//const ui = renderUi();
+ renderUi(st);
 // drawImage(ui, // image
 //                     32,
 //                     8,

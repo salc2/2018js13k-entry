@@ -18,16 +18,16 @@ export type Inventory = Artifactory[];
 export type State = [Camera, Body[], Cells, Parameter, Map, Inventory];
 
 const camera:Camera = [0,0,180,100,0,0,0];
-const player:Body = [80,45,8,20,0,0.058,'r',true, "player", 0, 0,10];
+const player:Body = [80,45,8,20,0,0.058,'r',true, "player", 0, 0,100];
 const enemy:Body = [300,45,19,21,0.03,0.058,'r',true, "vending",1, 180,0];
 const enemy2:Body = [250,45,19,21,0.03,0.058,'r',true, "vending",3, 180,0];
 const enemy3:Body = [100,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
 const enemy4:Body = [100,70,20,20,0.03,0.058,'r',true, "drone",5, 180,0];
 const step1:Body = [120,35,20,10,0.03,0.058,'r',true, "step",2, 300,0];
-const door1:Body = [120,50,20,40,0,0,'r',true, "door",63, 67,-1];
+const door1:Body = [120,50,20,40,0,0,'r',true, "door",63, 67,99];
 const door2:Body = [320,50,20,40,0,0,'r',true, "door",67, 63,-1];
 const desk1:Body = [390,45,18,10,0,0,'r',true, "desk",3, 0,0];
-const server1:Body = [450,45,40,20,0,0,'r',true, "server",3, 0,0];
+const server1:Body = [450,45,40,20,0,0,'r',true, "server",3, 1,0];
 const key1:Body = [23,45,10,10,0,0,'r',true, "key",99, 0,0];
 const pen1:Body = [35,45,10,10,0,0,'r',true, "pendrive",33, 0,0];
 
@@ -112,12 +112,13 @@ gab(px,py,pw,ph).map(xy => gtn(xy[0],xy[1],20,10)).map(tn => cells[tn]).forEach(
         if(obj[8] == "door"){
            const parId = obj[10];
            const dest = characters.filter( oth => oth[9] == parId)[0];
-           const idKey = dest[11];
+           const idKey = obj[11];
            if(idKey > 0){
-             if(inv.filter(el => el[1] == "key")
-             .map(elm => elm[0] == idKey).indexOf(true,idKey) > -1){
-               xToGo = dest[0];
-               yToGo = dest[1];
+             for(var i = 0;i<inv.length;i++){
+               if(inv[i][1]=="key" && inv[i][0]==idKey){
+                 xToGo = dest[0];
+                 yToGo = dest[1];
+               }
              }
            }else{
               xToGo = dest[0];
