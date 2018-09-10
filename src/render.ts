@@ -58,12 +58,12 @@ const charsAtlas = {
     b = seqTimeB(time);
     if(onfloor){
       if(vx == 0 ){
-        return charsAtlas[`pi${b}`];
+        return charsAtlas['pi'+b];
       }else{
-        return charsAtlas[`pw${i}`];
+        return charsAtlas['pwd'+i];
       }
     }else{
-      return charsAtlas[`pj${i}`];
+      return charsAtlas['pj'+i];
     }
   }
 
@@ -71,18 +71,18 @@ const charsAtlas = {
     const i = seqTimeI(time),
     b = (Math.round(time* 0.008) % 10) == 2 ? 2 : 1;
     if(life > 0 ){
-      return charsAtlas[`vo`];
+      return charsAtlas['vo'];
     }else{
-      return charsAtlas[`vw${i}`];
+      return charsAtlas['vw'+i];
     }
   }
 
   function droneCoords(life: number,time: number):Coord{
     const q = seqTimeQ(time);
     if(life > 0){
-      return charsAtlas[`d1`];
+      return charsAtlas['d1'];
     }else{
-      return charsAtlas[`d${q}`];
+      return charsAtlas['d'+q];
     }
   }
 
@@ -125,8 +125,8 @@ const charsAtlas = {
 
   export function render(st: State, map:string,tsize: number, wsize: number){
     fpsM.tick()
-    g.canvas.style.width = `${window.innerWidth}px`;
-    g.canvas.style.height = `${window.innerHeight}px`;
+    g.canvas.style.width = window.innerWidth+"px";
+    g.canvas.style.height = window.innerHeight+"px";
     g.viewport(0, 0, g.canvas.width, g.canvas.height);
 
     g.clear(g.COLOR_BUFFER_BIT);
@@ -140,7 +140,7 @@ const charsAtlas = {
     endRow = startRow + (h / tsize),
     offsetX = -x + startCol * tsize,
     offsetY = -y + startRow * tsize;
-    bindFrameBuffer();
+    // bindFrameBuffer();
 
     for (var c = startCol; c <= endCol; c++) {
       for (var r = startRow; r <= endRow; r++) {
@@ -166,14 +166,24 @@ const charsAtlas = {
           }catch(e){}
           
         }
-        characters.forEach(charact => renderCharacter(charact,performance.now(),x,y));
+        }
+
+        // characters.filter( p => p[0] > x && p[0] < x + w && p[1] > y && p[1] < y+h)
+        // .forEach(charact => renderCharacter(charact,performance.now(),x,y));
+
+        for(var i = 0; i<characters.length; i++){
+          if(characters[i][0] > x && characters[i][0] < x + w && characters[i][1] > y && characters[i][1] < y+h){
+            console.log(characters[i])
+              renderCharacter(characters[i],performance.now(),x,y)
+          }
+        }
+
 }
-}
 
 
 
 
-renderPostProcessing(performance.now(),postTexture);
+//renderPostProcessing(performance.now(),postTexture);
 //const ui = renderUi();
 // drawImage(ui, // image
 //                     32,
@@ -187,6 +197,6 @@ renderPostProcessing(performance.now(),postTexture);
 //                     32, // target width
 //                     8 // target height
 //                     );
-bindFrameBuffer();
+//bindFrameBuffer();
 
 };
