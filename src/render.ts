@@ -60,7 +60,7 @@ const charsAtlas = {
       if(vx == 0 ){
         return charsAtlas['pi'+b];
       }else{
-        return charsAtlas['pwd'+i];
+        return charsAtlas['pw'+i];
       }
     }else{
       return charsAtlas['pj'+i];
