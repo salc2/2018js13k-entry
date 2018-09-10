@@ -15,7 +15,7 @@ export function runGame<M,A>(update:Update<A,M>, render:Render<M,A>, subs: (m:M)
        const [nModel, ef] = update(event, currentModel);
         runEffect(ef,subs(nModel));
         currentModel = nModel;
-     },40);
+     },30);
   }
 
   function onEvent(event:A){

@@ -140,7 +140,7 @@ const charsAtlas = {
     endRow = startRow + (h / tsize),
     offsetX = -x + startCol * tsize,
     offsetY = -y + startRow * tsize;
-    // bindFrameBuffer();
+    bindFrameBuffer();
 
     for (var c = startCol; c <= endCol; c++) {
       for (var r = startRow; r <= endRow; r++) {
@@ -168,12 +168,8 @@ const charsAtlas = {
         }
         }
 
-        // characters.filter( p => p[0] > x && p[0] < x + w && p[1] > y && p[1] < y+h)
-        // .forEach(charact => renderCharacter(charact,performance.now(),x,y));
-
         for(var i = 0; i<characters.length; i++){
           if(characters[i][0] > x && characters[i][0] < x + w && characters[i][1] > y && characters[i][1] < y+h){
-            console.log(characters[i])
               renderCharacter(characters[i],performance.now(),x,y)
           }
         }
@@ -183,7 +179,7 @@ const charsAtlas = {
 
 
 
-//renderPostProcessing(performance.now(),postTexture);
+renderPostProcessing(performance.now(),postTexture);
 //const ui = renderUi();
 // drawImage(ui, // image
 //                     32,
@@ -197,6 +193,6 @@ const charsAtlas = {
 //                     32, // target width
 //                     8 // target height
 //                     );
-//bindFrameBuffer();
+bindFrameBuffer();
 
 };
