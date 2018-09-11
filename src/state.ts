@@ -2,7 +2,7 @@ import {gtn,gab,collide} from './collision';
 
 type OnFloor = boolean
 type Dir = "r" | "l"
-export type Kind = "player" | "vending" | "drone" | "desk" | "door" | "key" | "server" | "pendrive" | "step";
+export type Kind = "player" | "vending" | "drone" | "desk" | "door" | "key" | "server" | "hammer" | "step";
 // x,y,w,h,vx,vz,target
 type Id = number;
 type Active = number;
@@ -11,7 +11,7 @@ export type Spacing = [number,number,number,number,number,number];
 export type Camera = [number,number,number,number,number,number,number];
 export type Body = [number,number,number,number,number,number,Dir,OnFloor, Kind,Id, number, Active];
 export type Parameter = [number,number,number];
-export type ArtifactoryType = "pendrive" | "key";
+export type ArtifactoryType = "hammer" | "key";
 export type Artifactory = [number, ArtifactoryType];
 export type Cells = Body[][];
 export type Inventory = Artifactory[];
@@ -27,9 +27,9 @@ const step1:Body = [120,35,20,10,0.03,0.058,'r',true, "step",2, 300,0];
 const door1:Body = [120,50,20,40,0,0,'r',true, "door",63, 67,99];
 const door2:Body = [320,50,20,40,0,0,'r',true, "door",67, 63,-1];
 const desk1:Body = [390,45,18,10,0,0,'r',true, "desk",3, 0,0];
-const server1:Body = [450,45,40,20,0,0,'r',true, "server",3, 1,0];
+const server1:Body = [450,45,18,20,0,0,'r',true, "server",3, 1,100];
 const key1:Body = [23,45,10,10,0,0,'r',true, "key",99, 0,0];
-const pen1:Body = [35,45,10,10,0,0,'r',true, "pendrive",33, 0,0];
+const pen1:Body = [35,45,10,10,0,0,'r',true, "hammer",33, 0,0];
 
 
 function decodeMap(encodeMap:string): string{
@@ -126,7 +126,7 @@ gab(px,py,pw,ph).map(xy => gtn(xy[0],xy[1],20,10)).map(tn => cells[tn]).forEach(
            }
         }else if(obj[8] == "server"){
                const pendId = obj[11];
-            if(inv.filter(el => el[1] == "pendrive")
+            if(inv.filter(el => el[1] == "hammer")
              .map(elm => elm[0]).indexOf(pendId) > -1){
               obj[10] = 0;
              }

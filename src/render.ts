@@ -23,26 +23,29 @@ const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
 'r': [ 180, 0, 20, 20 ],
 't': [ 200, 0, 20, 20 ] };
 
-const charsAtlas = { 
-  'd1': [ 19, 49, 20, 20 ],
-  'd2': [ 39, 49, 20, 20 ],
-  'd3': [ 0, 70, 20, 20 ],
-  'desk': [ 8, 10, 18, 10 ],
-  'door': [ 39, 70, 20, 40 ],
-  'key': [ 10, 0, 10, 10 ],
-  'pendrive': [ 0, 0, 10, 10 ],
-  'pi1': [ 0, 10, 8, 20 ],
-  'pi2': [ 34, 10, 8, 20 ],
-  'pj1': [ 0, 30, 12, 17 ],
-  'pj2': [ 42, 10, 12, 17 ],
-  'pw1': [ 26, 10, 8, 20 ],
-  'pw2': [ 12, 30, 10, 19 ],
-  'sof': [ 20, 0, 16, 10 ],
-  'son': [ 36, 0, 16, 10 ],
-  'server': [ 0, 110, 40, 20 ],
-  'vo': [ 22, 30, 20, 13 ],
-  'vw1': [ 0, 49, 19, 21 ],
-  'vw2': [ 20, 70, 19, 21 ] };
+const charsAtlas = {
+  'd1': [ 0, 47, 20, 20 ],
+  'd2': [ 40, 47, 20, 20 ],
+  'd3': [ 20, 47, 20, 20 ],
+  'desk': [ 36, 0, 18, 10 ],
+  'door': [ 38, 87, 20, 40 ],
+  'hammer': [ 0, 0, 10, 6 ],
+  'key': [ 26, 0, 10, 10 ],
+  'ph1': [ 0, 67, 17, 20 ],
+  'ph2': [ 17, 67, 17, 20 ],
+  'pi1': [ 42, 67, 8, 20 ],
+  'pi2': [ 34, 67, 8, 20 ],
+  'pj1': [ 36, 10, 12, 17 ],
+  'pj2': [ 48, 10, 12, 17 ],
+  'pw1': [ 28, 27, 8, 20 ],
+  'pw2': [ 0, 27, 10, 19 ],
+  'sof': [ 0, 10, 16, 10 ],
+  'son': [ 10, 0, 16, 10 ],
+  'server': [ 10, 27, 18, 20 ],
+  'servero': [ 36, 27, 18, 20 ],
+  'vo': [ 16, 10, 20, 13 ],
+  'vw1': [ 0, 87, 19, 21 ],
+  'vw2': [ 19, 87, 19, 21 ] };
 
 
   type Coord = number[];
@@ -52,11 +55,13 @@ const charsAtlas = {
   const seqTimeQ = (t:number) =>  Math.round((performance.now()* 0.001)/ 0.04) % 3 + (1);
   const seqTimeBlink = (t:number):boolean => Math.floor((t * 0.008) % 2) == 0;
 
-  function playerCoords(vx: number,onfloor:boolean,time: number):Coord{
+  function playerCoords(vx: number,onfloor:boolean,attck:number,time: number):Coord{
     const i = seqTimeI(time),
     b = seqTimeB(time);
     if(onfloor){
-      if(vx == 0 ){
+      if(attck == 1){
+        return charsAtlas['ph'+i];
+      }else if(vx == 0 ){
         return charsAtlas['pi'+b];
       }else{
         return charsAtlas['pw'+i];
@@ -78,14 +83,21 @@ const charsAtlas = {
 
   function droneCoords(life: number,time: number):Coord{
     const q = seqTimeQ(time);
+    charsAtlas['d1'][1] = 47;
+    charsAtlas['d1'][3] = 20;
     if(life > 0){
+      charsAtlas['d1'][1] = 52;
+      charsAtlas['d1'][3] = 15;
       return charsAtlas['d1'];
     }else{
       return charsAtlas['d'+q];
     }
   }
 
-  function stuffCoords(kind: string):Coord{
+  function stuffCoords(kind: string, life: number):Coord{
+    if(kind == "server" && life < 0){
+    return charsAtlas['servero'];
+    }
     return charsAtlas[kind];
   }
 
@@ -93,13 +105,13 @@ const charsAtlas = {
   [Img,Coord]{
     switch (body[8]) {
       case "player":
-      return [char_text,playerCoords(body[4],body[7],time)];
+      return [char_text,playerCoords(body[4],body[7],body[10],time)];
       case "vending":
       return [char_text,vendingCoords(body[11],time)];
       case "drone":
       return [char_text,droneCoords(body[11],time)];
       default:
-      return [char_text,stuffCoords(body[8])];
+      return [char_text,stuffCoords(body[8],body[11])];
     }
   }
 

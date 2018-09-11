@@ -2,7 +2,7 @@ import {Subscriber, create} from './sub';
 import {Cmd, emptyCmd, create as createCmd} from './cmd';
 import {runGame, Update} from './game.runner';
 import {render as renderExt} from './render';
-import {ArtifactoryType,initState, Spacing, State, moveCamera, Body, insertInCells, openUse} from './state';
+import {ArtifactoryType,Artifactory,initState, Spacing, State, moveCamera, Body, insertInCells, openUse} from './state';
 //import {renderDebug,updateDebug} from './debug';
 import {isEnemy} from './utils';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
@@ -31,7 +31,7 @@ const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
   const handlerStart = (ev: TouchEvent) => {
     switch (ev.currentTarget['id']) {
       case "a":
-      consumer({kind:"up", delta:16})
+      consumer({kind:"attkp", delta:16})
       break;
       case "b":
       consumer({kind:"use", delta:16})
@@ -53,6 +53,9 @@ const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
     }
     const handlerEnd = (ev: TouchEvent) => {
       switch (ev.currentTarget['id']) {
+        case "a":
+        consumer({kind:"attkr", delta:16})
+        break;
         case "left":
         consumer({kind:"lr", delta:16})
         break;
@@ -96,6 +99,9 @@ const pressKeySub = create('p1', (consumer: Subscriber<Action>) => {
       case 13:
       consumer({kind:"use",delta:16})
       break;
+      case 32:
+      consumer({kind:"attkp",delta:16})
+      break;
       default:
       break;
     } 
@@ -112,6 +118,9 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
       break;
       case 39:
       consumer({kind:"rr",delta:16})
+      break;
+      case 32:
+      consumer({kind:"attkr",delta:16})
       break;
       default:
       break;
@@ -164,10 +173,10 @@ const walkLeft = (m: Model):Model => {
 
 const fillingInventory = (m: Model):Model => {
   const ids = m[5].map(i => i[0]) || [];
-  m[1].filter( c => c[0] < -1 && (c[8] == "key" || c[8] == "pendrive") )
+  m[1].filter( c => c[0] < -1 && (c[8] == "key" || c[8] == "hammer") )
   .forEach(fnd => {
     if(ids.indexOf(fnd[9]) < 0){
-      const at:ArtifactoryType = fnd[8] == "key" ? "key" : "pendrive";
+      const at:ArtifactoryType = fnd[8] == "key" ? "key" : "hammer";
       m[5].push( [fnd[9], at]); 
     }
   });
@@ -204,6 +213,7 @@ const jump = (m: Model):Model => {
     characters.forEach(c =>{
       if(c[8] == 'player'){
         c[4] = 0;
+        c[10] = 0;
       }
     });
     return m;
@@ -231,7 +241,29 @@ const jump = (m: Model):Model => {
       return [ stop(m),emptyCmd<Action>()];
       case "use":
       return [ openUse(m),emptyCmd<Action>()];
+      case "attkp":
+      return [ attackMode(m),emptyCmd<Action>()];
+      case "attkr":
+      return [ stop(m),emptyCmd<Action>()];
     }
+  }
+
+const haveHammer = (inv: Artifactory[]):Boolean => {
+  let result = false;
+  for(var i =0;i< inv.length;i++){
+    if(inv[i][1] == "hammer"){
+      result = true;
+    }
+  }
+  return result;
+}
+  const attackMode = (m:Model):Model => {
+    for(var i =0;i< m[1].length;i++){
+      if(m[1][i][8]=="player" && haveHammer(m[5])){
+        m[1][i][10] = 1; 
+      }
+    }
+    return m;
   }
 
   const evalVictoryDefeat = (m:Model): Model => {
@@ -248,7 +280,7 @@ const jump = (m: Model):Model => {
         c[11] = Math.max(0, c[11] - delta);
 
         if(c[11] < 100 && c[11] != 0){
-          c[1] = c[8] == "drone" ? c[10]/4 : c[1]-5;
+          c[1] = c[1]-5;
           c[3] = 21;
           c[4] = c[6] == "r" ? 0.03 : -0.03;
         }else if(c[11] > 100){
@@ -278,4 +310,4 @@ const jump = (m: Model):Model => {
  playSound();
 },null)]
 
-  runGame( update, render,  subs, initStateCmd);  
+runGame( update, render,  subs, initStateCmd);  

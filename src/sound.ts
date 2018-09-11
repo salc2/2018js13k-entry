@@ -583,7 +583,7 @@ export function playSound(){
         source.connect(gain);
         source.loop = true;
         source.start()
-       // source.loopEnd = 49.00;
+        source.loopEnd = 46.00;
     });
 
 }

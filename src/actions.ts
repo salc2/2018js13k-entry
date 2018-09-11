@@ -26,5 +26,13 @@ export interface UsePressed {
     kind: "use";
     delta: number;
 }
+export interface AttackPressed {
+    kind: "attkp";
+    delta: number;
+}
+export interface AttackReleased {
+    kind: "attkr";
+    delta: number;
+}
 
-export type Action = Time | UpPressed | RightPressed | LeftPressed | LeftReleased | RightReleased | UsePressed;
+export type Action = Time | UpPressed | RightPressed | LeftPressed | LeftReleased | RightReleased | UsePressed | AttackPressed | AttackReleased; 

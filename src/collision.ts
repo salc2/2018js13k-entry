@@ -43,7 +43,7 @@ export function moveBody(
     canMoveLeft:boolean = true,
     amIdead = dead;
     const isEnemy = (s:string) => s == "vending" || s == "drone";
-    const notCollide = (k:string) => !(k == "key" || k == "pendrive" || k == "server" || k == "door");
+    const notCollide = (k:string) => !(k == "key" || k == "hammer" || k == "server" || k == "door");
 
     gab(bX,bY,body[2],body[3]).map(xy => gtn(xy[0],xy[1],tileSize,worldSize)).map(tn => cells[tn]).forEach(bodies =>{
         if(bodies){
@@ -59,20 +59,30 @@ export function moveBody(
                         canMoveLeft = !(x < bX) || above || right;
                         if(e_kind == "player" && ey+eh-2 < bY){
                             amIdead = 5000;
+                        }else if((e_kind == "player" && isEnemy(kind) && e[10] == 1)){
+                            amIdead = 1000;
                         }
+                        //
                         if(kind == "player" && isEnemy(e_kind) && ey > bY+bH-2 && e[11] == 0){
                             cmd = soundSplashEnemy();
                         }
                         if(isEnemy(e_kind) && kind == "player" && e[11] == 0){
-                            amIdead = amIdead - 1
+                            if(body[10] == 0){
+                                   amIdead = amIdead - 1
+                            }
                            nX = e[0] > bX ? bX-5 : bX + 5;
                         }
 
                     }
-                    if(e_kind == "player" && (kind == "key" || kind == "pendrive") ){
+                    if(e_kind == "player" && (kind == "key" || kind == "hammer") ){
                         nX = -10000;
                     }
-                    if(kind == "player" && (e_kind == "key" || e_kind == "pendrive") ){
+                    if(e_kind == "player" && kind == "server" && e[10] == 1 && amIdead > -1){
+                        amIdead = amIdead - 1;
+                        nY = bY - 0.5;
+
+                    }
+                    if(kind == "player" && (e_kind == "key" || e_kind == "hammer") ){
                         cmd = gotInventorySound();
                     }
                 }

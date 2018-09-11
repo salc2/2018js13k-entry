@@ -60,18 +60,18 @@ test('test doors with key', () => {
   expect(openUse(stateKey)).toEqual(stateExpeced);
 });
 
-test('test turn off server', () => {
-  const player:Body = [21,21,8,20,0,0.058,'r',true, "player", 0, 0,0];
-  const server1:Body = [21,21,20,20,0,0,'r',true, "server", 1, 1,88];
-  const camera:Camera = [10,10,180,100,0,0,0];
-  const state:State = [camera,[player,server1],[], [0,0,0],"",[]];
-  expect(openUse(state)).toEqual(state);
+// test('test turn off server', () => {
+//   const player:Body = [21,21,8,20,0,0.058,'r',true, "player", 0, 0,0];
+//   const server1:Body = [21,21,20,20,0,0,'r',true, "server", 1, 1,88];
+//   const camera:Camera = [10,10,180,100,0,0,0];
+//   const state:State = [camera,[player,server1],[], [0,0,0],"",[]];
+//   expect(openUse(state)).toEqual(state);
 
-  const serverExpected:Body = [21,21,20,20,0,0,'r',true, "server", 1, 0,88];
-  const stateExpeced:State = [camera,[player,serverExpected],[], [0,0,0],"",[ [88,"pendrive"] ]];
-  const stateWithPen:State = [camera,[player,server1],[], [0,0,0],"",[[88,"pendrive"]]];
-  expect(openUse(stateWithPen)).toEqual(stateExpeced);
-});
+//   const serverExpected:Body = [21,21,20,20,0,0,'r',true, "server", 1, 0,88];
+//   const stateExpeced:State = [camera,[player,serverExpected],[], [0,0,0],"",[ [88,"pendrive"] ]];
+//   const stateWithPen:State = [camera,[player,server1],[], [0,0,0],"",[[88,"pendrive"]]];
+//   expect(openUse(stateWithPen)).toEqual(stateExpeced);
+// });
 
 
 const map = "%^&``*@£````````````````";
