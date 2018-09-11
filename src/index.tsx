@@ -31,10 +31,10 @@ const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
   const handlerStart = (ev: TouchEvent) => {
     switch (ev.currentTarget['id']) {
       case "a":
-      consumer({kind:"attkp", delta:16})
+      consumer({kind:"up", delta:16})
       break;
       case "b":
-      consumer({kind:"use", delta:16})
+      consumer({kind:"attkp", delta:16})
       break;
       case "left":
       consumer({kind:"lp", delta:16})
@@ -43,7 +43,7 @@ const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
       consumer({kind:"rp", delta:16})
       break;
       case "up":
-      consumer({kind:"up", delta:16})
+      consumer({kind:"use", delta:16})
       break;
       
       default:
@@ -53,7 +53,7 @@ const touchsSub = create('t1', (consumer: Subscriber<Action>) => {
     }
     const handlerEnd = (ev: TouchEvent) => {
       switch (ev.currentTarget['id']) {
-        case "a":
+        case "b":
         consumer({kind:"attkr", delta:16})
         break;
         case "left":

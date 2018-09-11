@@ -1,7 +1,7 @@
 import {initState, Spacing, State, moveCamera, Body, Cells} from './state';
 import {Cmd, emptyCmd, create} from './cmd';
 import {Action} from './actions';
-import {soundOnFloor, gotInventorySound,soundSplashEnemy} from './sound'
+import {gotInventorySound,soundSplashEnemy} from './sound'
 
 //getTileNumer
 export function gtn(x: number, y:number, tileSize: number, worldSize: number){

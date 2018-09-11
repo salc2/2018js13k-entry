@@ -5,54 +5,17 @@ declare var sonantx: any;
 const audioCtx:AudioContext = new AudioContext();
 
 
-const jsonOnFloor = {
-    "osc1_oct": 7,
-    "osc1_det": 0,
-    "osc1_detune": 0,
-    "osc1_xenv": 1,
-    "osc1_vol": 255,
-    "osc1_waveform": 0,
-    "osc2_oct": 7,
-    "osc2_det": 0,
-    "osc2_detune": 0,
-    "osc2_xenv": 1,
-    "osc2_vol": 255,
-    "osc2_waveform": 0,
-    "noise_fader": 37,
-    "env_attack": 50,
-    "env_sustain": 150,
-    "env_release": 4800,
-    "env_master": 200,
-    "fx_filter": 2,
-    "fx_freq": 600,
-    "fx_resonance": 254,
-    "fx_delay_time": 0,
-    "fx_delay_amt": 0,
-    "fx_pan_freq": 0,
-    "fx_pan_amt": 0,
-    "lfo_osc1_freq": 0,
-    "lfo_fx_freq": 0,
-    "lfo_freq": 0,
-    "lfo_amt": 0,
-    "lfo_waveform": 0
-}
 
-var soundGenFloor = new sonantx.SoundGenerator(jsonOnFloor);
 
-export function soundOnFloor(): Cmd<Action>{
-    return create( () =>{
-        soundGenFloor.getAudioGenerator(127, function(audioGenerator) {
-            var audio = audioGenerator.getAudio();
-            audio.play();
-        });
-    } ,null);
 
-}
+
 export function soundSplashEnemy(): Cmd<Action>{
     return create( () =>{
-        soundGenFloor.getAudioGenerator(163, function(audioGenerator) {
-            var audio = audioGenerator.getAudio();
-            audio.play();
+        soundGenInven.createAudioBuffer(125, function(buffer) {
+        var source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioCtx.destination);
+        source.start();
         });
     } ,null);
 
@@ -94,10 +57,12 @@ const jsonInven = {
 var soundGenInven = new sonantx.SoundGenerator(jsonInven);
 export function gotInventorySound():Cmd<Action>{
     return create( () =>{
-        soundGenInven.getAudioGenerator(159, function(audioGenerator) {
-            var audio = audioGenerator.getAudio();
-            audio.play();
-        });
+        soundGenInven.createAudioBuffer(159, function(buffer) {
+        var source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioCtx.destination);
+        source.start();
+    });
     } ,null);
 }
 
