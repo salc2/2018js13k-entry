@@ -4,14 +4,14 @@ import {gtn,gab,collide} from '../collision'
 
 test('players in map should be in cells', () =>{
     const p: Body = [23,23,1,1,0,0,'l',true,'player', 0,1,0];
-    const s: State = [[0,0,0,0,0,0,0], [p],[],[0,0,0],"",[]];
+    const s: State = [[0,0,0,0,0,0,0], [p],[],[0,0,0],"",[],0,""];
     expect(insertInCells(s,new Array(4),20,2)[2][3]).toEqual([p])
 });
 
 test('players and enemy in map should be in cells', () =>{
     const p: Body = [43,23,1,1,0,0,'l',true,'player', 0,1,0];
     const e: Body = [53,25,1,1,0,0,'r',true,'vending', 0,2,0];
-    const s: State = [[0,0,0,0,0,0,0], [p,e],[],[0,0,0],"",[]];
+    const s: State = [[0,0,0,0,0,0,0], [p,e],[],[0,0,0],"",[],0,""];
     expect(insertInCells(s,new Array(25),20,5)[2][7]).toEqual([p,e])
 });
 
@@ -35,11 +35,11 @@ test('test using doors', () => {
   const door1:Body = [21,21,20,20,0,0,'r',true, "door", 1, 2,-1];
   const door2:Body = [101,21,20,20,0,0,'r',true, "door", 2, 1,-1];
   const camera:Camera = [10,10,180,100,0,0,0];
-  const state:State = [camera,[player,door1,door2],[], [0,0,0],"",[]];
+  const state:State = [camera,[player,door1,door2],[], [0,0,0],"",[],0,""];
 
   const playerExpected:Body = [101,31,8,20,0,0.058,'r',true, "player", 0, 0,0];
   const cameraExpected:Camera = [31, -49,180,100,0,0,0];
-  const stateExpeced:State = [cameraExpected,[playerExpected,door1,door2],[], [0,0,0],"",[]];
+  const stateExpeced:State = [cameraExpected,[playerExpected,door1,door2],[], [0,0,0],"",[],0,""];
   expect(openUse(state)).toEqual(stateExpeced);
 });
 
@@ -49,14 +49,14 @@ test('test doors with key', () => {
   const door1:Body = [21,21,20,20,0,0,'r',true, "door", 1, 2,88];
   const door2:Body = [101,21,20,20,0,0,'r',true, "door", 2, 1,-1];
   const camera:Camera = [10,10,180,100,0,0,0];
-  const state:State = [camera,[player,door1,door2],[], [0,0,0],"",[]];
+  const state:State = [camera,[player,door1,door2],[], [0,0,0],"",[],0,""];
   expect(openUse(state)).toEqual(state);
 
   const playerExpected:Body = [101,31,8,20,0,0.058,'r',true, "player", 0, 0,0];
   const cameraExpected:Camera = [31, -49,180,100,0,0,0];
   
-  const stateKey:State = [camera,[player,door1,door2],[], [0,0,0],"",[ [88,"key"] ]];
-  const stateExpeced:State = [cameraExpected,[playerExpected,door1,door2],[], [0,0,0],"",[ [88,"key"] ]];
+  const stateKey:State = [camera,[player,door1,door2],[], [0,0,0],"",[ [88,"key"] ],0,""];
+  const stateExpeced:State = [cameraExpected,[playerExpected,door1,door2],[], [0,0,0],"",[ [88,"key"] ],0,""];
   expect(openUse(stateKey)).toEqual(stateExpeced);
 });
 

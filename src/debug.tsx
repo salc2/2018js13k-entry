@@ -152,14 +152,14 @@ export const renderDebug = (onEvent:(a:Action) => void) => (m: Model) => {
 }
 
 export const updateDebug:Update<Action,Model> = (a: Action, m: Model) =>{
-      const [cam, players,cells,pmt,map,inv] = m;
+      const [cam, players,cells,pmt,map,inv,tt,msg] = m;
 
 switch (a.kind) {
     case "parameter":
-    return [[cam, players, cells, a.val,map,inv],emptyCmd<Action>()];
+    return [[cam, players, cells, a.val,map,inv,tt,msg],emptyCmd<Action>()];
     case "cameraPos": 
     const moved:CameraType = moveCamera(cam,a.val[0],a.val[1],1000,1000);
-    return [[moved, players, cells, pmt,map,inv] ,emptyCmd<Action>()];
+    return [[moved, players, cells, pmt,map,inv,tt,msg] ,emptyCmd<Action>()];
     case "playerVal": 
     const [xx,yy,ww,hh] = a.val;
     return [[cam, players.map( p =>{
@@ -170,7 +170,7 @@ switch (a.kind) {
         }else{
             return p;
         }
-    }), cells, pmt, map,inv],emptyCmd<Action>()];
+    }), cells, pmt, map,inv,tt,msg],emptyCmd<Action>()];
     default:
       return update(a,m);
   }

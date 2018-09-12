@@ -8,6 +8,7 @@ import {isEnemy} from './utils';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
 import {playSound} from './sound'
+import {intro} from './render.ui'
 
 export type Model = State;
 
@@ -132,7 +133,7 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
 
 const applyMotion = (m: Model, delta: number):[Model,Cmd<Action>] => {
   let cmdSound: Cmd<Action> = emptyCmd();
-  let [cam, characters,cells,pmtr,map,inv]:Model = insertInCells(m,new Array(m[4].length),20,50);
+  let [cam, characters,cells,pmtr,map,inv,tt,msg]:Model = insertInCells(m,new Array(m[4].length),20,50);
   const pp = characters.filter(c => c[8] == "player")[0];
   const gravity = pmtr[0];
   const n_characters = characters.map(c => {
@@ -155,7 +156,7 @@ const applyMotion = (m: Model, delta: number):[Model,Cmd<Action>] => {
   }else if(pp[1] - (cam[1]+mdl) > 70){
     cam = moveCamera(cam,cam[0],cam[1] + (delta*0.075),1000,1000);
   }
-  const nm: Model  =[cam, n_characters,cells,pmtr,map,inv];
+  const nm: Model  =[cam, n_characters,cells,pmtr,map,inv,tt,msg];
   return [nm,cmdSound];
 }
 
@@ -269,7 +270,19 @@ const haveHammer = (inv: Artifactory[]):Boolean => {
   const evalVictoryDefeat = (m:Model): Model => {
     const p = m[1].filter(c => c[8] =="player")[0];
     if(p[11] < 0){
-      console.log("Moriste")
+      m[7] = "Game Over";
+    }
+    var n = 0;
+    var d = 0;
+    for(var i = 0; i< m[1].length;i++){
+        if(m[1][i][8] == "server"){
+            n ++;
+            d = m[1][i][11] < 0 ? d + 1 : d;
+        }
+    }
+    console.log(n,d)
+    if(n == d){
+        m[7] = "All is Offline! Yihaa";
     }
     return m;
   }
@@ -293,7 +306,12 @@ const haveHammer = (inv: Artifactory[]):Boolean => {
   }
 
   export const render = (onEvent:(a:Action) => void) => (m: Model) => {
-    renderExt(m,m[4],tileSize,mapSize);
+    if(performance.now() > m[6]+3000){
+      renderExt(m,m[4],tileSize,mapSize);
+    }else{
+      intro(m[6])
+    }
+    
   }
   export const subs = (m: Model) => {
     const zero: Time = {kind:"t", delta: 0}; 

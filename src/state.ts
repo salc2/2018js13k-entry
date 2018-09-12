@@ -15,7 +15,9 @@ export type ArtifactoryType = "hammer" | "key";
 export type Artifactory = [number, ArtifactoryType];
 export type Cells = Body[][];
 export type Inventory = Artifactory[];
-export type State = [Camera, Body[], Cells, Parameter, Map, Inventory];
+export type Time = number;
+export type Message = string;
+export type State = [Camera, Body[], Cells, Parameter, Map, Inventory,Time, Message];
 
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Body = [80,45,8,20,0,0.058,'r',true, "player", 0, 0,100];
@@ -50,7 +52,7 @@ const map = decodeMap("1-x,48-t,2-x,2-`,1-0,4-_,1-0,4-_,1-0,3-_,1-0,31-`,2-x,48-
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [0.058,.075,-0.35];
 
-export const initState: State = [camera,[door1,door2,enemy4,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, []];
+export const initState: State = [camera,[door1,door2,enemy4,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, [],performance.now()+30500,""];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy,trg] = c;
@@ -82,7 +84,7 @@ function onlyUnique(value, index, self) {
 }
 
 export const insertInCells = (s: State,tiles: Body[][],tileSize: number, worldSize: number): State => {
-    const [c, chars,,pmr,map,inv] = s;
+    const [c, chars,,pmr,map,inv,tt,msg] = s;
     chars.forEach(c => { 
         const aabbs = gab(c[0], c[1],c[2],c[3]);
         const tilesN = aabbs.map( xy =>  gtn(xy[0],xy[1],tileSize,worldSize));
@@ -94,11 +96,11 @@ export const insertInCells = (s: State,tiles: Body[][],tileSize: number, worldSi
             }
         });
     })
-    return [c, chars,tiles,pmr,map,inv];
+    return [c, chars,tiles,pmr,map,inv,tt,msg];
 }
 
 export function openUse(m:State): State {
-  let [cam, characters,cells,pmtr,map,inv]:State = insertInCells(m,new Array(100),20,10);
+  let [cam, characters,cells,pmtr,map,inv,tt,msg]:State = insertInCells(m,new Array(100),20,10);
   let xToGo:number ,yToGo: number, serverOn, currentDev:Body;
   const player:Body = characters.filter(c => c[8]=="player")[0];
   const [px,py,pw,ph] = player;
@@ -140,7 +142,7 @@ if(xToGo && yToGo){
    cam[1] = yToGo-70;
    player[0] = xToGo;
    player[1] = yToGo+10;
-   const ns: State = [cam, characters,[],pmtr,map,inv]; 
+   const ns: State = [cam, characters,[],pmtr,map,inv,tt,msg]; 
   return ns;
 }else{
   return m;
