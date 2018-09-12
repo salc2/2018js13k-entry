@@ -52,7 +52,7 @@ const map = decodeMap("1-x,48-t,2-x,2-`,1-0,4-_,1-0,4-_,1-0,3-_,1-0,31-`,2-x,48-
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [0.058,.075,-0.35];
 
-export const initState: State = [camera,[door1,door2,enemy4,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, [],performance.now()+30500,""];
+export const initState: State = [camera,[door1,door2,enemy4,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, [],performance.now()+29000,""];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy,trg] = c;
@@ -145,6 +145,8 @@ if(xToGo && yToGo){
    const ns: State = [cam, characters,[],pmtr,map,inv,tt,msg]; 
   return ns;
 }else{
+  
+  m[6] = m[6] - m[6];
   return m;
 }
 }

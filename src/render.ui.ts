@@ -22,7 +22,9 @@ export function renderUi(st:State){
     renderHeart(player);
     renderInven(st[5]);
     renderServer(st[1]);
- //   renderMsg(st);
+    if(st[7].length > 0){
+      showMessage(st[7],performance.now()+2000)
+    }
 }
 function renderHeart(player:Body){
     ctx.fillText(player[11].toString(),15,10);
@@ -52,18 +54,7 @@ function renderServer(bodies:Body[]){
     ctx.drawImage(uiImg,0, 13, 9, 10,75,3,9, 10);
 }
 
-function renderMsg(st:State){
-    if(st[7] != ""){
-    ctx.fillStyle = "#000000";
-    ctx.clearRect(0,0,180,100);
-    ctx.fillRect(0,0,180,100);
-    ctx.font = '22px Verdana';
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(st[7],10,35);
-    }
-}
-
-export function intro(time: number){
+export function showMessage(words:string, time: number){
    ctx.canvas.style.width = window.innerWidth+"px";
     ctx.canvas.style.height = window.innerHeight+"px";
     ctx.fillStyle = "#000000";
@@ -71,8 +62,6 @@ export function intro(time: number){
     ctx.fillRect(0,0,180,100);
     ctx.font = '8px Verdana';
     ctx.fillStyle = "#54ed25";
-
-    const words = "Hi there, I am Antonia. since years big corporations had spent lot of resources researching AI fields. 'Cloud Computing' and 'Machine Learning', it will be a good idea they said. Well  apparently they learnt... and more than they had to. Now they want to dominate us. Let's stop them smashing any datacenter we see.";
   
 ctx.font = '8px Verdana';
 animateText(time,words)

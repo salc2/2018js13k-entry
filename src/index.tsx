@@ -8,7 +8,7 @@ import {isEnemy} from './utils';
 import {Time, Action, LeftPressed, LeftReleased, RightPressed, RightReleased} from './actions';
 import {moveBody, gtn, gab, collide} from './collision';
 import {playSound} from './sound'
-import {intro} from './render.ui'
+import {showMessage} from './render.ui'
 
 export type Model = State;
 
@@ -313,13 +313,14 @@ const attackMode = (m:Model):Model => {
       m[1][i][10] = 1; 
     }
   }
+  m[6] = m[6] - m[6]; 
   return m;
 }
 
 const evalVictoryDefeat = (m:Model): Model => {
   const p = m[1].filter(c => c[8] =="player")[0];
   if(p[11] < 0){
-    m[7] = "Game Over";
+    m[7] = "Game Over!";
   }
   var n = 0;
   var d = 0;
@@ -330,7 +331,7 @@ const evalVictoryDefeat = (m:Model): Model => {
     }
   }
   if(n == d){
-    m[7] = "All is Offline! Yihaa";
+    m[7] = "You won! they are offline.";
   }
   return m;
 }
@@ -353,12 +354,17 @@ const recoveryEnemies = (m:Model, delta: number): Model => {
   return m;
 }
 
+
+
+    const words = "'Cloud Computing' and 'Machine Learning', it will be a good idea they said. Well apparently they learned... and more than they had to. Let's stop them smashing any datacenter we see. \n Use arrows + space + enter in desktop, virtual gamepad in mobile. Physical gamepad supported and recommended";
+
 export const render = (onEvent:(a:Action) => void) => (m: Model) => {
-    // if(performance.now() > m[6]+3000){
-    // }else{
-    //   intro(m[6])
-    // }
+    if(performance.now() > m[6]+3000){
     renderExt(m,m[4],tileSize,mapSize);
+
+    }else{
+      showMessage(words,m[6])
+    }
 
     
   }
