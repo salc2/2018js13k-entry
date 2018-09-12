@@ -4,11 +4,6 @@ import './lib/sonantx.js';
 declare var sonantx: any;
 const audioCtx:AudioContext = new AudioContext();
 
-
-
-
-
-
 export function soundSplashEnemy(): Cmd<Action>{
     return create( () =>{
         soundGenInven.createAudioBuffer(125, function(buffer) {

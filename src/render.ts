@@ -8,8 +8,8 @@ import {renderUi} from './render.ui'
 
 //const fpsM = new FPSMeter();
 
-const map_text = getImg('./map.png');
-const char_text = getImg('./charatlas.png');
+const map_text = getImg('map.png');
+const char_text = getImg('charatlas.png');
 
 const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
 '_': [ 20, 0, 20, 20 ],

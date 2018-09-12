@@ -2,7 +2,7 @@ import {State, Kind, Body, Inventory} from './State';
 const canvasUI:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("u");
 const ctx = canvasUI.getContext("2d");
 const uiImg = new Image();
-uiImg.src = "./ui_compo.png";
+uiImg.src = "ui_compo.png";
 const coord = { 
     'h': [ 0, 0, 10, 8 ],
   'k': [ 0, 8, 13, 5 ],
