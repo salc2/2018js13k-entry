@@ -131,6 +131,55 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
   return () => window.removeEventListener('keyup', handler, true);
 });
 
+
+const gamePadSub = create('gp', (consumer:Subscriber<Action>) =>{
+  let bttnA = false;
+  let bttnB = false;
+  let up = false;
+  let left = false;
+  let right = false;
+
+  let handler = setInterval(function(){
+    var gp = navigator.getGamepads()[0];
+    if(gp){
+      if(!bttnA && gp.buttons[0].pressed){
+        consumer({kind:"attkp",delta:16})
+        bttnA = true;
+      }else if(bttnA && !gp.buttons[0].pressed){
+        consumer({kind:"attkr",delta:16})
+        bttnA = false;
+      }
+      if(!bttnB && gp.buttons[1].pressed){
+        consumer({kind:"up",delta:16})
+        bttnB = true;
+      }else if(bttnB && !gp.buttons[1].pressed){
+        bttnB = false;
+      }
+      if(!up && (gp.axes[1] < -0.2)){
+        consumer({kind:"use",delta:16})
+        up = true;
+      }else if(up && !(gp.axes[1] < -0.2)){
+        up = false;
+      }
+      if(!left && (gp.axes[0] < -0.5)){
+        consumer({kind:"lp",delta:16})
+        left = true;
+      }else if(left && !(gp.axes[0] < -0.5)){
+        consumer({kind:"lr",delta:16})
+        left = false;
+      }
+      if(!right && (gp.axes[0] > 0.5)){
+        consumer({kind:"rp",delta:16})
+        right = true;
+      }else if(right && !(gp.axes[0] > 0.5)){
+        consumer({kind:"rr",delta:16})
+        right = false;
+      }
+    }
+  },30);
+  return () => {clearInterval(handler)};
+});
+
 const applyMotion = (m: Model, delta: number):[Model,Cmd<Action>] => {
   let cmdSound: Cmd<Action> = emptyCmd();
   let [cam, characters,cells,pmtr,map,inv,tt,msg]:Model = insertInCells(m,new Array(m[4].length),20,50);
@@ -209,45 +258,45 @@ const jump = (m: Model):Model => {
   return m;
 } 
 
-  const stop = (m: Model):Model => {
-    const characters = m[1];
-    characters.forEach(c =>{
-      if(c[8] == 'player'){
-        c[4] = 0;
-        c[10] = 0;
-      }
-    });
-    return m;
-  }
-
-  const passingTime = (m: Model, delta: number):[Model,Cmd<Action>] => {
-    const [nm, cmdEffects] = applyMotion(m,delta)
-    const _nm = recoveryEnemies(evalVictoryDefeat(fillingInventory(nm)),delta)
-    return [_nm,cmdEffects];
-  };
-
-  export const update: Update<Action,Model> = (a: Action, m: Model) => {
-    switch (a.kind) {
-      case "t":
-      return passingTime(m,a.delta);
-      case "up":
-      return [ jump(m), emptyCmd<Action>()];
-      case "lp":
-      return [ walkLeft(m),emptyCmd<Action>()];
-      case "rp":
-      return [ walkRight(m),emptyCmd<Action>()];
-      case "lr":
-      return [ stop(m),emptyCmd<Action>()];
-      case "rr":
-      return [ stop(m),emptyCmd<Action>()];
-      case "use":
-      return [ openUse(m),emptyCmd<Action>()];
-      case "attkp":
-      return [ attackMode(m),emptyCmd<Action>()];
-      case "attkr":
-      return [ stop(m),emptyCmd<Action>()];
+const stop = (m: Model):Model => {
+  const characters = m[1];
+  characters.forEach(c =>{
+    if(c[8] == 'player'){
+      c[4] = 0;
+      c[10] = 0;
     }
+  });
+  return m;
+}
+
+const passingTime = (m: Model, delta: number):[Model,Cmd<Action>] => {
+  const [nm, cmdEffects] = applyMotion(m,delta)
+  const _nm = recoveryEnemies(evalVictoryDefeat(fillingInventory(nm)),delta)
+  return [_nm,cmdEffects];
+};
+
+export const update: Update<Action,Model> = (a: Action, m: Model) => {
+  switch (a.kind) {
+    case "t":
+    return passingTime(m,a.delta);
+    case "up":
+    return [ jump(m), emptyCmd<Action>()];
+    case "lp":
+    return [ walkLeft(m),emptyCmd<Action>()];
+    case "rp":
+    return [ walkRight(m),emptyCmd<Action>()];
+    case "lr":
+    return [ stop(m),emptyCmd<Action>()];
+    case "rr":
+    return [ stop(m),emptyCmd<Action>()];
+    case "use":
+    return [ openUse(m),emptyCmd<Action>()];
+    case "attkp":
+    return [ attackMode(m),emptyCmd<Action>()];
+    case "attkr":
+    return [ stop(m),emptyCmd<Action>()];
   }
+}
 
 const haveHammer = (inv: Artifactory[]):Boolean => {
   let result = false;
@@ -258,64 +307,64 @@ const haveHammer = (inv: Artifactory[]):Boolean => {
   }
   return result;
 }
-  const attackMode = (m:Model):Model => {
-    for(var i =0;i< m[1].length;i++){
-      if(m[1][i][8]=="player" && haveHammer(m[5])){
-        m[1][i][10] = 1; 
+const attackMode = (m:Model):Model => {
+  for(var i =0;i< m[1].length;i++){
+    if(m[1][i][8]=="player" && haveHammer(m[5])){
+      m[1][i][10] = 1; 
+    }
+  }
+  return m;
+}
+
+const evalVictoryDefeat = (m:Model): Model => {
+  const p = m[1].filter(c => c[8] =="player")[0];
+  if(p[11] < 0){
+    m[7] = "Game Over";
+  }
+  var n = 0;
+  var d = 0;
+  for(var i = 0; i< m[1].length;i++){
+    if(m[1][i][8] == "server"){
+      n ++;
+      d = m[1][i][11] < 0 ? d + 1 : d;
+    }
+  }
+  if(n == d){
+    m[7] = "All is Offline! Yihaa";
+  }
+  return m;
+}
+
+const recoveryEnemies = (m:Model, delta: number): Model => {
+  m[1].forEach(c => {
+    if(isEnemy(c)){
+      c[11] = Math.max(0, c[11] - delta);
+
+      if(c[11] < 100 && c[11] != 0){
+        c[1] = c[1]-5;
+        c[3] = 21;
+        c[4] = c[6] == "r" ? 0.03 : -0.03;
+      }else if(c[11] > 100){
+        c[4] = 0;
+        c[3] = 13;
       }
     }
-    return m;
-  }
+  });
+  return m;
+}
 
-  const evalVictoryDefeat = (m:Model): Model => {
-    const p = m[1].filter(c => c[8] =="player")[0];
-    if(p[11] < 0){
-      m[7] = "Game Over";
-    }
-    var n = 0;
-    var d = 0;
-    for(var i = 0; i< m[1].length;i++){
-        if(m[1][i][8] == "server"){
-            n ++;
-            d = m[1][i][11] < 0 ? d + 1 : d;
-        }
-    }
-    console.log(n,d)
-    if(n == d){
-        m[7] = "All is Offline! Yihaa";
-    }
-    return m;
-  }
+export const render = (onEvent:(a:Action) => void) => (m: Model) => {
+    // if(performance.now() > m[6]+3000){
+    // }else{
+    //   intro(m[6])
+    // }
+    renderExt(m,m[4],tileSize,mapSize);
 
-  const recoveryEnemies = (m:Model, delta: number): Model => {
-    m[1].forEach(c => {
-      if(isEnemy(c)){
-        c[11] = Math.max(0, c[11] - delta);
-
-        if(c[11] < 100 && c[11] != 0){
-          c[1] = c[1]-5;
-          c[3] = 21;
-          c[4] = c[6] == "r" ? 0.03 : -0.03;
-        }else if(c[11] > 100){
-          c[4] = 0;
-          c[3] = 13;
-        }
-      }
-    });
-    return m;
-  }
-
-  export const render = (onEvent:(a:Action) => void) => (m: Model) => {
-    if(performance.now() > m[6]+3000){
-      renderExt(m,m[4],tileSize,mapSize);
-    }else{
-      intro(m[6])
-    }
     
   }
   export const subs = (m: Model) => {
     const zero: Time = {kind:"t", delta: 0}; 
-    return [clockSub, pressKeySub, releaseKeySub, touchsSub];
+    return [clockSub, pressKeySub, releaseKeySub, touchsSub,gamePadSub];
   }
   export const initStateCmd:[Model,Cmd<Action>] = [initState, createCmd(()=>{
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
@@ -325,7 +374,7 @@ const haveHammer = (inv: Artifactory[]):Boolean => {
       });
     }
 
- playSound();
-},null)]
+    playSound();
+  },null)]
 
-runGame( update, render,  subs, initStateCmd);  
+  runGame( update, render,  subs, initStateCmd);  

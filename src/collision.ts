@@ -61,6 +61,8 @@ export function moveBody(
                             amIdead = 5000;
                         }else if((e_kind == "player" && isEnemy(kind) && e[10] == 1)){
                             amIdead = 1000;
+                        }else if((kind == "player" && isEnemy(e_kind) && body[10] == 1 && e[11] == 0)){
+                            cmd = soundSplashEnemy();
                         }
                         //
                         if(kind == "player" && isEnemy(e_kind) && ey > bY+bH-2 && e[11] == 0){

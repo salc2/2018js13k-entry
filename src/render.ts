@@ -191,7 +191,7 @@ const charsAtlas = {
 
 
 renderPostProcessing(performance.now(),postTexture);
- renderUi(st);
+renderUi(st);
 // drawImage(ui, // image
 //                     32,
 //                     8,

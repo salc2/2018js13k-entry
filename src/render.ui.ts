@@ -22,7 +22,7 @@ export function renderUi(st:State){
     renderHeart(player);
     renderInven(st[5]);
     renderServer(st[1]);
-    renderMsg(st);
+ //   renderMsg(st);
 }
 function renderHeart(player:Body){
     ctx.fillText(player[11].toString(),15,10);
@@ -54,7 +54,6 @@ function renderServer(bodies:Body[]){
 
 function renderMsg(st:State){
     if(st[7] != ""){
-        console.log(st[7])
     ctx.fillStyle = "#000000";
     ctx.clearRect(0,0,180,100);
     ctx.fillRect(0,0,180,100);
