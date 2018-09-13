@@ -2,50 +2,43 @@ import {State, Kind, Body} from './State';
 import {drawImage, g, getImg,Img, postTexture, bindFrameBuffer, renderPostProcessing} from './render.webgl'
 import {renderUi} from './render.ui'
 
-//import 'fpsmeter';
+const charText = getImg('atlas.png');
 
-//declare var FPSMeter:any;
-
-//const fpsM = new FPSMeter();
-
-const map_text = getImg('map.png');
-const char_text = getImg('charatlas.png');
-
-const tileMap: any ={ '0': [ 0, 0, 20, 20 ],
-'_': [ 20, 0, 20, 20 ],
-'c': [ 40, 0, 20, 20 ],
-'w': [ 60, 0, 20, 20 ],
-'d': [ 80, 0, 20, 20 ],
-'f': [ 100, 0, 20, 20 ],
-'l': [ 120, 0, 20, 20 ],
-'s': [ 140, 0, 20, 20 ],
-'p': [ 160, 0, 20, 20 ],
-'r': [ 180, 0, 20, 20 ],
-'t': [ 200, 0, 20, 20 ] };
-
-const charsAtlas = {
-  'd1': [ 0, 47, 20, 20 ],
-  'd2': [ 40, 47, 20, 20 ],
-  'd3': [ 20, 47, 20, 20 ],
-  'desk': [ 36, 0, 18, 10 ],
-  'door': [ 38, 87, 20, 40 ],
+export const charsAtlas = { '0': [ 40, 90, 20, 20 ],
+  '_': [ 0, 131, 20, 20 ],
+  'c': [ 20, 131, 20, 20 ],
+  'w': [ 39, 110, 20, 20 ],
+  'd1': [ 0, 110, 20, 20 ],
+  'd2': [ 40, 131, 20, 20 ],
+  'd3': [ 20, 171, 20, 20 ],
+  'door': [ 40, 171, 20, 40 ],
+  'd': [ 0, 171, 20, 20 ],
+  'f': [ 20, 151, 20, 20 ],
+  'hui': [ 10, 0, 10, 8 ],
   'hammer': [ 0, 0, 10, 6 ],
-  'key': [ 26, 0, 10, 10 ],
-  'ph1': [ 0, 67, 17, 20 ],
-  'ph2': [ 17, 67, 17, 20 ],
-  'pi1': [ 42, 67, 8, 20 ],
-  'pi2': [ 34, 67, 8, 20 ],
-  'pj1': [ 36, 10, 12, 17 ],
-  'pj2': [ 48, 10, 12, 17 ],
-  'pw1': [ 28, 27, 8, 20 ],
-  'pw2': [ 0, 27, 10, 19 ],
+  'kui': [ 20, 0, 13, 5 ],
+  'key': [ 42, 0, 10, 10 ],
+  'l': [ 40, 151, 20, 20 ],
+  's': [ 0, 151, 20, 20 ],
+  'ph1': [ 0, 49, 17, 20 ],
+  'ph2': [ 17, 49, 17, 20 ],
+  'pi1': [ 32, 10, 8, 20 ],
+  'pi2': [ 40, 10, 8, 20 ],
+  'pj1': [ 0, 30, 12, 17 ],
+  'pj2': [ 22, 30, 12, 17 ],
+  'p': [ 37, 69, 20, 20 ],
+  'pw1': [ 48, 10, 8, 20 ],
+  'pw2': [ 12, 30, 10, 19 ],
+  'r': [ 20, 90, 20, 20 ],
+  't': [ 0, 90, 20, 20 ],
   'sof': [ 0, 10, 16, 10 ],
-  'son': [ 10, 0, 16, 10 ],
-  'server': [ 10, 27, 18, 20 ],
-  'servero': [ 36, 27, 18, 20 ],
-  'vo': [ 16, 10, 20, 13 ],
-  'vw1': [ 0, 87, 19, 21 ],
-  'vw2': [ 19, 87, 19, 21 ] };
+  'son': [ 16, 10, 16, 10 ],
+  'server': [ 34, 49, 18, 20 ],
+  'srvui': [ 33, 0, 9, 10 ],
+  'servero': [ 0, 69, 18, 20 ],
+  'vo': [ 34, 30, 20, 13 ],
+  'vw1': [ 18, 69, 19, 21 ],
+  'vw2': [ 20, 110, 19, 21 ] };
 
 
   type Coord = number[];
@@ -105,13 +98,13 @@ const charsAtlas = {
   [Img,Coord]{
     switch (body[8]) {
       case "player":
-      return [char_text,playerCoords(body[4],body[7],body[10],time)];
+      return [charText,playerCoords(body[4],body[7],body[10],time)];
       case "vending":
-      return [char_text,vendingCoords(body[11],time)];
+      return [charText,vendingCoords(body[11],time)];
       case "drone":
-      return [char_text,droneCoords(body[11],time)];
+      return [charText,droneCoords(body[11],time)];
       default:
-      return [char_text,stuffCoords(body[8],body[11])];
+      return [charText,stuffCoords(body[8],body[11])];
     }
   }
 
@@ -128,7 +121,7 @@ const charsAtlas = {
     if( (kind == "vending" || kind == "drone") && seqTimeBlink(time)){
       const iden = life > 0 ? "sof" : "son",
       [_x,_y,_w,_h] = charsAtlas[iden], [plx,ply] = kind == "drone" ? [2,5] : [0,0];
-      drawImage(char_text.tex,char_text.w,char_text.h,_x,_y,_w, _h,
+      drawImage(charText.tex,charText.w,charText.h,_x,_y,_w, _h,
         Math.round(x+plx), Math.round(y+ply-_h),_w,_h)
     }
   }
@@ -160,11 +153,11 @@ const charsAtlas = {
         const letter = map.charAt(r*wsize+c);
         if(letter != '`' && letter != 'x'){
           try{
-            const [_x,_y,_w,_h] = tileMap[letter];
+            const [_x,_y,_w,_h] = charsAtlas[letter];
             drawImage(
-                    map_text.tex, // image
-                    map_text.w,
-                    map_text.h,
+                    charText.tex, // image
+                    charText.w,
+                    charText.h,
                     _x, // source x
                     _y, // source y
                     _w, // source width
@@ -174,7 +167,11 @@ const charsAtlas = {
                     tsize, // target width
                     tsize // target height
                     );
-          }catch(e){}
+          }catch(e){
+
+            console.log(e)
+            console.log(letter)
+          }
           
         }
         }
