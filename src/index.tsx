@@ -131,55 +131,6 @@ const releaseKeySub = create('r1', (consumer: Subscriber<Action>) => {
   return () => window.removeEventListener('keyup', handler, true);
 });
 
-
-const gamePadSub = create('gp', (consumer:Subscriber<Action>) =>{
-  let bttnA = false;
-  let bttnB = false;
-  let up = false;
-  let left = false;
-  let right = false;
-
-  let handler = setInterval(function(){
-    var gp = navigator.getGamepads()[0];
-    if(gp){
-      if(!bttnA && gp.buttons[0].pressed){
-        consumer({kind:"attkp",delta:16})
-        bttnA = true;
-      }else if(bttnA && !gp.buttons[0].pressed){
-        consumer({kind:"attkr",delta:16})
-        bttnA = false;
-      }
-      if(!bttnB && gp.buttons[1].pressed){
-        consumer({kind:"up",delta:16})
-        bttnB = true;
-      }else if(bttnB && !gp.buttons[1].pressed){
-        bttnB = false;
-      }
-      if(!up && (gp.axes[1] < -0.2)){
-        consumer({kind:"use",delta:16})
-        up = true;
-      }else if(up && !(gp.axes[1] < -0.2)){
-        up = false;
-      }
-      if(!left && (gp.axes[0] < -0.5)){
-        consumer({kind:"lp",delta:16})
-        left = true;
-      }else if(left && !(gp.axes[0] < -0.5)){
-        consumer({kind:"lr",delta:16})
-        left = false;
-      }
-      if(!right && (gp.axes[0] > 0.5)){
-        consumer({kind:"rp",delta:16})
-        right = true;
-      }else if(right && !(gp.axes[0] > 0.5)){
-        consumer({kind:"rr",delta:16})
-        right = false;
-      }
-    }
-  },30);
-  return () => {clearInterval(handler)};
-});
-
 const applyMotion = (m: Model, delta: number):[Model,Cmd<Action>] => {
   let cmdSound: Cmd<Action> = emptyCmd();
   let [cam, characters,cells,pmtr,map,inv,tt,msg]:Model = insertInCells(m,new Array(m[4].length),20,50);
@@ -314,7 +265,6 @@ const attackMode = (m:Model):Model => {
     }
   }
   m[6] = m[6] - m[6]; 
-  console.log(m[1][m[1].length-1])
   return m;
 }
 
@@ -355,12 +305,10 @@ const recoveryEnemies = (m:Model, delta: number): Model => {
   return m;
 }
 
-
-
-    const words = "'Cloud Computing' and 'Machine Learning', it will be a good idea they said. Well apparently they learned... and more than they had to. Let's stop them smashing any datacenter we see. \n Use arrows + space + enter in desktop, virtual gamepad in mobile. Physical gamepad supported and recommended";
+const words = "'Cloud Computing' and 'Machine Learning', it will be a good idea they said. Well apparently they learned... and more than they had to. Let's stop them smashing any datacenter we see. Use arrows + space + enter in desktop, virtual gamepad in mobile.";
 
 export const render = (onEvent:(a:Action) => void) => (m: Model) => {
-    if(performance.now() > m[6]+3000){
+    if(performance.now() > m[6]+2000){
     renderExt(m,m[4],tileSize,mapSize);
 
     }else{
@@ -371,7 +319,7 @@ export const render = (onEvent:(a:Action) => void) => (m: Model) => {
   }
   export const subs = (m: Model) => {
     const zero: Time = {kind:"t", delta: 0}; 
-    return [clockSub, pressKeySub, releaseKeySub, touchsSub,gamePadSub];
+    return [clockSub, pressKeySub, releaseKeySub, touchsSub];
   }
   export const initStateCmd:[Model,Cmd<Action>] = [initState, createCmd(()=>{
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){

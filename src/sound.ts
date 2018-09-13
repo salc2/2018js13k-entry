@@ -4,64 +4,6 @@ import './lib/sonantx.js';
 declare var sonantx: any;
 const audioCtx:AudioContext = new AudioContext();
 
-export function soundSplashEnemy(): Cmd<Action>{
-    return create( () =>{
-        soundGenInven.createAudioBuffer(125, function(buffer) {
-        var source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioCtx.destination);
-        source.start();
-        });
-    } ,null);
-
-}
-
-const jsonInven = {
-    "osc1_oct": 9,
-    "osc1_det": 0,
-    "osc1_detune": 0,
-    "osc1_xenv": 0,
-    "osc1_vol": 255,
-    "osc1_waveform": 0,
-    "osc2_oct": 9,
-    "osc2_det": 0,
-    "osc2_detune": 12,
-    "osc2_xenv": 0,
-    "osc2_vol": 255,
-    "osc2_waveform": 0,
-    "noise_fader": 0,
-    "env_attack": 100,
-    "env_sustain": 0,
-    "env_release": 14545,
-    "env_master": 70,
-    "fx_filter": 0,
-    "fx_freq": 0,
-    "fx_resonance": 240,
-    "fx_delay_time": 2,
-    "fx_delay_amt": 27,
-    "fx_pan_freq": 3,
-    "fx_pan_amt": 47,
-    "lfo_osc1_freq": 0,
-    "lfo_fx_freq": 0,
-    "lfo_freq": 0,
-    "lfo_amt": 0,
-    "lfo_waveform": 0
-};
-
-
-var soundGenInven = new sonantx.SoundGenerator(jsonInven);
-export function gotInventorySound():Cmd<Action>{
-    return create( () =>{
-        soundGenInven.createAudioBuffer(159, function(buffer) {
-        var source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioCtx.destination);
-        source.start();
-    });
-    } ,null);
-}
-
-
 const jsonTheme = {
     "rowLen": 7692,
     "endPattern": 10,

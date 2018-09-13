@@ -8,23 +8,20 @@ uiImg.src = "atlas.png";
 ctx.font = '8px Verdana';
 var start = performance.now() + 22000;
 ctx.fillStyle = "#ffffff";
-//ctx.fillStyle = "#54ed25";
+
 
 export function renderUi(st:State){
     ctx.clearRect(0,0,180,100);
     ctx.canvas.style.width = window.innerWidth+"px";
     ctx.canvas.style.height = window.innerHeight+"px";
     const player = st[1].filter(c => c[8] == "player")[0]
-    renderHeart(player);
+    ctx.fillText(player[11].toString(),15,10);
+    ctx.drawImage(uiImg,10, 0, 10, 8,3,3,10, 8);
     renderInven(st[5]);
     renderServer(st[1]);
     if(st[7].length > 0){
       showMessage(st[7],performance.now()+2000)
     }
-}
-function renderHeart(player:Body){
-    ctx.fillText(player[11].toString(),15,10);
-    ctx.drawImage(uiImg,10, 0, 10, 8,3,3,10, 8);
 }
 function renderInven(inv:Inventory){
     var k = 0,p = 0;

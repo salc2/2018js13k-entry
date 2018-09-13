@@ -76,10 +76,10 @@ export const charsAtlas = { '0': [ 40, 90, 20, 20 ],
 
   function droneCoords(life: number,time: number):Coord{
     const q = seqTimeQ(time);
-    charsAtlas['d1'][1] = 47;
+    charsAtlas['d1'][1] = 110;
     charsAtlas['d1'][3] = 20;
     if(life > 0){
-      charsAtlas['d1'][1] = 52;
+      charsAtlas['d1'][1] = 115;
       charsAtlas['d1'][3] = 15;
       return charsAtlas['d1'];
     }else{
@@ -168,9 +168,6 @@ export const charsAtlas = { '0': [ 40, 90, 20, 20 ],
                     tsize // target height
                     );
           }catch(e){
-
-            console.log(e)
-            console.log(letter)
           }
           
         }

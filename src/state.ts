@@ -21,25 +21,22 @@ export type State = [Camera, Body[], Cells, Parameter, Map, Inventory,Time, Mess
 
 const camera:Camera = [0,0,180,100,0,0,0];
 const player:Body = [30,60,8,20,0,0.058,'r',true, "player", 0, 0,100];
-const enemy:Body = [777,45,19,21,0.03,0.058,'r',true, "vending",1, 180,0];
-const enemyO:Body = [777,45,19,21,0.03,0.058,'r',true, "drone",1, 180,0];
-const enemy2:Body = [830,45,19,21,0.03,0.058,'r',true, "vending",3, 180,0];
-const enemy2O:Body = [830,45,19,21,0.03,0.058,'r',true, "drone",3, 180,0];
-const enemy3:Body = [697,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
-const enemy3o:Body = [573,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
-const enemy3d:Body = [573,70,19,21,0.03,0.058,'r',true, "drone",4, 180,0];
-const enemy5:Body = [125,45,20,20,0.03,0.058,'r',true, "vending",5, 180,0];
+const enemyO:Body = [777,45,19,21,0.03,0.058,'r',true, "drone",103, 180,0];
+const enemy2:Body = [830,45,19,21,0.03,0.058,'r',true, "vending",104, 180,0];
+const enemy2O:Body = [830,45,19,21,0.03,0.058,'r',true, "drone",105, 180,0];
+const enemy3:Body = [697,45,19,21,0.03,0.058,'r',true, "vending",106, 180,0];
+const enemy3d:Body = [573,70,19,21,0.03,0.058,'r',true, "drone",108, 180,0];
+const enemy5:Body = [125,45,20,20,0.03,0.058,'r',true, "vending",109, 180,0];
 
 const harmer:Body = [657,60,10,10,0,0,'r',true, "hammer",33, 0,0];
 const key1:Body = [106,2,10,10,0,0,'r',true, "key",99, 0,0];
 const door1:Body = [242,39,20,40,0,0,'r',true, "door",63, 67,99];
 const door2:Body = [680,39,20,40,0,0,'r',true, "door",67, 63,-1];
 
-const server1:Body = [412,80,18,20,0,0,'r',true, "server",3, 1,100];
-const server2:Body = [777,80,18,20,0,0,'r',true, "server",3, 1,100];
-const server3:Body = [830,80,18,20,0,0,'r',true, "server",3, 1,100];
-const server4:Body = [597,80,18,20,0,0,'r',true, "server",3, 1,100];
-const server5:Body = [740,80,18,20,0,0,'r',true, "server",3, 1,100];
+const server1:Body = [412,80,18,20,0,0,'r',true, "server",11, 1,100];
+const server2:Body = [777,80,18,20,0,0,'r',true, "server",12, 1,100];
+const server3:Body = [830,80,18,20,0,0,'r',true, "server",13, 1,100];
+const server4:Body = [597,80,18,20,0,0,'r',true, "server",14, 1,100];
 
 function decodeMap(encodeMap:string): string{
     var grps = encodeMap.split(",");
@@ -61,7 +58,7 @@ const parameter:Parameter = [0.058,.075,-0.35];
 
 // export const initState: State = [camera,[door1,door2,enemy4,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, [],performance.now()+29000,""];
 
-export const initState: State = [camera,[harmer,key1,door1,door2,server1,server2,server3,server4, server5,enemyO, enemy2, enemy2O, enemy3, enemy5,player],[], parameter, map, [],performance.now()+29000,""];
+export const initState: State = [camera,[harmer,key1,door1,door2,server1,server2,server3,server4,enemyO, enemy2, enemy2O, enemy3, enemy5,player],[], parameter, map, [],performance.now()+23000,""];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy,trg] = c;

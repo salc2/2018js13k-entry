@@ -1,7 +1,7 @@
 import {initState, Spacing, State, moveCamera, Body, Cells} from './state';
 import {Cmd, emptyCmd, create} from './cmd';
 import {Action} from './actions';
-import {gotInventorySound,soundSplashEnemy} from './sound'
+//import {gotInventorySound,soundSplashEnemy} from './sound'
 
 //getTileNumer
 export function gtn(x: number, y:number, tileSize: number, worldSize: number){
@@ -57,16 +57,16 @@ export function moveBody(
                         canMoveDown = !(y > bY) || isEnemy(kind)
                         canMoveRight = !(x > bX) || above || left;
                         canMoveLeft = !(x < bX) || above || right;
-                        if(e_kind == "player" && ey+eh-2 < bY){
+                        if(e_kind == "player" && ey+eh-2 < bY && isEnemy(kind)){
                             amIdead = 5000;
                         }else if((e_kind == "player" && isEnemy(kind) && e[10] == 1)){
                             amIdead = 1000;
                         }else if((kind == "player" && isEnemy(e_kind) && body[10] == 1 && e[11] == 0)){
-                            cmd = soundSplashEnemy();
+                          //  cmd = soundSplashEnemy();
                         }
                         //
                         if(kind == "player" && isEnemy(e_kind) && ey > bY+bH-2 && e[11] == 0){
-                            cmd = soundSplashEnemy();
+                            //cmd = soundSplashEnemy();
                         }
                         if(isEnemy(e_kind) && kind == "player" && e[11] == 0){
                             if(body[10] == 0){
@@ -85,7 +85,7 @@ export function moveBody(
 
                     }
                     if(kind == "player" && (e_kind == "key" || e_kind == "hammer") ){
-                        cmd = gotInventorySound();
+                       // cmd = gotInventorySound();
                     }
                 }
             })
