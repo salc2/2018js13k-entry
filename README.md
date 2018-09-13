@@ -65,7 +65,7 @@ I learned a lot in mozilla tutorials series. Like this:
 
 https://developer.mozilla.org/en-US/docs/Games/Techniques/Tilemaps/Square_tilemaps_implementation:_Scrolling_maps
 
-I wanted some post-processing effect just to bring up a bit of grunch to the final rendering so I managed to use this tutorial shader in webgl:
+I wanted some post-processing effect just to bring up a bit of grunge to the final rendering so I managed to use this tutorial shader in webgl:
 
 https://github.com/mattdesl/lwjgl-basics/wiki/ShaderLesson3
 
