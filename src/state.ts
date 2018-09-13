@@ -20,19 +20,26 @@ export type Message = string;
 export type State = [Camera, Body[], Cells, Parameter, Map, Inventory,Time, Message];
 
 const camera:Camera = [0,0,180,100,0,0,0];
-const player:Body = [80,45,8,20,0,0.058,'r',true, "player", 0, 0,100];
-const enemy:Body = [300,45,19,21,0.03,0.058,'r',true, "vending",1, 180,0];
-const enemy2:Body = [250,45,19,21,0.03,0.058,'r',true, "vending",3, 180,0];
-const enemy3:Body = [100,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
-const enemy4:Body = [100,70,20,20,0.03,0.058,'r',true, "drone",5, 180,0];
-const step1:Body = [120,35,20,10,0.03,0.058,'r',true, "step",2, 300,0];
-const door1:Body = [120,50,20,40,0,0,'r',true, "door",63, 67,99];
-const door2:Body = [320,50,20,40,0,0,'r',true, "door",67, 63,-1];
-const desk1:Body = [390,45,18,10,0,0,'r',true, "desk",3, 0,0];
-const server1:Body = [450,45,18,20,0,0,'r',true, "server",3, 1,100];
-const key1:Body = [23,45,10,10,0,0,'r',true, "key",99, 0,0];
-const pen1:Body = [35,45,10,10,0,0,'r',true, "hammer",33, 0,0];
+const player:Body = [30,60,8,20,0,0.058,'r',true, "player", 0, 0,100];
+const enemy:Body = [777,45,19,21,0.03,0.058,'r',true, "vending",1, 180,0];
+const enemyO:Body = [777,45,19,21,0.03,0.058,'r',true, "drone",1, 180,0];
+const enemy2:Body = [830,45,19,21,0.03,0.058,'r',true, "vending",3, 180,0];
+const enemy2O:Body = [830,45,19,21,0.03,0.058,'r',true, "drone",3, 180,0];
+const enemy3:Body = [697,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
+const enemy3o:Body = [573,45,19,21,0.03,0.058,'r',true, "vending",4, 180,0];
+const enemy3d:Body = [573,70,19,21,0.03,0.058,'r',true, "drone",4, 180,0];
+const enemy5:Body = [125,45,20,20,0.03,0.058,'r',true, "vending",5, 180,0];
 
+const harmer:Body = [657,60,10,10,0,0,'r',true, "hammer",33, 0,0];
+const key1:Body = [106,2,10,10,0,0,'r',true, "key",99, 0,0];
+const door1:Body = [242,39,20,40,0,0,'r',true, "door",63, 67,99];
+const door2:Body = [680,39,20,40,0,0,'r',true, "door",67, 63,-1];
+
+const server1:Body = [412,80,18,20,0,0,'r',true, "server",3, 1,100];
+const server2:Body = [777,80,18,20,0,0,'r',true, "server",3, 1,100];
+const server3:Body = [830,80,18,20,0,0,'r',true, "server",3, 1,100];
+const server4:Body = [597,80,18,20,0,0,'r',true, "server",3, 1,100];
+const server5:Body = [740,80,18,20,0,0,'r',true, "server",3, 1,100];
 
 function decodeMap(encodeMap:string): string{
     var grps = encodeMap.split(",");
@@ -47,12 +54,14 @@ function decodeMap(encodeMap:string): string{
     return result;
 }
 
-const map = decodeMap("1-x,48-t,2-x,2-`,1-0,4-_,1-0,4-_,1-0,3-_,1-0,31-`,2-x,48-`,2-x,36-`,1-w,11-`,2-x,27-`,1-c,1-`,2-s,1-p,1-`,1-c,11-`,1-p,1-s,1-`,51-x,2200-`");
+const map = decodeMap("1-x,2-t,1-l,2-t,1-l,2-t,1-l,2-t,1-l,2-t,1-l,2-t,1-l,2-t,1-l,1-t,1-x,1-f,1-x,1-t,1-l,2-t,1-l,2-t,1-l,2-t,1-l,2-t,1-l,2-t,1-l,2-t,1-l,3-t,2-x,4-`,1-0,3-_,1-0,3-_,1-0,3-_,1-0,5-`,1-x,1-f,1-x,3-`,1-0,3-_,1-0,3-_,1-0,3-_,1-0,7-`,2-x,2-`,1-w,4-`,1-s,5-`,1-w,4-`,1-0,2-_,1-0,1-x,1-f,1-x,2-`,1-s,4-`,1-w,6-`,1-s,4-`,1-w,3-`,2-x,1-r,1-p,1-c,1-s,3-r,1-s,1-c,1-p,6-r,1-d,2-r,1-c,1-p,1-r,1-x,1-f,1-x,1-r,1-c,1-s,8-r,1-c,1-p,1-c,1-s,3-r,1-s,2-c,2-r,2-x,3-d,7-f,3-d,2-f,3-d,4-f,1-x,1-f,1-x,7-f,3-d,13-f,52-x,23-`,1-x,24-`,2-x,23-`,1-x,24-`,2-x,23-`,1-x,24-`,2-x,23-`,1-x,24-`,2-x,23-`,1-x,24-`,2-x,23-`,1-x,24-`,2-x,23-`,1-x,24-`,2-x,23-`,1-x,25-`,1-x,23-`,1-x,25-`,1-x,23-`,1-x,1725-`");
 
 // gravity, walkvel, jumpvel
 const parameter:Parameter = [0.058,.075,-0.35];
 
-export const initState: State = [camera,[door1,door2,enemy4,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, [],performance.now()+29000,""];
+// export const initState: State = [camera,[door1,door2,enemy4,enemy ,desk1, server1, key1, pen1, player],[], parameter, map, [],performance.now()+29000,""];
+
+export const initState: State = [camera,[harmer,key1,door1,door2,server1,server2,server3,server4, server5,enemyO, enemy2, enemy2O, enemy3, enemy5,player],[], parameter, map, [],performance.now()+29000,""];
 
 export const moveCamera = (c:Camera,x:number,y:number,ww:number,wh:number) => {
     const [,,w,h,cvx,cvy,trg] = c;

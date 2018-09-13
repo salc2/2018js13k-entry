@@ -314,6 +314,7 @@ const attackMode = (m:Model):Model => {
     }
   }
   m[6] = m[6] - m[6]; 
+  console.log(m[1][m[1].length-1])
   return m;
 }
 
