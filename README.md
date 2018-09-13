@@ -1,6 +1,5 @@
-## This project is an entry for the Js13k game jam which consists in develop an HTML5 game in one month in only 13 Kilobytes at most.
-
 ### Cloudapocalypsis Now: The learning of machines.
+## This project is an entry for the Js13k game jam which consists in develop an HTML5 game in one month in only 13 Kilobytes at most.
 
 I got inspired by Apogee early 90's MS-DOS game. 
 Bio Menace, Secret Agent. 
@@ -18,12 +17,13 @@ I evaluated using ReasonML, Purescript even ScalaJS but all of them need extra J
 I avoid using classes and instanciation with new due to they generate more codebase or at least that I thought. Instead I just used Tuples of differents size with Type Aliases so like that I could have the type system safety and without any evidence in the generated JS.
 
 The architecture is basically defined with the interaction of 6 building block which are:
-Cancellable
-Observable
-Subscription
-Subscriber
-Action
-Cmd
+
+- Cancellable
+- Observable
+- Subscription
+- Subscriber
+- Action
+- Cmd
 
 Those components interact with an `update` function and a `render` function mainly.
 The update receive as parameters and Action (which could be an user input key pressed) and an initial state in first time or the latest one stored in some place and render receive that state and renders it.
@@ -33,13 +33,15 @@ I tried (again) to make all necessary functions testable but (again I failed) ru
 I made from scratch pixel art and assets.
 I used Gimp and Krita for arts. Krita only to test how good an sprite animation looked with how many fps. 
 Later using the global time (performance.now()) I implemented frame based animation:
-`const seqTimeI = (t:number) =>  Math.floor(1+(t* (0.02/5))%2);`
+```
+const seqTimeI = (t:number) =>  Math.floor(1+(t* (0.02/5))%2);
+```
 "player_1_walking.png"
 "player_2_walking.png"
 
 "player_"+seqTimeI(performance.now())+"_walking.png"
 
-That animation will iterate between 1 and 2, 5 times per second or each or each 200ms.
+That function will iterate between 1 and 2, 5 times per second or each 200ms.
 
 I decide to model my world/map in tiles of 20px, where the canvas size is 180px X 100px (Later I just scaled it up using CSS) That allowed me have atlases/ spritesheets really small.
 
