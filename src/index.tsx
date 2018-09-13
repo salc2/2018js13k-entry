@@ -305,7 +305,7 @@ const recoveryEnemies = (m:Model, delta: number): Model => {
   return m;
 }
 
-const words = "'Cloud Computing' and 'Machine Learning', it will be a good idea they said. Well apparently they learned... and more than they had to. Let's stop them smashing any datacenter we see. Use arrows + space + enter in desktop, virtual gamepad in mobile.";
+const words = "Use arrows + space + enter in desktop, virtual gamepad in mobile. and smash all datacenters";
 
 export const render = (onEvent:(a:Action) => void) => (m: Model) => {
     if(performance.now() > m[6]+2000){
